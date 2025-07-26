@@ -124,12 +124,12 @@ const Login = () => {
             Sign in with Google
           </button>
 
-          <p className="mt-4 text-center text-sm">
+          {/* <p className="mt-4 text-center text-sm">
             Don’t have an account?{" "}
             <a href="/register" className="text-primary font-medium hover:underline">
               Register
             </a>
-          </p>
+          </p> */}
         </div>
       </div>
     </div>

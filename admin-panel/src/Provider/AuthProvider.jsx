@@ -4,29 +4,46 @@ import { createContext, useEffect, useState } from "react";
 import {
   onAuthStateChanged,
   signOut,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
 } from "firebase/auth";
-import { auth } from "../Firebase/firebase.config"; // ✅ Adjust if needed
+import { auth } from "../Firebase/firebase.config";
+import Swal from "sweetalert2";
 
 export const AuthContext = createContext();
+
+// ✅ Allowed Admin Emails
+const ALLOWED_EMAILS = [
+  "zhdhsn6@gmail.com",
+  "zahidweb1224@gmail.com",
+  "mavrick.utpal@gmail.com",
+  "info@edificerealtybdopc.com",
+];
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Firebase auth state observer
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (loggedInUser) => {
-      setUser(loggedInUser);
+      if (loggedInUser && ALLOWED_EMAILS.includes(loggedInUser.email)) {
+        setUser(loggedInUser);
+      } else if (loggedInUser) {
+        Swal.fire({
+          icon: "error",
+          title: "Access Denied",
+          text: "Your email is not authorized to access this admin panel.",
+          confirmButtonColor: "#d33",
+        });
+        signOut(auth);
+        setUser(null);
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
-  // Optional: add auth methods if needed
   const logOut = () => signOut(auth);
 
   const authInfo = {

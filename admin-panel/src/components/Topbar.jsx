@@ -3,17 +3,31 @@ import { AuthContext } from "../Provider/AuthProvider";
 import { signOut } from "firebase/auth";
 import { auth } from "../Firebase/firebase.config";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Topbar = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      navigate("/login");
-    } catch (error) {
-      console.error("Logout failed:", error.message);
+    const confirm = await Swal.fire({
+      title: "Are you sure?",
+      text: "You will be logged out of the admin panel.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, logout",
+      cancelButtonText: "Cancel",
+    });
+
+    if (confirm.isConfirmed) {
+      try {
+        await signOut(auth);
+        Swal.fire("Logged Out", "You have been logged out successfully.", "success");
+        navigate("/login");
+      } catch (error) {
+        console.error("Logout failed:", error.message);
+        Swal.fire("Error", "Logout failed. Try again later.", "error");
+      }
     }
   };
 
@@ -32,7 +46,7 @@ const Topbar = () => {
         </h1>
       </div>
 
-      {/* Avatar and Logout */}
+      {/* Avatar and Dropdown */}
       <div className="flex-none gap-4">
         <div className="dropdown dropdown-end">
           <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
@@ -48,10 +62,18 @@ const Topbar = () => {
             className="mt-3 z-[1] p-2 shadow-md menu menu-sm dropdown-content bg-base-100 border border-base-300 rounded-box w-52"
           >
             <li>
-              <a className="hover:bg-base-200">Profile</a>
+              <button
+                onClick={() => navigate("/profile")}
+                className="hover:bg-base-200"
+              >
+                Profile
+              </button>
             </li>
             <li>
-              <button onClick={handleLogout} className="hover:bg-base-200">
+              <button
+                onClick={handleLogout}
+                className="hover:bg-base-200 text-red-500"
+              >
                 Logout
               </button>
             </li>
