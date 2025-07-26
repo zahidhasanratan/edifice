@@ -3,6 +3,7 @@ import Root from "../Pages/Root/Root";
 import Dashboard from "../Pages/Dashboard";
 import Users from "../Pages/Users";
 import Settings from "../Pages/Settings";
+import Login from "../Pages/Auth/Login";
 
 export const router = createBrowserRouter([
   {
@@ -13,5 +14,9 @@ export const router = createBrowserRouter([
       { path: "/users", element: <Users /> },
       { path: "/settings", element: <Settings /> },
     ],
+  },
+   {
+    path: "/login",
+    element: <Login />
   },
 ]);
