@@ -1,25 +1,52 @@
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import loginIllustration from "../../assets/loginslide.svg"; // ✅ Adjust path as per your folder structure
+import {
+  signInWithPopup,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../../Firebase/firebase.config";
+import { useNavigate } from "react-router-dom";
+import loginIllustration from "../../assets/loginslide.svg";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  // 🔐 Email/Password Login
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log(email, password);
-    // TODO: Add Firebase email/password login
+    setError("");
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      console.log("✅ Email login successful:", result.user);
+      navigate("/"); // redirect to dashboard
+    } catch (err) {
+      console.error("❌ Email login failed:", err.message);
+      setError("Invalid email or password.");
+    }
   };
 
-  const handleGoogleSignIn = () => {
-    console.log("Google Sign-In clicked");
-    // TODO: Add Firebase Google Sign-In
+  // 🔐 Google Sign-In
+  const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    setError("");
+    try {
+      const result = await signInWithPopup(auth, provider);
+      console.log("✅ Google Sign-In successful:", result.user);
+      navigate("/"); // redirect to dashboard
+    } catch (error) {
+      console.error("❌ Google Sign-In failed:", error.message);
+      setError("Google Sign-In failed.");
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-100 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-base-100 to-base-200 px-4">
       <div className="flex flex-col lg:flex-row bg-white rounded-xl shadow-lg overflow-hidden w-full max-w-5xl border border-base-300">
+        
         {/* Left Illustration Panel */}
         <div className="hidden lg:flex items-center justify-center bg-base-200 w-1/2 p-8">
           <img
@@ -30,10 +57,25 @@ const Login = () => {
         </div>
 
         {/* Right Login Form Panel */}
-        <div className="w-full lg:w-1/2 p-8">
-          <h2 className="text-2xl font-bold text-center text-primary mb-6">
+        <div className="w-full lg:w-1/2 p-8 relative">
+
+          {/* Logo */}
+          <div className="absolute top-4 right-4">
+            <img
+              src="/large-logo.png"
+              alt="Logo"
+              className="h-10 w-auto object-contain drop-shadow"
+            />
+          </div>
+
+          <h2 className="text-2xl font-bold text-center text-primary mb-6 mt-2">
             Login to Admin Panel
           </h2>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 text-sm text-red-600 text-center">{error}</div>
+          )}
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
@@ -64,7 +106,10 @@ const Login = () => {
               />
             </div>
 
-            <button type="submit" className="btn btn-primary w-full">
+            <button
+              type="submit"
+              className="btn btn-primary w-full hover:brightness-110 transition duration-200"
+            >
               Login
             </button>
           </form>
@@ -73,7 +118,7 @@ const Login = () => {
 
           <button
             onClick={handleGoogleSignIn}
-            className="btn btn-outline w-full flex items-center justify-center gap-2"
+            className="btn btn-outline w-full flex items-center justify-center gap-2 hover:bg-base-200 transition duration-200"
           >
             <FcGoogle className="text-xl" />
             Sign in with Google
