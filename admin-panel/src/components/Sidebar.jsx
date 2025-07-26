@@ -95,6 +95,34 @@ const Sidebar = () => {
             </ul>
           </details>
         </li>
+         {/* Menu - Collapsible Submenu */}
+        <li>
+          <details className="group">
+            <summary className="btn btn-ghost w-full justify-start cursor-pointer flex items-center">
+              <FaBars className="mr-2" /> Slider
+            </summary>
+            <ul className="pl-8 space-y-1">
+              <li>
+                <Link
+                  to="/menu/add"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/menu/add")}`}
+                >
+                  <FaPlus className="mr-2" /> Add Slider
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/menu/all"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/menu/all")}`}
+                >
+                  <FaList className="mr-2" /> All Slider
+                </Link>
+              </li>
+            </ul>
+          </details>
+        </li>
       </ul>
     </aside>
   );
