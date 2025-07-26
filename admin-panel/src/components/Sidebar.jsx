@@ -3,16 +3,15 @@ import {
   FaTachometerAlt,
   FaUsers,
   FaCog,
-  FaBars,
+  FaImage,
   FaPlus,
-  FaList,
+  FaThList,
 } from "react-icons/fa";
 
 const Sidebar = () => {
   const { pathname } = useLocation();
   const isActive = (path) => pathname === path ? "bg-primary text-white" : "";
 
-  // ✅ Auto-close drawer on mobile
   const closeDrawerOnMobile = () => {
     const drawerCheckbox = document.getElementById("dashboard-drawer");
     if (drawerCheckbox && drawerCheckbox.checked) {
@@ -32,7 +31,7 @@ const Sidebar = () => {
         <h1 className="text-xl font-bold text-primary">Admin Panel</h1>
       </div>
 
-      {/* Navigation */}
+      {/* Navigation Menu */}
       <ul className="menu p-4 space-y-2 w-full">
         {/* Dashboard */}
         <li>
@@ -67,57 +66,29 @@ const Sidebar = () => {
           </Link>
         </li>
 
-        {/* Menu - Collapsible Submenu */}
+        {/* Banners - Collapsible Submenu */}
         <li>
           <details className="group">
             <summary className="btn btn-ghost w-full justify-start cursor-pointer flex items-center">
-              <FaBars className="mr-2" /> Menu
+              <FaImage className="mr-2" /> Banners
             </summary>
             <ul className="pl-8 space-y-1">
               <li>
                 <Link
-                  to="/menu/add"
+                  to="/sliders/add"
                   onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/menu/add")}`}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/sliders/add")}`}
                 >
-                  <FaPlus className="mr-2" /> Add Menu
+                  <FaPlus className="mr-2" /> Add Banner
                 </Link>
               </li>
               <li>
                 <Link
-                  to="/menu/all"
+                  to="/sliders"
                   onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/menu/all")}`}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/sliders")}`}
                 >
-                  <FaList className="mr-2" /> All Menus
-                </Link>
-              </li>
-            </ul>
-          </details>
-        </li>
-         {/* Menu - Collapsible Submenu */}
-        <li>
-          <details className="group">
-            <summary className="btn btn-ghost w-full justify-start cursor-pointer flex items-center">
-              <FaBars className="mr-2" /> Slider
-            </summary>
-            <ul className="pl-8 space-y-1">
-              <li>
-                <Link
-                  to="/menu/add"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/menu/add")}`}
-                >
-                  <FaPlus className="mr-2" /> Add Slider
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/menu/all"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/menu/all")}`}
-                >
-                  <FaList className="mr-2" /> All Slider
+                  <FaThList className="mr-2" /> All Banners
                 </Link>
               </li>
             </ul>

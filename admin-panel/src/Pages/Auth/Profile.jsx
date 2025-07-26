@@ -1,12 +1,12 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../../Provider/AuthProvider";
 import { updateProfile, updatePassword } from "firebase/auth";
-import { auth } from "../../Firebase/firebase.config";
 import Swal from "sweetalert2";
 
 const Profile = () => {
   const { user } = useContext(AuthContext);
   const [name, setName] = useState(user?.displayName || "");
+  const [photoURL, setPhotoURL] = useState(user?.photoURL || "");
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -15,12 +15,15 @@ const Profile = () => {
     setLoading(true);
 
     try {
-      // Update displayName
-      if (user.displayName !== name) {
-        await updateProfile(user, { displayName: name });
+      // ✅ Update profile: display name + photoURL
+      if (user.displayName !== name || user.photoURL !== photoURL) {
+        await updateProfile(user, {
+          displayName: name,
+          photoURL: photoURL,
+        });
       }
 
-      // Update password if provided
+      // ✅ Update password only if provided
       if (newPassword) {
         await updatePassword(user, newPassword);
       }
@@ -30,6 +33,9 @@ const Profile = () => {
         title: "Profile Updated",
         text: "Your profile has been updated successfully!",
       });
+
+      // Optional: force refresh by reloading
+      setTimeout(() => window.location.reload(), 1000);
     } catch (err) {
       Swal.fire({
         icon: "error",
@@ -56,7 +62,7 @@ const Profile = () => {
           />
         </div>
 
-        {/* Display Name */}
+        {/* Name */}
         <div>
           <label className="block text-sm font-medium mb-1">Name</label>
           <input
@@ -65,6 +71,18 @@ const Profile = () => {
             onChange={(e) => setName(e.target.value)}
             className="input input-bordered w-full"
             required
+          />
+        </div>
+
+        {/* Photo URL */}
+        <div>
+          <label className="block text-sm font-medium mb-1">Profile Photo URL</label>
+          <input
+            type="text"
+            value={photoURL}
+            onChange={(e) => setPhotoURL(e.target.value)}
+            className="input input-bordered w-full"
+            placeholder="https://your-image-link.com/avatar.jpg"
           />
         </div>
 
