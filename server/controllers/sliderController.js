@@ -1,29 +1,44 @@
 const Slider = require("../models/Slider");
 
-const addSlider = async (req, res) => {
+// GET all sliders
+exports.getAllSliders = async (req, res) => {
+  const sliders = await Slider.find();
+  res.json(sliders);
+};
+
+// GET single slider by ID
+exports.getSliderById = async (req, res) => {
   try {
-    const { title, subtitle, image, status } = req.body;
-
-    if (!title || !image) {
-      return res.status(400).json({ message: "Title and Image are required" });
-    }
-
-    const newSlider = new Slider({ title, subtitle, image, status });
-    const savedSlider = await newSlider.save();
-
-    res.status(201).json({ insertedId: savedSlider._id });
+    const slider = await Slider.findById(req.params.id);
+    if (!slider) return res.status(404).json({ message: "Slider not found" });
+    res.json(slider);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-const getSliders = async (req, res) => {
+// CREATE new slider
+exports.createSlider = async (req, res) => {
+  const newSlider = new Slider(req.body);
+  const saved = await newSlider.save();
+  res.json({ insertedId: saved._id });
+};
+
+// UPDATE slider by ID
+exports.updateSlider = async (req, res) => {
   try {
-    const sliders = await Slider.find().sort({ createdAt: -1 });
-    res.json(sliders);
+    const updated = await Slider.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    if (!updated) return res.status(404).json({ message: "Not found" });
+    res.json({ updatedId: updated._id });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-module.exports = { addSlider, getSliders };
+// DELETE slider
+exports.deleteSlider = async (req, res) => {
+  const deleted = await Slider.findByIdAndDelete(req.params.id);
+  res.json({ deletedCount: deleted ? 1 : 0 });
+};

@@ -1,5 +1,6 @@
 // src/Pages/Slider/AllSliders.jsx
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const AllSliders = () => {
@@ -60,14 +61,16 @@ const AllSliders = () => {
                 <td>{slider.subtitle}</td>
                 <td>{slider.status ? "Active" : "Inactive"}</td>
                 <td>
-                  <button
-                    onClick={() => handleDelete(slider._id)}
-                    className="btn btn-xs btn-error"
-                  >
-                    Delete
-                  </button>
-                  {/* Optional edit button */}
-                </td>
+                    <Link to={`/sliders/edit/${slider._id}`} className="btn btn-xs btn-info mr-2">
+                        Edit
+                    </Link>
+                    <button
+                        onClick={() => handleDelete(slider._id)}
+                        className="btn btn-xs btn-error"
+                    >
+                        Delete
+                    </button>
+                    </td>
               </tr>
             ))}
           </tbody>

@@ -1,8 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const { addSlider, getSliders } = require("../controllers/sliderController");
+const {
+  getAllSliders,
+  getSliderById,
+  createSlider,
+  updateSlider,
+  deleteSlider,
+} = require("../controllers/sliderController");
 
-router.post("/", addSlider);
-router.get("/", getSliders);
+router.get("/", getAllSliders);
+router.get("/:id", getSliderById);
+router.post("/", createSlider);
+router.put("/:id", updateSlider);
+router.delete("/:id", deleteSlider);
 
 module.exports = router;

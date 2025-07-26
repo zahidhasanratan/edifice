@@ -10,6 +10,7 @@ import PrivateRoute from "./PrivateRoute"; // ✅ Ensure this is correct
 import Profile from "../Pages/Auth/Profile";
 import AllSliders from "../Pages/Slider/AllSliders";
 import AddSlider from "../Pages/Slider/AddSlider";
+import EditSlider from "../Pages/Slider/EditSlider";
 
 export const router = createBrowserRouter([
   {
@@ -26,6 +27,7 @@ export const router = createBrowserRouter([
       { path: "/profile", element: <Profile /> }, // ✅ fixed comma here
       { path: "/sliders", element: <AllSliders /> },
       { path: "/sliders/add", element: <AddSlider /> },
+      { path: "/sliders/edit/:id", element: <EditSlider /> },
     ],
   },
   {
