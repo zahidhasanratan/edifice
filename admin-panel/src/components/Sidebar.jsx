@@ -7,6 +7,7 @@ import {
   FaPlus,
   FaThList,
   FaQuoteRight,
+  FaBuilding,
 } from "react-icons/fa";
 
 const Sidebar = () => {
@@ -116,11 +117,40 @@ const Sidebar = () => {
           </details>
         </li>
 
- {/* Projects - Collapsible Submenu */}
+ {/* Management - Collapsible Submenu */}
         <li>
           <details className="group">
             <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
-  <FaQuoteRight className="mr-2" /> Projects
+  <FaUsers className="mr-2" /> Team
+</summary>
+            <ul className="pl-8 space-y-1">
+              <li>
+                <Link
+                  to="/team/add"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/team/add")}`}
+                >
+                  <FaPlus className="mr-2" /> Add Team
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/team"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/team")}`}
+                >
+                  <FaThList className="mr-2" /> All Team
+                </Link>
+              </li>
+            </ul>
+          </details>
+        
+        </li>
+ {/* Project - Collapsible Submenu */}
+        <li>
+          <details className="group">
+            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
+  <FaBuilding className="mr-2" /> Projects
 </summary>
             <ul className="pl-8 space-y-1">
               <li>
@@ -144,6 +174,7 @@ const Sidebar = () => {
             </ul>
           </details>
         </li>
+
 
       </ul>
     </aside>

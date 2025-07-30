@@ -17,6 +17,9 @@ import EditTestimonial from "../Pages/Testimonial/EditTestimonial";
 import { AddProject } from "../Pages/Projects/AddProject";
 import { EditProject } from "../Pages/Projects/EditProject";
 import { AllProjects } from "../Pages/Projects/AllProjects";
+import AddTeam from '../Pages/Team/AddTeam';
+import  EditTeam  from "../Pages/Team/EditTeam";
+import  AllTeam  from "../Pages/Team/AllTeam";
 
 export const router = createBrowserRouter([
   {
@@ -31,9 +34,11 @@ export const router = createBrowserRouter([
       { path: "/users", element: <Users /> },
       { path: "/settings", element: <Settings /> },
       { path: "/profile", element: <Profile /> }, 
+     
       { path: "/sliders", element: <AllSliders /> },
       { path: "/sliders/add", element: <AddSlider /> },
       { path: "/sliders/edit/:id", element: <EditSlider /> },
+      
       {path: "/testimonial", element: <AllTestimonials />},
       {path: "/testimonial/add", element: <AddTestimonial />},
       { path: "/testimonials/edit/:id", element: <EditTestimonial /> },
@@ -41,7 +46,10 @@ export const router = createBrowserRouter([
       { path: "/projects/add", element: <AddProject /> },
       { path: "/projects/edit/:id", element: <EditProject /> },
       { path: "/projects", element: <AllProjects /> },
-    
+
+      { path: "/team/add", element: <AddTeam /> },
+      { path: "/team/edit/:id", element: <EditTeam /> },
+      { path: "/team", element: <AllTeam /> },
     ],
   },
   {
