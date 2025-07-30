@@ -6,6 +6,7 @@ import {
   FaImage,
   FaPlus,
   FaThList,
+  FaQuoteRight,
 } from "react-icons/fa";
 
 const Sidebar = () => {
@@ -20,19 +21,19 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="w-64 min-h-screen bg-base-200 shadow-xl border-r border-base-300">
+    <aside className="w-64 min-h-screen border-r shadow-xl bg-base-200 border-base-300">
       {/* Logo and Title */}
-      <div className="p-6 flex flex-col items-center justify-center text-center border-b border-base-300">
+      <div className="flex flex-col items-center justify-center p-6 text-center border-b border-base-300">
         <img
           src="/large-logo.png"
           alt="Company Logo"
-          className="w-16 h-16 object-contain mt-12 lg:mt-0"
+          className="object-contain w-16 h-16 mt-12 lg:mt-0"
         />
         <h1 className="text-xl font-bold text-primary">Admin Panel</h1>
       </div>
 
       {/* Navigation Menu */}
-      <ul className="menu p-4 space-y-2 w-full">
+      <ul className="w-full p-4 space-y-2 menu">
         {/* Dashboard */}
         <li>
           <Link
@@ -44,16 +45,7 @@ const Sidebar = () => {
           </Link>
         </li>
 
-        {/* Users */}
-        <li>
-          <Link
-            to="/users"
-            onClick={closeDrawerOnMobile}
-            className={`btn btn-ghost w-full justify-start ${isActive("/users")}`}
-          >
-            <FaUsers className="mr-2" /> Users
-          </Link>
-        </li>
+        
 
         {/* Settings */}
         <li>
@@ -69,7 +61,7 @@ const Sidebar = () => {
         {/* Banners - Collapsible Submenu */}
         <li>
           <details className="group">
-            <summary className="btn btn-ghost w-full justify-start cursor-pointer flex items-center">
+            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
               <FaImage className="mr-2" /> Banners
             </summary>
             <ul className="pl-8 space-y-1">
@@ -94,6 +86,65 @@ const Sidebar = () => {
             </ul>
           </details>
         </li>
+        
+        {/* Client Say - Collapsible Submenu */}
+        <li>
+          <details className="group">
+            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
+  <FaQuoteRight className="mr-2" /> Client Say
+</summary>
+            <ul className="pl-8 space-y-1">
+              <li>
+                <Link
+                  to="/testimonial/add"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/testimonial/add")}`}
+                >
+                  <FaPlus className="mr-2" /> Add Testimonial
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/testimonial"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/testimonial")}`}
+                >
+                  <FaThList className="mr-2" /> All Testimonial
+                </Link>
+              </li>
+            </ul>
+          </details>
+        </li>
+
+ {/* Projects - Collapsible Submenu */}
+        <li>
+          <details className="group">
+            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
+  <FaQuoteRight className="mr-2" /> Projects
+</summary>
+            <ul className="pl-8 space-y-1">
+              <li>
+                <Link
+                  to="/projects/add"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/projects/add")}`}
+                >
+                  <FaPlus className="mr-2" /> Add Projects
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/projects"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/projects")}`}
+                >
+                  <FaThList className="mr-2" /> All Projects
+                </Link>
+              </li>
+            </ul>
+          </details>
+        </li>
+
       </ul>
     </aside>
   );

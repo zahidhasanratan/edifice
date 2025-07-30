@@ -11,6 +11,12 @@ import Profile from "../Pages/Auth/Profile";
 import AllSliders from "../Pages/Slider/AllSliders";
 import AddSlider from "../Pages/Slider/AddSlider";
 import EditSlider from "../Pages/Slider/EditSlider";
+import AddTestimonial from "../Pages/Testimonial/AddTestimonial";
+import AllTestimonials from "../Pages/Testimonial/AllTestimonials";
+import EditTestimonial from "../Pages/Testimonial/EditTestimonial";
+import { AddProject } from "../Pages/Projects/AddProject";
+import { EditProject } from "../Pages/Projects/EditProject";
+import { AllProjects } from "../Pages/Projects/AllProjects";
 
 export const router = createBrowserRouter([
   {
@@ -24,10 +30,18 @@ export const router = createBrowserRouter([
       { path: "/", element: <Dashboard /> },
       { path: "/users", element: <Users /> },
       { path: "/settings", element: <Settings /> },
-      { path: "/profile", element: <Profile /> }, // ✅ fixed comma here
+      { path: "/profile", element: <Profile /> }, 
       { path: "/sliders", element: <AllSliders /> },
       { path: "/sliders/add", element: <AddSlider /> },
       { path: "/sliders/edit/:id", element: <EditSlider /> },
+      {path: "/testimonial", element: <AllTestimonials />},
+      {path: "/testimonial/add", element: <AddTestimonial />},
+      { path: "/testimonials/edit/:id", element: <EditTestimonial /> },
+
+      { path: "/projects/add", element: <AddProject /> },
+      { path: "/projects/edit/:id", element: <EditProject /> },
+      { path: "/projects", element: <AllProjects /> },
+    
     ],
   },
   {
