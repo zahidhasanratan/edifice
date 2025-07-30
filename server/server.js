@@ -21,7 +21,8 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use("/api/sliders", require("./routes/sliderRoutes"));
 app.use("/api/testimonials", require("./routes/testimonialRoutes"));
 app.use("/api/projects", require("./routes/projectRoutes"));
-app.use("/api/team", require("./routes/teamRoutes")); // Cleaner, consistent import
+app.use("/api/team", require("./routes/teamRoutes"));
+app.use("/api/news", require("./routes/newsRoutes")); // ✅ Add this line for News
 
 // ========== Optional Base Route ==========
 app.get("/", (req, res) => {

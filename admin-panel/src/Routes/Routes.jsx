@@ -17,9 +17,12 @@ import EditTestimonial from "../Pages/Testimonial/EditTestimonial";
 import { AddProject } from "../Pages/Projects/AddProject";
 import { EditProject } from "../Pages/Projects/EditProject";
 import { AllProjects } from "../Pages/Projects/AllProjects";
-import AddTeam from '../Pages/Team/AddTeam';
+import  AddTeam from '../Pages/Team/AddTeam';
 import  EditTeam  from "../Pages/Team/EditTeam";
 import  AllTeam  from "../Pages/Team/AllTeam";
+import  AddNews  from "../Pages/News/AddNews";
+import  EditNews  from "../Pages/News/EditNews";
+import  AllNews from "../Pages/News/AllNews";
 
 export const router = createBrowserRouter([
   {
@@ -50,6 +53,10 @@ export const router = createBrowserRouter([
       { path: "/team/add", element: <AddTeam /> },
       { path: "/team/edit/:id", element: <EditTeam /> },
       { path: "/team", element: <AllTeam /> },
+
+      { path: "/news/add", element: <AddNews /> },
+      { path: "/news/edit/:id", element: <EditNews /> },
+      { path: "/news", element: <AllNews /> },
     ],
   },
   {

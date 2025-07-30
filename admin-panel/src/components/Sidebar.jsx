@@ -8,6 +8,7 @@ import {
   FaThList,
   FaQuoteRight,
   FaBuilding,
+  FaNewspaper,
 } from "react-icons/fa";
 
 const Sidebar = () => {
@@ -169,6 +170,35 @@ const Sidebar = () => {
                   className={`btn btn-ghost w-full justify-start ${isActive("/projects")}`}
                 >
                   <FaThList className="mr-2" /> All Projects
+                </Link>
+              </li>
+            </ul>
+          </details>
+        </li>
+
+ {/* News - Collapsible Submenu */}
+        <li>
+          <details className="group">
+            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
+  <FaNewspaper className="mr-2" /> News
+</summary>
+            <ul className="pl-8 space-y-1">
+              <li>
+                <Link
+                  to="/news/add"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/news/add")}`}
+                >
+                  <FaPlus className="mr-2" /> Add News
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/news"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/news")}`}
+                >
+                  <FaThList className="mr-2" /> All News
                 </Link>
               </li>
             </ul>
