@@ -23,6 +23,12 @@ import  AllTeam  from "../Pages/Team/AllTeam";
 import  AddNews  from "../Pages/News/AddNews";
 import  EditNews  from "../Pages/News/EditNews";
 import  AllNews from "../Pages/News/AllNews";
+import { AddAlbum } from "../Pages/Album/AddAlbum";
+import { EditAlbum } from "../Pages/Album/EditAlbum";
+import { AllAlbum } from "../Pages/Album/AllAlbum";
+import { AddPhoto } from "../Pages/Photo/AddPhoto";
+import { EditPhoto } from "../Pages/Photo/EditPhoto";
+import { AllPhoto } from "../Pages/Photo/AllPhoto";
 
 export const router = createBrowserRouter([
   {
@@ -57,6 +63,15 @@ export const router = createBrowserRouter([
       { path: "/news/add", element: <AddNews /> },
       { path: "/news/edit/:id", element: <EditNews /> },
       { path: "/news", element: <AllNews /> },
+
+      { path: "/album/add", element: <AddAlbum /> },
+      { path: "/albums/edit/:id", element: <EditAlbum /> },
+      { path: "/albums", element: <AllAlbum /> },
+
+      { path: "/photo/add", element: <AddPhoto /> },
+      { path: "/photos/edit/:id", element: <EditPhoto /> },
+      { path: "/photos", element: <AllPhoto /> },
+
     ],
   },
   {

@@ -204,7 +204,53 @@ const Sidebar = () => {
             </ul>
           </details>
         </li>
+ {/* Gallery - Collapsible Submenu */}
+        <li>
+          <details className="group">
+            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
+  <FaImage className="mr-2" /> Gallery
+</summary>
+            <ul className="pl-8 space-y-1">
+              <li>
+                <Link
+                  to="/album/add"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/album/add")}`}
+                >
+                  <FaPlus className="mr-2" /> Add Album
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/album"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/album")}`}
+                >
+                  <FaThList className="mr-2" /> All Album
+                </Link>
+              </li>
 
+              <li>
+                <Link
+                  to="/photo/add"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/photo/add")}`}
+                >
+                  <FaPlus className="mr-2" /> Add Photo
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/photo"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/photo")}`}
+                >
+                  <FaThList className="mr-2" /> All Photo
+                </Link>
+              </li>
+            </ul>
+          </details>
+        </li>
 
       </ul>
     </aside>
