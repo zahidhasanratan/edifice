@@ -9,6 +9,8 @@ import {
   FaQuoteRight,
   FaBuilding,
   FaNewspaper,
+  FaPhotoVideo,
+  FaFolderOpen,
 } from "react-icons/fa";
 
 const Sidebar = () => {
@@ -47,10 +49,14 @@ const Sidebar = () => {
           </Link>
         </li>
 
-        
+        <li>
+          <Link to="/media" className="flex items-center gap-2">
+            <FaPhotoVideo /> Media Gallery
+          </Link>
+        </li>
 
         {/* Settings */}
-        <li>
+        {/* <li>
           <Link
             to="/settings"
             onClick={closeDrawerOnMobile}
@@ -58,7 +64,7 @@ const Sidebar = () => {
           >
             <FaCog className="mr-2" /> Settings
           </Link>
-        </li>
+        </li> */}
 
         {/* Banners - Collapsible Submenu */}
         <li>
@@ -222,9 +228,9 @@ const Sidebar = () => {
               </li>
               <li>
                 <Link
-                  to="/album"
+                  to="/albums"
                   onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/album")}`}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/albums")}`}
                 >
                   <FaThList className="mr-2" /> All Album
                 </Link>
@@ -241,13 +247,35 @@ const Sidebar = () => {
               </li>
               <li>
                 <Link
-                  to="/photo"
+                  to="/photos"
                   onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/photo")}`}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/photos")}`}
                 >
                   <FaThList className="mr-2" /> All Photo
                 </Link>
               </li>
+            </ul>
+          </details>
+        </li>
+ 
+ {/* Others - Collapsible Submenu */}
+        <li>
+          <details className="group">
+            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
+  <FaFolderOpen className="mr-2" /> Others
+</summary>
+            <ul className="pl-8 space-y-1">
+              <li>
+                <Link
+                  to="/about/edit"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/about")}`}
+                >
+                  <FaPlus className="mr-2" /> About
+                </Link>
+              </li>
+             
+             
             </ul>
           </details>
         </li>

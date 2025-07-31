@@ -25,6 +25,8 @@ app.use("/api/team", require("./routes/teamRoutes"));
 app.use("/api/news", require("./routes/newsRoutes")); 
 app.use('/api/albums', require('./routes/albumRoutes'));
 app.use("/api/photos", require("./routes/photoRoutes"));
+app.use('/api/media', require('./routes/mediaRoutes'));
+app.use('/api/about', require('./routes/aboutRoutes'));
 
 // ========== Optional Base Route ==========
 app.get("/", (req, res) => {

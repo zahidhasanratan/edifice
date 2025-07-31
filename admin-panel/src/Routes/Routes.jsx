@@ -29,6 +29,8 @@ import { AllAlbum } from "../Pages/Album/AllAlbum";
 import { AddPhoto } from "../Pages/Photo/AddPhoto";
 import { EditPhoto } from "../Pages/Photo/EditPhoto";
 import { AllPhoto } from "../Pages/Photo/AllPhoto";
+import { MediaGallery } from "../Pages/Media/MediaGallery";
+import EditAbout from "../Pages/Media/EditAbout";
 
 export const router = createBrowserRouter([
   {
@@ -71,6 +73,13 @@ export const router = createBrowserRouter([
       { path: "/photo/add", element: <AddPhoto /> },
       { path: "/photos/edit/:id", element: <EditPhoto /> },
       { path: "/photos", element: <AllPhoto /> },
+
+
+      { path: "/media", element: <MediaGallery /> },
+
+      { path: "/about/edit", element: <EditAbout /> },
+
+
 
     ],
   },
