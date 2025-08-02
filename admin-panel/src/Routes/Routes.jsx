@@ -31,6 +31,10 @@ import { EditPhoto } from "../Pages/Photo/EditPhoto";
 import { AllPhoto } from "../Pages/Photo/AllPhoto";
 import { MediaGallery } from "../Pages/Media/MediaGallery";
 import EditAbout from "../Pages/Media/EditAbout";
+import { EditContact } from "../Pages/Media/EditContact";
+import { AddMenu } from "../Pages/Menu/AddMenu";
+import { EditMenu } from "../Pages/Menu/EditMenu";
+import { AllMenu } from "../Pages/Menu/AllMenu";
 
 export const router = createBrowserRouter([
   {
@@ -46,6 +50,11 @@ export const router = createBrowserRouter([
       { path: "/settings", element: <Settings /> },
       { path: "/profile", element: <Profile /> }, 
      
+
+      { path: "/menu/add", element: <AddMenu /> },
+      { path: "/menu/edit/:id", element: <EditMenu /> },
+      { path: "/menu", element: <AllMenu /> },
+
       { path: "/sliders", element: <AllSliders /> },
       { path: "/sliders/add", element: <AddSlider /> },
       { path: "/sliders/edit/:id", element: <EditSlider /> },
@@ -78,6 +87,7 @@ export const router = createBrowserRouter([
       { path: "/media", element: <MediaGallery /> },
 
       { path: "/about/edit", element: <EditAbout /> },
+      { path: "/contact/edit", element: <EditContact /> },
 
 
 

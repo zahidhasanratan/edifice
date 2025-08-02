@@ -11,6 +11,7 @@ import {
   FaNewspaper,
   FaPhotoVideo,
   FaFolderOpen,
+  FaBars,
 } from "react-icons/fa";
 
 const Sidebar = () => {
@@ -48,7 +49,35 @@ const Sidebar = () => {
             <FaTachometerAlt className="mr-2" /> Dashboard
           </Link>
         </li>
-
+        {/* Menu - Collapsible Submenu */}
+        <li>
+          <details className="group">
+            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
+              <FaBars className="mr-2" /> Menu
+            </summary>
+            <ul className="pl-8 space-y-1">
+              <li>
+                <Link
+                  to="/menu/add"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/menu/add")}`}
+                >
+                  <FaPlus className="mr-2" /> Add Menu
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/menu"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/menu")}`}
+                >
+                  <FaThList className="mr-2" /> All Menu
+                </Link>
+              </li>
+            </ul>
+          </details>
+        </li>
+        
         <li>
           <Link to="/media" className="flex items-center gap-2">
             <FaPhotoVideo /> Media Gallery
@@ -275,7 +304,15 @@ const Sidebar = () => {
                 </Link>
               </li>
              
-             
+              <li>
+                <Link
+                  to="/contact/edit"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/contact")}`}
+                >
+                  <FaPlus className="mr-2" /> Contact
+                </Link>
+              </li>
             </ul>
           </details>
         </li>
