@@ -1,34 +1,108 @@
 const Menu = require('../models/Menu');
 const slugify = require('slugify');
 
-exports.createMenu = async (req, res) => {
+// ✅ Get all menus
+const getAllMenus = async (req, res) => {
   try {
-    const {
-      menu_name, root_id, sroot_id, troot_id,
-      page_type, external_link, sequence,
-      target, display, footer1, footer2
-    } = req.body;
+    const menus = await Menu.find({ parent: null }).sort({ order: 1 }).lean();
+    for (const menu of menus) {
+      menu.children = await Menu.find({ parent: menu._id }).sort({ order: 1 }).lean();
+    }
+    res.json(menus);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching menus' });
+  }
+};
 
+// ✅ Create a menu
+const createMenu = async (req, res) => {
+  try {
+    const { menu_name, parent, page_type, external_link, target, display, sequence, footer1, footer2 } = req.body;
     const slug = slugify(menu_name, { lower: true });
 
     const newMenu = new Menu({
       menu_name,
       slug,
-      root_id,
-      sroot_id,
-      troot_id,
+      parent: parent || null,
       page_type,
       external_link,
-      sequence: sequence || 0,
       target,
-      display: display || false,
-      footer1: footer1 || false,
-      footer2: footer2 || false
+      display,
+      sequence,
+      footer1,
+      footer2,
     });
 
     await newMenu.save();
     res.status(201).json(newMenu);
-  } catch (error) {
-    res.status(500).json({ message: 'Menu creation failed', error: error.message });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error creating menu' });
   }
+};
+
+// ✅ Reorder
+const reorderMenus = async (req, res) => {
+  try {
+    const { menus } = req.body;
+    let orderIndex = 0;
+    for (const menu of menus) {
+      await Menu.findByIdAndUpdate(menu._id, { order: orderIndex, parent: null });
+      if (menu.children && menu.children.length) {
+        for (let i = 0; i < menu.children.length; i++) {
+          await Menu.findByIdAndUpdate(menu.children[i]._id, {
+            order: i,
+            parent: menu._id,
+          });
+        }
+      }
+      orderIndex++;
+    }
+    res.json({ message: 'Order updated' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error reordering menus' });
+  }
+};
+
+// ✅ Update Menu
+const updateMenu = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+    await Menu.findByIdAndUpdate(id, updateData);
+    res.json({ message: 'Menu updated' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error updating menu' });
+  }
+};
+
+// ✅ Get Single Menu
+const getMenuById = async (req, res) => {
+  try {
+    const menu = await Menu.findById(req.params.id);
+    res.json(menu);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching menu' });
+  }
+};
+
+// ✅ Delete Menu
+const deleteMenu = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Menu.findByIdAndDelete(id);
+    res.json({ message: 'Menu deleted' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting menu' });
+  }
+};
+
+// ✅ Export all functions
+module.exports = {
+  getAllMenus,
+  createMenu,
+  reorderMenus,
+  updateMenu,
+  getMenuById,
+  deleteMenu
 };

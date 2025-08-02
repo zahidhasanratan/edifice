@@ -32,9 +32,10 @@ import { AllPhoto } from "../Pages/Photo/AllPhoto";
 import { MediaGallery } from "../Pages/Media/MediaGallery";
 import EditAbout from "../Pages/Media/EditAbout";
 import { EditContact } from "../Pages/Media/EditContact";
-import { AddMenu } from "../Pages/Menu/AddMenu";
-import { EditMenu } from "../Pages/Menu/EditMenu";
-import { AllMenu } from "../Pages/Menu/AllMenu";
+import AddMenu from "../Pages/Menu/AddMenu";
+
+import  EditMenu  from "../Pages/Menu/EditMenu";
+import  AllMenu  from "../Pages/Menu/AllMenu";
 
 export const router = createBrowserRouter([
   {
