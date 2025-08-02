@@ -41,14 +41,14 @@ const AllNews = () => {
       const result = await res.json();
       if (result.deletedCount > 0) {
         Swal.fire('Deleted!', 'News article has been removed.', 'success');
-        fetchNews(); // Refresh the list
+        fetchNews();
       }
     }
   };
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
-    setPage(1); // Reset to page 1 whenever search changes
+    setPage(1);
   };
 
   const handlePagination = (pageNumber) => {
@@ -56,23 +56,28 @@ const AllNews = () => {
   };
 
   return (
-    <div className="max-w-6xl p-6 mx-auto">
-      <h2 className="mb-4 text-2xl font-bold">All News</h2>
-
-      {/* Search Box */}
-      <div className="mb-4">
-        <input
-          type="text"
-          className="w-full input input-bordered"
-          placeholder="Search news..."
-          value={search}
-          onChange={handleSearchChange}
-        />
+    <div className="p-6 mx-auto max-w-7xl">
+      {/* 🔹 Top Bar */}
+      <div className="flex flex-col items-center justify-between gap-3 mb-6 md:flex-row">
+        <h2 className="text-2xl font-bold">All News</h2>
+        <div className="flex flex-col items-center w-full gap-2 md:flex-row md:w-auto">
+          <input
+            type="text"
+            placeholder="Search news..."
+            value={search}
+            onChange={handleSearchChange}
+            className="w-full input input-bordered md:w-64"
+          />
+          <Link to="/news/add" className="btn btn-primary">
+            + Add News
+          </Link>
+        </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="table w-full table-zebra">
-          <thead>
+      {/* 🧾 Table */}
+      <div className="overflow-x-auto bg-white rounded-lg shadow">
+        <table className="table w-full">
+          <thead className="text-sm text-gray-700 bg-base-200">
             <tr>
               <th>Featured Photo</th>
               <th>Title</th>
@@ -88,7 +93,7 @@ const AllNews = () => {
                     <img
                       src={item.featuredPhoto}
                       alt={item.title}
-                      className="object-cover w-24 h-16 rounded"
+                      className="object-cover w-24 h-16 rounded shadow"
                     />
                   ) : (
                     <span className="text-sm text-gray-400">No Image</span>
@@ -123,24 +128,26 @@ const AllNews = () => {
         </table>
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-center mt-4">
-        <button
-          onClick={() => handlePagination(page - 1)}
-          className="btn btn-sm"
-          disabled={page === 1}
-        >
-          Previous
-        </button>
-        <span className="mx-4">{page}</span>
-        <button
-          onClick={() => handlePagination(page + 1)}
-          className="btn btn-sm"
-          disabled={page === totalPages}
-        >
-          Next
-        </button>
-      </div>
+      {/* 📄 Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-6">
+          <button
+            onClick={() => handlePagination(page - 1)}
+            className="btn btn-sm"
+            disabled={page === 1}
+          >
+            Previous
+          </button>
+          <span className="font-medium">Page {page} of {totalPages}</span>
+          <button
+            onClick={() => handlePagination(page + 1)}
+            className="btn btn-sm"
+            disabled={page === totalPages}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };

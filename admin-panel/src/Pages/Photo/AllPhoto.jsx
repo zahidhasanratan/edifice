@@ -15,9 +15,7 @@ export const AllPhoto = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedAlbum) {
-      setPage(1);
-    }
+    if (selectedAlbum) setPage(1);
   }, [selectedAlbum]);
 
   const fetchAlbums = async () => {
@@ -56,7 +54,7 @@ export const AllPhoto = () => {
   };
 
   const filteredPhotos = selectedAlbum
-    ? photos.filter((photo) => photo.album._id === selectedAlbum)
+    ? photos.filter((photo) => photo.album?._id === selectedAlbum)
     : photos;
 
   const totalPages = Math.ceil(filteredPhotos.length / photosPerPage);
@@ -67,11 +65,16 @@ export const AllPhoto = () => {
 
   return (
     <div className="max-w-6xl p-6 mx-auto">
-      <h2 className="mb-4 text-2xl font-bold">All Photos</h2>
+      {/* 🔹 Header */}
+      <div className="flex flex-col justify-between gap-4 mb-6 md:flex-row md:items-center">
+        <h2 className="text-2xl font-bold">All Photos</h2>
+        <Link to="/photos/add" className="btn btn-primary">+ Add Photo</Link>
+      </div>
 
+      {/* 🔍 Filter */}
       <div className="mb-4">
         <select
-          className="w-full select select-bordered"
+          className="w-full md:w-64 select select-bordered"
           value={selectedAlbum}
           onChange={(e) => setSelectedAlbum(e.target.value)}
         >
@@ -84,9 +87,10 @@ export const AllPhoto = () => {
         </select>
       </div>
 
-      <div className="overflow-x-auto">
+      {/* 📸 Photo Table */}
+      <div className="overflow-x-auto bg-white rounded-lg shadow">
         <table className="table w-full table-zebra">
-          <thead>
+          <thead className="text-sm text-gray-700 bg-base-200">
             <tr>
               <th>Image</th>
               <th>Title</th>
@@ -95,34 +99,39 @@ export const AllPhoto = () => {
             </tr>
           </thead>
           <tbody>
-            {paginatedPhotos.map((photo) => (
-              <tr key={photo._id}>
-                <td>
-                  <img
-                    src={photo.imageUrl}
-                    alt={photo.title}
-                    className="object-cover w-24 h-16 rounded"
-                  />
-                </td>
-                <td>{photo.title || 'Untitled'}</td>
-                <td>{photo.album?.title || 'N/A'}</td>
-                <td className="flex gap-2">
-                  <Link
-                    to={`/photos/edit/${photo._id}`}
-                    className="btn btn-xs btn-info"
-                  >
-                    Edit
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(photo._id)}
-                    className="btn btn-xs btn-error"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {paginatedPhotos.length === 0 && (
+            {paginatedPhotos.length > 0 ? (
+              paginatedPhotos.map((photo) => (
+                <tr key={photo._id}>
+                  <td>
+                    {photo.imageUrl ? (
+                      <img
+                        src={photo.imageUrl}
+                        alt={photo.title}
+                        className="object-cover w-24 h-16 rounded shadow"
+                      />
+                    ) : (
+                      <span className="text-sm text-gray-400">No Image</span>
+                    )}
+                  </td>
+                  <td>{photo.title || 'Untitled'}</td>
+                  <td>{photo.album?.title || 'N/A'}</td>
+                  <td className="flex justify-center gap-2">
+                    <Link
+                      to={`/photos/edit/${photo._id}`}
+                      className="btn btn-xs btn-info"
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(photo._id)}
+                      className="btn btn-xs btn-error"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
               <tr>
                 <td colSpan="4" className="py-4 text-center text-gray-500">
                   No photos found.
@@ -133,9 +142,9 @@ export const AllPhoto = () => {
         </table>
       </div>
 
-      {/* Pagination */}
+      {/* 🔄 Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-4">
+        <div className="flex justify-center gap-2 mt-6">
           <button
             className="btn btn-sm"
             disabled={page === 1}
@@ -148,7 +157,7 @@ export const AllPhoto = () => {
               key={num}
               onClick={() => setPage(num + 1)}
               className={`btn btn-sm ${
-                page === num + 1 ? 'btn-primary' : 'btn-ghost'
+                page === num + 1 ? 'btn-primary' : 'btn-outline'
               }`}
             >
               {num + 1}

@@ -60,28 +60,34 @@ export const AllProjects = () => {
     setFilteredProjects(filtered);
   };
 
-  const indexOfLastProject = currentPage * projectsPerPage;
-  const indexOfFirstProject = indexOfLastProject - projectsPerPage;
-  const currentProjects = filteredProjects.slice(indexOfFirstProject, indexOfLastProject);
-
+  const indexOfLast = currentPage * projectsPerPage;
+  const indexOfFirst = indexOfLast - projectsPerPage;
+  const currentItems = filteredProjects.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
 
   return (
-    <div className="max-w-6xl p-6 mx-auto">
-      <div className="flex flex-col items-start justify-between mb-4 md:flex-row md:items-center">
-        <h2 className="mb-2 text-2xl font-bold md:mb-0">All Projects</h2>
-        <input
-          type="text"
-          placeholder="Search by Title or Subtitle"
-          value={search}
-          onChange={handleSearch}
-          className="w-full max-w-xs input input-bordered"
-        />
+    <div className="p-6 mx-auto max-w-7xl">
+      {/* 🔹 Top Bar */}
+      <div className="flex flex-col items-center justify-between gap-3 mb-6 md:flex-row">
+        <h2 className="text-2xl font-bold">All Projects</h2>
+        <div className="flex flex-col items-center w-full gap-2 md:flex-row md:w-auto">
+          <input
+            type="text"
+            placeholder="Search by Title or Subtitle"
+            value={search}
+            onChange={handleSearch}
+            className="w-full input input-bordered md:w-64"
+          />
+          <Link to="/projects/add" className="btn btn-primary">
+            + Add Project
+          </Link>
+        </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="table w-full table-zebra">
-          <thead>
+      {/* 🧾 Table */}
+      <div className="overflow-x-auto bg-white rounded-lg shadow">
+        <table className="table w-full">
+          <thead className="text-sm text-gray-700 bg-base-200">
             <tr>
               <th>Image</th>
               <th>Title</th>
@@ -91,14 +97,14 @@ export const AllProjects = () => {
             </tr>
           </thead>
           <tbody>
-            {currentProjects.map(project => (
+            {currentItems.map(project => (
               <tr key={project._id}>
                 <td>
                   {project.featureImage ? (
                     <img
                       src={project.featureImage}
                       alt={project.title}
-                      className="object-cover w-24 h-16 rounded"
+                      className="object-cover w-24 h-16 rounded shadow"
                     />
                   ) : (
                     <span className="text-sm text-gray-400">No Image</span>
@@ -110,12 +116,19 @@ export const AllProjects = () => {
                   <span className="badge badge-info">{project.projectType}</span>
                 </td>
                 <td className="space-x-2">
-                  <Link to={`/projects/edit/${project._id}`} className="btn btn-sm btn-primary">Edit</Link>
-                  <button onClick={() => handleDelete(project._id)} className="btn btn-sm btn-error">Delete</button>
+                  <Link to={`/projects/edit/${project._id}`} className="text-white btn btn-xs btn-info">
+                    Edit
+                  </Link>
+                  <button
+                    onClick={() => handleDelete(project._id)}
+                    className="text-white btn btn-xs btn-error"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
-            {currentProjects.length === 0 && (
+            {currentItems.length === 0 && (
               <tr>
                 <td colSpan="5" className="py-4 text-center text-gray-500">
                   No projects found.
@@ -126,16 +139,16 @@ export const AllProjects = () => {
         </table>
       </div>
 
-      {/* Pagination */}
+      {/* 📄 Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center mt-4 space-x-2">
-          {[...Array(totalPages).keys()].map((number) => (
+        <div className="flex justify-center gap-1 mt-4">
+          {Array.from({ length: totalPages }, (_, i) => (
             <button
-              key={number + 1}
-              onClick={() => setCurrentPage(number + 1)}
-              className={`btn btn-sm ${currentPage === number + 1 ? 'btn-primary' : 'btn-outline'}`}
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`btn btn-sm ${currentPage === i + 1 ? 'btn-primary' : 'btn-outline'}`}
             >
-              {number + 1}
+              {i + 1}
             </button>
           ))}
         </div>

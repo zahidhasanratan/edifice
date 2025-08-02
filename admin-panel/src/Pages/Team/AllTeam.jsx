@@ -53,20 +53,28 @@ const AllTeam = () => {
   const currentItems = filteredTeam.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <div className="max-w-6xl p-6 mx-auto">
-      <h2 className="mb-4 text-2xl font-bold text-center">All Team Members</h2>
+    <div className="p-6 mx-auto max-w-7xl">
+      {/* 🔹 Top Bar */}
+      <div className="flex flex-col items-center justify-between gap-2 mb-6 sm:flex-row">
+        <h2 className="text-2xl font-bold">All Team Members</h2>
+        <div className="flex flex-col w-full gap-2 sm:flex-row sm:w-auto">
+          <input
+            type="text"
+            placeholder="Search by name or designation..."
+            className="w-full input input-bordered sm:w-64"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <Link to="/team/add" className="btn btn-primary">
+            + Add Member
+          </Link>
+        </div>
+      </div>
 
-      <input
-        type="text"
-        placeholder="Search by name or designation..."
-        className="w-full mb-4 input input-bordered"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-
-      <div className="overflow-x-auto">
-        <table className="table w-full border border-base-300">
-          <thead>
+      {/* 🧾 Table */}
+      <div className="overflow-x-auto bg-white rounded-lg shadow">
+        <table className="table w-full">
+          <thead className="text-sm text-gray-700 bg-base-200">
             <tr>
               <th>Photo</th>
               <th>Name</th>
@@ -82,19 +90,22 @@ const AllTeam = () => {
                   <img
                     src={member.photo}
                     alt={member.name}
-                    className="object-cover rounded-full w-14 h-14"
+                    className="object-cover rounded-full shadow w-14 h-14"
                   />
                 </td>
                 <td>{member.name}</td>
                 <td>{member.designation}</td>
                 <td>{member.sequence}</td>
-                <td className="flex gap-2">
-                  <Link to={`/team/edit/${member._id}`} className="btn btn-xs btn-info">
+                <td className="space-x-1">
+                  <Link
+                    to={`/team/edit/${member._id}`}
+                    className="text-white btn btn-xs btn-info"
+                  >
                     Edit
                   </Link>
                   <button
                     onClick={() => handleDelete(member._id)}
-                    className="btn btn-xs btn-error"
+                    className="text-white btn btn-xs btn-error"
                   >
                     Delete
                   </button>
@@ -112,18 +123,20 @@ const AllTeam = () => {
         </table>
       </div>
 
-      {/* Pagination Controls */}
-      <div className="flex justify-center gap-2 mt-4">
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i + 1}
-            onClick={() => setCurrentPage(i + 1)}
-            className={`btn btn-sm ${currentPage === i + 1 ? 'btn-primary' : 'btn-outline'}`}
-          >
-            {i + 1}
-          </button>
-        ))}
-      </div>
+      {/* 📄 Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-4 space-x-1">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`btn btn-sm ${currentPage === i + 1 ? 'btn-primary' : 'btn-outline'}`}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

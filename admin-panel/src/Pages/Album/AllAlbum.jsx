@@ -32,7 +32,7 @@ export const AllAlbum = () => {
       album.title.toLowerCase().includes(search.toLowerCase())
     );
     setFilteredAlbums(result);
-    setPage(1); // Reset to first page on new search
+    setPage(1);
   };
 
   const handleDelete = async (id) => {
@@ -53,7 +53,7 @@ export const AllAlbum = () => {
 
         if (result.deletedId) {
           Swal.fire('Deleted!', 'Album has been deleted.', 'success');
-          fetchAlbums(); // Refresh list
+          fetchAlbums();
         } else {
           Swal.fire('Error!', 'Failed to delete album.', 'error');
         }
@@ -69,23 +69,25 @@ export const AllAlbum = () => {
 
   return (
     <div className="max-w-6xl p-6 mx-auto">
-      <h2 className="mb-4 text-2xl font-bold">All Photo Albums</h2>
-
-      {/* Search Input */}
-      <div className="mb-4">
-        <input
-          type="text"
-          className="w-full input input-bordered"
-          placeholder="Search by title..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      {/* 🔹 Header Section */}
+      <div className="flex flex-col justify-between gap-4 mb-6 md:flex-row md:items-center">
+        <h2 className="text-2xl font-bold">All Photo Albums</h2>
+        <div className="flex flex-col items-start gap-2 md:flex-row md:items-center">
+          <input
+            type="text"
+            placeholder="Search by title..."
+            className="w-full input input-bordered md:w-64"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Link to="/albums/add" className="btn btn-primary">+ Add Album</Link>
+        </div>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
+      {/* 📸 Album Table */}
+      <div className="overflow-x-auto bg-white rounded-lg shadow">
         <table className="table w-full table-zebra">
-          <thead>
+          <thead className="text-sm text-gray-700 bg-base-200">
             <tr>
               <th>Cover Photo</th>
               <th>Title</th>
@@ -97,14 +99,18 @@ export const AllAlbum = () => {
               paginatedAlbums.map((album) => (
                 <tr key={album._id}>
                   <td>
-                    <img
-                      src={album.coverPhoto}
-                      alt={album.title}
-                      className="object-cover w-24 h-16 rounded"
-                    />
+                    {album.coverPhoto ? (
+                      <img
+                        src={album.coverPhoto}
+                        alt={album.title}
+                        className="object-cover w-24 h-16 rounded shadow"
+                      />
+                    ) : (
+                      <span className="text-sm text-gray-400">No Image</span>
+                    )}
                   </td>
                   <td>{album.title}</td>
-                  <td className="flex items-center justify-center gap-2">
+                  <td className="flex justify-center gap-2">
                     <Link
                       to={`/albums/edit/${album._id}`}
                       className="btn btn-xs btn-info"
@@ -131,9 +137,9 @@ export const AllAlbum = () => {
         </table>
       </div>
 
-      {/* Pagination */}
+      {/* 🔄 Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-4">
+        <div className="flex justify-center gap-2 mt-6">
           <button
             className="btn btn-sm"
             disabled={page === 1}
@@ -146,7 +152,7 @@ export const AllAlbum = () => {
               key={num}
               onClick={() => setPage(num + 1)}
               className={`btn btn-sm ${
-                page === num + 1 ? 'btn-primary' : 'btn-ghost'
+                page === num + 1 ? 'btn-primary' : 'btn-outline'
               }`}
             >
               {num + 1}

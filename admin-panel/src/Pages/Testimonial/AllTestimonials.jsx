@@ -58,21 +58,28 @@ const AllTestimonials = () => {
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
 
   return (
-    <div className="p-6">
-      <div className="flex flex-col items-center justify-between mb-4 md:flex-row">
-        <h2 className="mb-2 text-2xl font-bold md:mb-0">All Testimonials</h2>
-        <input
-          type="text"
-          value={search}
-          onChange={handleSearch}
-          placeholder="Search by Title or Client"
-          className="w-full max-w-sm input input-bordered"
-        />
+    <div className="p-6 mx-auto max-w-7xl">
+      {/* 🔹 Top Bar */}
+      <div className="flex flex-col items-center justify-between gap-2 mb-6 md:flex-row">
+        <h2 className="text-2xl font-bold">All Testimonials</h2>
+        <div className="flex flex-col w-full gap-2 sm:flex-row sm:w-auto">
+          <input
+            type="text"
+            value={search}
+            onChange={handleSearch}
+            placeholder="Search by title or client"
+            className="w-full input input-bordered sm:w-64"
+          />
+          <Link to="/testimonial/add" className="btn btn-primary">
+            + Add Testimonial
+          </Link>
+        </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="table w-full border border-base-300">
-          <thead>
+      {/* 🧾 Table */}
+      <div className="overflow-x-auto bg-white rounded-lg shadow">
+        <table className="table w-full">
+          <thead className="text-sm text-gray-700 bg-base-200">
             <tr>
               <th>Photo</th>
               <th>Title</th>
@@ -88,31 +95,31 @@ const AllTestimonials = () => {
                   <img
                     src={item.photo}
                     alt={item.clientName}
-                    className="object-cover w-16 h-16 rounded-full"
+                    className="object-cover rounded-full shadow w-14 h-14"
                   />
                 </td>
                 <td>{item.title}</td>
                 <td>{item.clientName}</td>
                 <td>{item.designation}</td>
-                <td className="flex gap-2">
-                  <button
-                    onClick={() => handleDelete(item._id)}
-                    className="btn btn-xs btn-error"
-                  >
-                    Delete
-                  </button>
+                <td className="space-x-1">
                   <Link
                     to={`/testimonials/edit/${item._id}`}
-                    className="btn btn-xs btn-info"
+                    className="text-white btn btn-xs btn-info"
                   >
                     Edit
                   </Link>
+                  <button
+                    onClick={() => handleDelete(item._id)}
+                    className="text-white btn btn-xs btn-error"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
             {currentItems.length === 0 && (
               <tr>
-                <td colSpan="5" className="py-4 text-center text-gray-500">
+                <td colSpan="5" className="py-4 text-center text-gray-400">
                   No testimonials found.
                 </td>
               </tr>
@@ -121,12 +128,15 @@ const AllTestimonials = () => {
         </table>
       </div>
 
+      {/* 📄 Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center mt-4 space-x-1">
           {[...Array(totalPages).keys()].map((n) => (
             <button
               key={n}
-              className={`btn btn-sm ${currentPage === n + 1 ? "btn-primary" : "btn-outline"}`}
+              className={`btn btn-sm ${
+                currentPage === n + 1 ? "btn-primary" : "btn-outline"
+              }`}
               onClick={() => setCurrentPage(n + 1)}
             >
               {n + 1}
