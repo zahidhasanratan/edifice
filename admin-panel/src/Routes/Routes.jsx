@@ -36,6 +36,9 @@ import AddMenu from "../Pages/Menu/AddMenu";
 
 import  EditMenu  from "../Pages/Menu/EditMenu";
 import  AllMenu  from "../Pages/Menu/AllMenu";
+import  AddPage  from "../Pages/Page/AddPage";
+import { EditPage } from "../Pages/Page/EditPage";
+import { AllPage } from "../Pages/Page/AllPage";
 
 export const router = createBrowserRouter([
   {
@@ -55,6 +58,11 @@ export const router = createBrowserRouter([
       { path: "/menu/add", element: <AddMenu /> },
       { path: "/menu/edit/:id", element: <EditMenu /> },
       { path: "/menu", element: <AllMenu /> },
+
+      { path: "/page/add", element: <AddPage /> },
+      { path: "/edit-page/:id", element: <EditPage /> },
+      { path: "/pages", element: <AllPage /> },
+
 
       { path: "/sliders", element: <AllSliders /> },
       { path: "/sliders/add", element: <AddSlider /> },

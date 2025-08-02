@@ -12,6 +12,7 @@ import {
   FaPhotoVideo,
   FaFolderOpen,
   FaBars,
+  FaFileAlt,
 } from "react-icons/fa";
 
 const Sidebar = () => {
@@ -77,6 +78,36 @@ const Sidebar = () => {
             </ul>
           </details>
         </li>
+ {/* Page - Collapsible Submenu */}
+        <li>
+          <details className="group">
+            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
+              <FaFileAlt className="mr-2" /> Page
+            </summary>
+            <ul className="pl-8 space-y-1">
+              <li>
+                <Link
+                  to="/page/add"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/page/add")}`}
+                >
+                  <FaPlus className="mr-2" /> Add Page
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/pages"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/pages")}`}
+                >
+                  <FaThList className="mr-2" /> All Page
+                </Link>
+              </li>
+            </ul>
+          </details>
+        </li>
+
+
         
         <li>
           <Link to="/media" className="flex items-center gap-2">

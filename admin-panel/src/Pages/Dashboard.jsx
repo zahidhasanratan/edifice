@@ -1,91 +1,161 @@
-import { FaUsers, FaBriefcase, FaEnvelopeOpen, FaCalendarAlt, FaProjectDiagram, FaRocket } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import {
+  FaUsers,
+  FaEnvelopeOpen,
+  FaProjectDiagram,
+  FaBars,
+  FaFileAlt,
+  FaPhotoVideo,
+  FaImage,
+  FaQuoteRight,
+  FaBuilding,
+  FaNewspaper,
+  FaFolderOpen,
+} from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
+  const [visitorCount, setVisitorCount] = useState(0);
+  const [completedProjects, setCompletedProjects] = useState(0);
+  const [ongoingProjects, setOngoingProjects] = useState(0);
+  const [upcomingProjects, setUpcomingProjects] = useState(0);
+  const [stats] = useState({
+    growth: 9.4,
+    newInquiries: 26, // Make dynamic later
+  });
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/projects");
+        const data = await res.json();
+        setCompletedProjects(data.filter(p => p.projectType === "Completed").length);
+        setOngoingProjects(data.filter(p => p.projectType === "Ongoing").length);
+        setUpcomingProjects(data.filter(p => p.projectType === "Upcoming").length);
+      } catch (err) {
+        console.error("❌ Failed to fetch project stats:", err);
+      }
+    };
+
+    const fetchVisitorCount = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/visitors/count");
+        const data = await res.json();
+        setVisitorCount(data.count || 0);
+      } catch (err) {
+        console.error("❌ Failed to fetch visitor count:", err);
+      }
+    };
+
+    fetchProjects();
+    fetchVisitorCount();
+  }, []);
+
   return (
     <div className="px-4 py-6 space-y-8">
       <h1 className="text-3xl font-bold text-primary">Dashboard Overview</h1>
 
-      {/* Stat Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {/* Total Visitors */}
-        <div className="card w-full bg-primary text-primary-content shadow-md hover:shadow-xl transition-transform duration-300 hover:scale-105">
+      {/* 📊 Stat Cards */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {/* 🟦 Total Visitors */}
+        <div className="w-full transition-transform duration-300 shadow-md card bg-primary text-primary-content hover:shadow-xl hover:scale-105">
           <div className="card-body">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="card-title text-lg">Total Visitors</h2>
-                <p className="text-3xl font-bold">15,430</p>
-                <p className="text-sm opacity-80">↗︎ 9.4% this month</p>
+                <h2 className="text-lg card-title">Total Visitors</h2>
+                <p className="text-3xl font-bold">{visitorCount.toLocaleString()}</p>
+                <p className="text-sm opacity-80">↗︎ {stats.growth}% this month</p>
               </div>
               <FaUsers className="text-4xl opacity-30" />
             </div>
           </div>
         </div>
 
-        {/* Completed Projects */}
-        <div className="card w-full bg-green-600 text-green-100 shadow-md hover:shadow-xl transition-transform duration-300 hover:scale-105">
+        {/* ✅ Completed Projects */}
+        <div className="w-full text-green-100 transition-transform duration-300 bg-green-600 shadow-md card hover:shadow-xl hover:scale-105">
           <div className="card-body">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="card-title text-lg">Completed Projects</h2>
-                <p className="text-3xl font-bold">78</p>
-                <p className="text-sm opacity-80">+3 this month</p>
+                <h2 className="text-lg card-title">Completed Projects</h2>
+                <p className="text-3xl font-bold">{completedProjects}</p>
+                <p className="text-sm opacity-80">✔ This month</p>
               </div>
               <FaProjectDiagram className="text-4xl opacity-30" />
             </div>
           </div>
         </div>
 
-        {/* Inquiries */}
-        <div className="card w-full bg-yellow-500 text-yellow-900 shadow-md hover:shadow-xl transition-transform duration-300 hover:scale-105">
+        {/* 🔵 Ongoing Projects */}
+        <div className="w-full text-blue-100 transition-transform duration-300 bg-blue-600 shadow-md card hover:shadow-xl hover:scale-105">
           <div className="card-body">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="card-title text-lg">New Inquiries</h2>
-                <p className="text-3xl font-bold">26</p>
-                <p className="text-sm opacity-80">Updated daily</p>
+                <h2 className="text-lg card-title">Ongoing Projects</h2>
+                <p className="text-3xl font-bold">{ongoingProjects}</p>
+                <p className="text-sm opacity-80">In progress</p>
               </div>
-              <FaEnvelopeOpen className="text-4xl opacity-30" />
+              <FaProjectDiagram className="text-4xl opacity-30" />
+            </div>
+          </div>
+        </div>
+
+        {/* 🟣 Upcoming Projects */}
+        <div className="w-full text-purple-100 transition-transform duration-300 bg-purple-600 shadow-md card hover:shadow-xl hover:scale-105">
+          <div className="card-body">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg card-title">Upcoming Projects</h2>
+                <p className="text-3xl font-bold">{upcomingProjects}</p>
+                <p className="text-sm opacity-80">Planned ahead</p>
+              </div>
+              <FaProjectDiagram className="text-4xl opacity-30" />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Section 2: Recent Projects and Upcoming Events */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Projects */}
-        <div className="card bg-base-100 shadow-md border border-base-300">
-          <div className="card-body">
-            <h2 className="card-title">Recent Projects</h2>
-            <ul className="list-disc list-inside text-sm space-y-1 mt-2">
-              <li>Corporate Website for ABC Tech</li>
-              <li>Brand Identity Design for Delta Logistics</li>
-              <li>Marketing Campaign for HealthZone</li>
-              <li>App UI/UX for QuickRide</li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Upcoming Events */}
-        <div className="card bg-base-100 shadow-md border border-base-300">
-          <div className="card-body">
-            <h2 className="card-title">Upcoming Events</h2>
-            <ul className="list-disc list-inside text-sm space-y-1 mt-2">
-              <li>Annual Portfolio Review - 28 July</li>
-              <li>Client Meeting - 1 August</li>
-              <li>Team Workshop: Design Systems - 5 August</li>
-              <li>Project Handover: Fusion App - 10 August</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* Section 3: Mission & Vision */}
-      <div className="card bg-base-100 shadow-md border border-base-300">
+      {/* 🚀 Quick Access */}
+      <div className="border shadow-md card bg-base-100 border-base-300">
         <div className="card-body">
-          <h2 className="card-title">Our Mission & Vision</h2>
-          <p className="text-sm mt-2">
-            We aim to deliver top-notch design and development solutions tailored to our clients' business needs. Our vision is to become a leading creative tech agency known for innovation, collaboration, and impactful experiences.
-          </p>
+          <h2 className="card-title">Quick Access Modules</h2>
+          <div className="grid grid-cols-2 gap-4 mt-4 md:grid-cols-3 lg:grid-cols-4">
+            <Link to="/menu" className="flex items-center gap-2 btn btn-outline btn-primary">
+              <FaBars /> Menu
+            </Link>
+            <Link to="/page" className="flex items-center gap-2 btn btn-outline btn-secondary">
+              <FaFileAlt /> Page
+            </Link>
+            <Link to="/media" className="flex items-center gap-2 btn btn-outline btn-accent">
+              <FaPhotoVideo /> Media
+            </Link>
+            <Link to="/sliders" className="flex items-center gap-2 btn btn-outline btn-success">
+              <FaImage /> Banners
+            </Link>
+            <Link to="/testimonial" className="flex items-center gap-2 btn btn-outline btn-warning">
+              <FaQuoteRight /> Testimonials
+            </Link>
+            <Link to="/team" className="flex items-center gap-2 btn btn-outline btn-info">
+              <FaUsers /> Team
+            </Link>
+            <Link to="/projects" className="flex items-center gap-2 btn btn-outline btn-error">
+              <FaBuilding /> Projects
+            </Link>
+            <Link to="/news" className="flex items-center gap-2 btn btn-outline btn-neutral">
+              <FaNewspaper /> News
+            </Link>
+            <Link to="/albums" className="flex items-center gap-2 btn btn-outline btn-primary">
+              <FaFolderOpen /> Albums
+            </Link>
+            <Link to="/photos" className="flex items-center gap-2 btn btn-outline btn-secondary">
+              <FaPhotoVideo /> Photos
+            </Link>
+            <Link to="/about/edit" className="flex items-center gap-2 btn btn-outline btn-info">
+              <FaFileAlt /> About Page
+            </Link>
+            <Link to="/contact/edit" className="flex items-center gap-2 btn btn-outline btn-success">
+              <FaFileAlt /> Contact Page
+            </Link>
+          </div>
         </div>
       </div>
     </div>

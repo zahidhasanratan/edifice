@@ -17,20 +17,34 @@ mongoose.connect(process.env.MONGO_URI, {
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
+// ========== Route Imports ==========
+const pageRoutes = require("./routes/pageRoutes");         // ✅ Make sure this comes before use()
+const sliderRoutes = require("./routes/sliderRoutes");
+const testimonialRoutes = require("./routes/testimonialRoutes");
+const projectRoutes = require("./routes/projectRoutes");
+const teamRoutes = require("./routes/teamRoutes");
+const newsRoutes = require("./routes/newsRoutes");
+const albumRoutes = require("./routes/albumRoutes");
+const photoRoutes = require("./routes/photoRoutes");
+const mediaRoutes = require("./routes/mediaRoutes");
+const aboutRoutes = require("./routes/aboutRoutes");
+const contactRoutes = require("./routes/contactRoutes");
+const menuRoutes = require("./routes/menuRoutes");
+
 // ========== API Routes ==========
-app.use("/api/sliders", require("./routes/sliderRoutes"));
-app.use("/api/testimonials", require("./routes/testimonialRoutes"));
-app.use("/api/projects", require("./routes/projectRoutes"));
-app.use("/api/team", require("./routes/teamRoutes"));
-app.use("/api/news", require("./routes/newsRoutes"));
-app.use("/api/albums", require("./routes/albumRoutes"));
-app.use("/api/photos", require("./routes/photoRoutes"));
-app.use("/api/media", require("./routes/mediaRoutes"));
-app.use("/api/about", require("./routes/aboutRoutes"));
-app.use("/api/contact", require("./routes/contactRoutes")); 
-app.use("/api/menus", require("./routes/menuRoutes"));
-
-
+app.use("/api/pages", pageRoutes);               // ✅ FIXED position
+app.use("/api/sliders", sliderRoutes);
+app.use("/api/testimonials", testimonialRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/team", teamRoutes);
+app.use("/api/news", newsRoutes);
+app.use("/api/albums", albumRoutes);
+app.use("/api/photos", photoRoutes);
+app.use("/api/media", mediaRoutes);
+app.use("/api/about", aboutRoutes);
+app.use("/api/contact", contactRoutes);
+app.use("/api/menus", menuRoutes);
+app.use("/api/visitors", require("./routes/visitorRoutes"));
 
 // ========== Optional Base Route ==========
 app.get("/", (req, res) => {
