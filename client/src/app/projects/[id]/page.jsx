@@ -18,11 +18,11 @@ const ProjectDetails = () => {
   }, [id]);
 
   return (
-    <main>
+    <main className="bg-[var(--background)] text-[var(--foreground)] transition-colors duration-300">
       <InnerHero
         subtitle="Our Projects"
         title={`Project ID: ${id}`}
-        backgroundImage="/assets/images/hero/01.jpg" // ✅ Use public image path
+        backgroundImage="/assets/images/hero/01.jpg"
       />
 
       <SingleProjectDetails />

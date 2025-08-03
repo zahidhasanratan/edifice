@@ -20,6 +20,7 @@ const Gallery = () => {
     { src: '/assets/images/news/3.jpg', alt: 'Penthouse Balcony View' },
   ];
 
+  // Preload images
   useEffect(() => {
     const loadImage = (src) =>
       new Promise((resolve, reject) => {
@@ -65,10 +66,12 @@ const Gallery = () => {
       direction === 'prev'
         ? (currentImageIndex - 1 + loadedImages.length) % loadedImages.length
         : (currentImageIndex + 1) % loadedImages.length;
+
     setCurrentImageIndex(newIndex);
     router.push(`?imageIndex=${newIndex}`);
   };
 
+  // Handle keyboard nav
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (!isModalOpen) return;
@@ -88,7 +91,8 @@ const Gallery = () => {
 
       <section
         data-aos="fade-up"
-        className="relative z-0 bg-white text-black dark:bg-black dark:text-white py-16 px-4 md:px-10 transition-colors duration-300 ease-in-out"
+        className="relative z-0 py-16 px-4 md:px-10 transition-colors duration-300 ease-in-out"
+        style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
       >
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -101,7 +105,7 @@ const Gallery = () => {
                 <img
                   src={image.src}
                   alt={image.alt}
-                  className="w-full h-72 object-cover transform transition duration-500 group-hover:scale-110 ease-in-out"
+                  className="w-full h-72 object-cover transform transition duration-500 group-hover:scale-110"
                   loading="lazy"
                 />
               </div>
@@ -112,11 +116,12 @@ const Gallery = () => {
 
       {isModalOpen && (
         <div
-          className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center"
+          className="fixed inset-0 z-[9999] flex items-center justify-center"
+          style={{ backgroundColor: 'rgba(0,0,0,0.9)' }}
           onClick={closeModal}
         >
           <button
-            className="absolute top-6 right-6 text-white text-3xl hover:text-[#c20e35] focus:outline-none"
+            className="absolute top-6 right-6 text-white text-3xl hover:text-[#c20e35]"
             onClick={(e) => {
               e.stopPropagation();
               closeModal();
@@ -126,7 +131,7 @@ const Gallery = () => {
             &times;
           </button>
           <button
-            className="absolute left-6 text-white text-4xl hover:text-[#c20e35] focus:outline-none"
+            className="absolute left-6 text-white text-4xl hover:text-[#c20e35]"
             onClick={(e) => {
               e.stopPropagation();
               navigateImage('prev');
@@ -139,12 +144,12 @@ const Gallery = () => {
             <img
               src={loadedImages[currentImageIndex]?.src}
               alt={loadedImages[currentImageIndex]?.alt}
-              className="min-w-[80vw] min-h-[80vh] object-contain"
+              className="min-w-[80vw] min-h-[80vh] object-contain rounded-xl"
               onClick={(e) => e.stopPropagation()}
             />
           </div>
           <button
-            className="absolute right-6 text-white text-4xl hover:text-[#c20e35] focus:outline-none"
+            className="absolute right-6 text-white text-4xl hover:text-[#c20e35]"
             onClick={(e) => {
               e.stopPropagation();
               navigateImage('next');

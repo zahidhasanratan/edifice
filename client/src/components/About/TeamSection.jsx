@@ -64,13 +64,16 @@ const TeamSection = () => {
   ];
 
   return (
-    <section data-aos="fade-up" className="py-16 bg-sky-100 text-black dark:bg-black dark:text-white">
+    <section
+      data-aos="fade-up"
+      className="py-16 bg-[var(--background)] text-[var(--foreground)] transition-colors duration-300"
+    >
       <div className="max-w-7xl mx-auto px-4 text-center">
         <div className="text-center mb-10" data-aos="fade-up">
-          <p className="text-[#c20e35] dark:text-red-600 text-sm uppercase tracking-wider relative inline-block mb-2 before:content-[''] before:absolute before:-left-4 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-2 before:bg-[#c20e35] before:rounded-full">
+          <p className="text-[#c20e35] text-sm uppercase tracking-wider relative inline-block mb-2 before:content-[''] before:absolute before:-left-4 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-2 before:bg-[#c20e35] before:rounded-full">
             Team
           </p>
-          <h2 className="relative text-3xl md:text-4xl font-bold text-black dark:text-white text-center mb-6 after:content-[''] after:block after:w-20 after:h-1 after:bg-[#c20e35] after:mx-auto after:mt-4">
+          <h2 className="relative text-3xl md:text-4xl font-bold text-center mb-6 after:content-[''] after:block after:w-20 after:h-1 after:bg-[#c20e35] after:mx-auto after:mt-4">
             Management
           </h2>
         </div>
@@ -90,7 +93,7 @@ const TeamSection = () => {
                   className="w-full h-[400px] md:h-[350px] object-cover"
                   loading="lazy"
                 />
-                <div className="absolute bottom-0 left-0 w-full bg-black/80 text-white dark:bg-white dark:text-black p-4 transition-all duration-300 group-hover:bg-opacity-90">
+                <div className="absolute bottom-0 left-0 w-full bg-[var(--foreground)]/90 text-[var(--background)] p-4 transition-all duration-300 group-hover:bg-opacity-100">
                   <h3 className="text-lg font-semibold">{member.name}</h3>
                   <p className="text-sm text-[#c20e35]">{member.position}</p>
                 </div>

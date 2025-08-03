@@ -5,7 +5,6 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import InnerHero from '@/components/Hero/InnerHero';
 
-// ✅ Move this outside of export
 const newsItems = [
   {
     id: 1,
@@ -70,11 +69,19 @@ const News = () => {
         backgroundImage="/assets/images/hero/01.jpg"
       />
 
-      <section data-aos="fade-up" className="py-16 bg-gray-100 text-black dark:bg-black dark:text-white">
+      <section
+        data-aos="fade-up"
+        className="py-16 transition-colors duration-300"
+        style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
+      >
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {newsItems.map((item) => (
-              <div key={item.id} className="group bg-white dark:bg-gray-900 rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl">
+              <div
+                key={item.id}
+                className="group rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl"
+                style={{ backgroundColor: 'var(--card-bg)', color: 'var(--foreground)' }}
+              >
                 <a href={item.link} className="block">
                   <div className="overflow-hidden h-60">
                     <img
@@ -85,10 +92,10 @@ const News = () => {
                     />
                   </div>
                   <div className="p-6">
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                    <p className="text-sm mb-2" style={{ color: 'var(--muted-text)' }}>
                       {item.date}
                     </p>
-                    <h3 className="text-xl font-semibold text-black dark:text-white transition duration-300 group-hover:text-[#c20e35]">
+                    <h3 className="text-xl font-semibold transition duration-300 group-hover:text-[#c20e35]">
                       {item.title}
                     </h3>
                   </div>
@@ -102,4 +109,4 @@ const News = () => {
   );
 };
 
-export default News; // ✅ Must be the default export
+export default News;

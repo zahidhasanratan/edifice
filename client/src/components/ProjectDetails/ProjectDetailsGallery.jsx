@@ -13,7 +13,6 @@ const ProjectDetailsGallery = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loadedImages, setLoadedImages] = useState([]);
 
-  // Preload images
   useEffect(() => {
     const loadImage = (src) => {
       return new Promise((resolve, reject) => {
@@ -51,7 +50,10 @@ const ProjectDetailsGallery = () => {
   };
 
   return (
-    <section className="bg-white text-black dark:bg-black dark:text-white py-16 px-4 md:px-10">
+    <section
+      className="transition-colors duration-300 ease-in-out py-16 px-4 md:px-10"
+      style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
+    >
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {loadedImages.map((image, index) => (

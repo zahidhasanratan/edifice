@@ -12,10 +12,7 @@ const JobDetailsPage = () => {
   const id = params?.id;
 
   useEffect(() => {
-    AOS.init({
-      duration: 800,
-      easing: 'ease-in-out',
-    });
+    AOS.init({ duration: 800, easing: 'ease-in-out' });
     document.title = 'Career | EDIFICE';
     window.scrollTo(0, 0);
   }, []);
@@ -64,37 +61,36 @@ const JobDetailsPage = () => {
       <InnerHero subtitle="Latest Releases" title="Career" backgroundImage="" />
       <section
         data-aos="fade-up"
-        className="dark:bg-black dark:text-white bg-white text-black py-16 px-4 md:px-10 transition-colors duration-300 ease-in-out"
+        className="py-16 px-4 md:px-10 transition-colors duration-300 ease-in-out"
+        style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
       >
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row gap-8">
+            {/* Main Content */}
             <div className="lg:w-3/4">
-              <div className="bg-white text-black p-6 sm:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-800 mb-4">
+              <div
+                className="p-6 sm:p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
+                style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
+              >
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-4">
                   {jobData.title}
                 </h1>
 
-                <div className="text-sm text-gray-600 space-y-1 mb-4">
-                  <p>
-                    <strong>Location:</strong> {jobData.location}
-                  </p>
-                  <p>
-                    <strong>Date Posted:</strong> {jobData.postedDate}
-                  </p>
-                  <p>
-                    <strong>Last Date of Application:</strong> {jobData.deadline}
-                  </p>
+                <div className="text-sm space-y-1 mb-4 text-gray-600 dark:text-gray-400">
+                  <p><strong>Location:</strong> {jobData.location}</p>
+                  <p><strong>Date Posted:</strong> {jobData.postedDate}</p>
+                  <p><strong>Last Date of Application:</strong> {jobData.deadline}</p>
                 </div>
 
-                <div className="text-base text-gray-700 space-y-4 mb-6">
+                <div className="text-base space-y-4 mb-6 text-gray-700 dark:text-gray-300">
                   {jobData.description.map((paragraph, index) => (
                     <p key={index}>{paragraph}</p>
                   ))}
                 </div>
 
                 <div className="mb-6">
-                  <h2 className="text-lg font-semibold text-gray-800 mb-2">Key Responsibilities</h2>
-                  <ul className="list-disc list-inside space-y-1 text-gray-700">
+                  <h2 className="text-lg font-semibold mb-2">Key Responsibilities</h2>
+                  <ul className="list-disc list-inside space-y-1 text-gray-700 dark:text-gray-300">
                     {jobData.responsibilities.map((item, index) => (
                       <li key={index}>{item}</li>
                     ))}
@@ -102,8 +98,8 @@ const JobDetailsPage = () => {
                 </div>
 
                 <div className="mb-6">
-                  <h2 className="text-lg font-semibold text-gray-800 mb-2">Job Requirements</h2>
-                  <ul className="list-disc list-inside space-y-1 text-gray-700">
+                  <h2 className="text-lg font-semibold mb-2">Job Requirements</h2>
+                  <ul className="list-disc list-inside space-y-1 text-gray-700 dark:text-gray-300">
                     {jobData.requirements.map((item, index) => (
                       <li key={index}>{item}</li>
                     ))}
@@ -111,8 +107,8 @@ const JobDetailsPage = () => {
                 </div>
 
                 <div className="mb-8">
-                  <h2 className="text-lg font-semibold text-gray-800 mb-2">Benefits</h2>
-                  <p className="text-gray-700">{jobData.benefits}</p>
+                  <h2 className="text-lg font-semibold mb-2">Benefits</h2>
+                  <p className="text-gray-700 dark:text-gray-300">{jobData.benefits}</p>
                 </div>
 
                 <button
@@ -134,20 +130,24 @@ const JobDetailsPage = () => {
               </div>
             </div>
 
+            {/* Sidebar */}
             <div className="lg:w-1/4">
-              <div className="bg-white text-sm rounded-lg p-4 shadow-md sticky top-[150px]">
+              <div
+                className="text-sm rounded-lg p-4 shadow-md sticky top-[150px]"
+                style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
+              >
                 <h3 className="text-lg text-white bg-[#c20e35] p-3 rounded-md mb-4">Job Summary</h3>
-
-                <div className="space-y-3 text-gray-800">
+                <div className="space-y-3">
                   {Object.entries(jobData.summary).map(([key, value]) => (
                     <div key={key}>
                       <span className="font-medium capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
-                      <span className="text-gray-600"> {value}</span>
+                      <span className="text-gray-600 dark:text-gray-400"> {value}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>

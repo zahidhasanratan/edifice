@@ -9,7 +9,7 @@ import InnerHero from '@/components/Hero/InnerHero';
 const galleryItems = [
   {
     id: 1,
-    imageSrc: '/assets/images/news/1.jpg', // ✅ from public folder
+    imageSrc: '/assets/images/news/1.jpg',
     altText: 'Gallery Image',
     title: 'Penthouse Balcony View',
   },
@@ -41,15 +41,17 @@ const GalleryAlbum = () => {
   }, []);
 
   const handleGalleryClick = () => {
-    router.push('/gallery'); // ✅ navigate in Next.js
+    router.push('/gallery');
   };
 
   return (
     <>
       <InnerHero subtitle="Our" title="GALLERY" backgroundImage="" />
+
       <section
-        className="dark:bg-black dark:text-white bg-white text-black py-16 px-4 md:px-10 transition-colors duration-300 ease-in-out"
         data-aos="fade-up"
+        className="transition-colors duration-300 ease-in-out py-16 px-4 md:px-10"
+        style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
       >
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -63,8 +65,15 @@ const GalleryAlbum = () => {
                   src={item.imageSrc}
                   alt={item.altText}
                   className="w-full h-72 object-cover transform transition duration-500 group-hover:scale-110"
+                  loading="lazy"
                 />
-                <div className="absolute bottom-0 w-full bg-white/60 dark:bg-black/60 dark:text-white text-black text-center py-3 backdrop-blur-sm transition duration-300">
+                <div
+                  className="absolute bottom-0 w-full text-center py-3 backdrop-blur-sm transition duration-300"
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                    color: 'var(--foreground)',
+                  }}
+                >
                   <h3 className="text-lg font-semibold transition duration-300 group-hover:text-[#c20e35]">
                     {item.title}
                   </h3>

@@ -63,19 +63,30 @@ const CareerPage = () => {
 
       <section
         data-aos="fade-up"
-        className="dark:bg-black dark:text-white bg-white text-black px-4 md:px-10 transition-colors duration-300 ease-in-out py-16"
+        className="px-4 md:px-10 py-16 transition-colors duration-300 ease-in-out"
+        style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
       >
         <div className="max-w-7xl mx-auto">
           <ul className="space-y-6">
             {jobListings.map((job) => (
-              <li key={job.id} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+              <li
+                key={job.id}
+                className="p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
+              >
                 <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
                   <div className="flex-1">
-                    <h3 className="text-lg md:text-3xl mb-3 text-gray-800">{job.title}</h3>
-                    <p className="text-gray-600 mb-3">{job.location}</p>
+                    <h3 className="text-lg md:text-3xl mb-3 font-semibold">
+                      {job.title}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-3">
+                      {job.location}
+                    </p>
                     <ul className="flex flex-wrap gap-4 mb-3 px-4 list-disc list-inside">
                       {job.details.map((detail, index) => (
-                        <li key={index} className="text-gray-600 text-sm">{detail}</li>
+                        <li key={index} className="text-sm text-gray-600 dark:text-gray-400">
+                          {detail}
+                        </li>
                       ))}
                     </ul>
                   </div>
