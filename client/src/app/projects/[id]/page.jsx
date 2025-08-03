@@ -42,8 +42,8 @@ const ProjectDetails = () => {
       />
       <SingleProjectDetails project={project} />
       <ProjectDetailsGallery images={project.multiplePhotos} />
-      <ProjectVideo videoUrl={project.youtubeUrl} />
-      <ProjectLocation address={project.exactLocation} mapEmbedLink={project.googleMapLocation} />
+      <ProjectVideo youtubeUrl={project.youtubeUrl} />
+      <ProjectLocation address={project.address} mapEmbedLink={project.googleMapLocation} />
       <ProjectsGrid title="Projects" subtitle="Related Projects" />
     </main>
   );

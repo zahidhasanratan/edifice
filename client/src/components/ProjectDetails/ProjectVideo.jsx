@@ -2,12 +2,20 @@
 
 import React, { useState, useEffect } from 'react';
 
-const ProjectVideo = () => {
+const ProjectVideo = ({ youtubeUrl }) => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  if (!youtubeUrl) {
+    return (
+      <section className="py-20 text-center text-gray-600 dark:text-gray-400">
+        <p>No video available</p>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -16,15 +24,15 @@ const ProjectVideo = () => {
     >
       <div
         className="mx-auto w-[90%] md:w-[70%] rounded-xl p-4 transition-colors duration-300"
-        style={{ backgroundColor: 'var(--card-bg, #f3f4f6)' }} // Optional: You can define --card-bg in light/dark mode if needed
+        style={{ backgroundColor: 'var(--card-bg, #f3f4f6)' }}
       >
         {isClient ? (
           <div className="relative pt-[56.25%]">
             <iframe
               className="absolute top-0 left-0 w-full h-full rounded-lg"
-              src="https://www.youtube.com/embed/6biMWgD6_JY?autoplay=0&rel=0"
+              src={`https://www.youtube.com/embed/${youtubeUrl}?autoplay=0&rel=0`}
               title="Project Video"
-              allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               loading="lazy"
             />
