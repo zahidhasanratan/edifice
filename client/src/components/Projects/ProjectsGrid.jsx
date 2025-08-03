@@ -1,61 +1,30 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import AOS from 'aos';
-import { useEffect } from 'react';
 import 'aos/dist/aos.css';
 
-export const projects = [
-  {
-    id: 1,
-    title: "Surma Tower",
-    location: "Taltala, Sylhet",
-    image: "/assets/images/projects/surmaTower.jpg",
-    link: "/projects/:id"
-  },
-  {
-    id: 2,
-    title: "FAZLUR RAHMAN Tower",
-    location: "Mohakhali, Dhaka",
-    image: "/assets/images/projects/bulbul_tower.jpg",
-    link: "/projects/:id"
-  },
-  {
-    id: 3,
-    title: "Impulse Tower",
-    location: "Rikabi Bazar, Sylhet",
-    image: "/assets/images/projects/impulse_Tower.jpg",
-    link: "/projects/:id"
-  },
-  {
-    id: 4,
-    title: "Impulse Tower",
-    location: "Aftabnagar, E. H. L. Dhaka",
-    image: "/assets/images/projects/aftabnagar.jpg",
-    link: "/projects/:id"
-  },
-  {
-    id: 5,
-    title: "Office & Home Solution (Pvt.) Ltd.",
-    location: "Uttara, Dhaka",
-    image: "/assets/images/projects/home-solution.jpg",
-    link: "/projects/:id"
-  },
-  {
-    id: 6,
-    title: "Lotus Kamal Properties Ltd.",
-    location: "Baridhara, Dhaka",
-    image: "/assets/images/projects/lotus_Kamal.jpg",
-    link: "/projects/:id"
-  }
-];
-
 const ProjectsGrid = ({ title = '', subtitle = '' }) => {
+  const [projects, setProjects] = useState([]);
+
   useEffect(() => {
     AOS.init({
       duration: 800,
       easing: 'ease-in-out',
-      once: true
+      once: true,
     });
+
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/projects');
+        const data = await res.json();
+        setProjects(data);
+      } catch (err) {
+        console.error('Failed to fetch projects:', err);
+      }
+    };
+
+    fetchProjects();
   }, []);
 
   return (
@@ -78,19 +47,19 @@ const ProjectsGrid = ({ title = '', subtitle = '' }) => {
           )}
         </div>
 
-        {/* Grid */}
+        {/* Project Grid */}
         <div className="-mx-4 flex flex-wrap justify-center">
           {projects.map((project) => (
-            <div key={project.id} className="w-full px-4 md:w-1/2 lg:w-1/3">
+            <div key={project._id} className="w-full px-4 md:w-1/2 lg:w-1/3">
               <div
-                className="group mx-auto mb-10 max-w-[380px] text-center md:mb-16 wow fadeInUp"
-                data-wow-delay=".25s"
+                className="group mx-auto mb-10 max-w-[380px] text-center md:mb-16"
+                data-aos="fade-up"
               >
                 <div className="bg-[var(--background)] text-[var(--foreground)] shadow-lg overflow-hidden group cursor-pointer transition-colors duration-300">
-                  <a href={project.link || "#"} className="block">
+                  <a href={`/projects/${project._id}`} className="block">
                     <div className="overflow-hidden">
                       <img
-                        src={project.image}
+                        src={project.featureImage}
                         alt={project.title}
                         className="w-full max-h-[450px] object-cover transition-transform group-hover:scale-110 duration-1000 ease-in-out"
                       />
@@ -99,7 +68,9 @@ const ProjectsGrid = ({ title = '', subtitle = '' }) => {
                       <h3 className="text-xl font-semibold group-hover:text-[#c20e35] transition duration-300">
                         {project.title}
                       </h3>
-                      <p className="mt-1">{project.location}</p>
+                      <p className="mt-1">
+                        {project.address || project.exactLocation || 'No location available'}
+                      </p>
                     </div>
                   </a>
                 </div>

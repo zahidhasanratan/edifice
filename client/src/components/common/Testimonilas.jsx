@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import AOS from 'aos';
@@ -10,33 +10,7 @@ import 'aos/dist/aos.css';
 
 const Testimonials = () => {
   const swiperRef = useRef(null);
-
-  const testimonials = [
-    {
-      id: 1,
-      project: "Dream Heights Project",
-      quote: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      name: "Sarah Johnson",
-      role: "Apartment Owner",
-      image: "https://randomuser.me/api/portraits/women/44.jpg"
-    },
-    {
-      id: 2,
-      project: "Urban Living Complex",
-      quote: "The quality and attention to detail exceeded our expectations. We couldn't be happier with our new home.",
-      name: "Michael Chen",
-      role: "Business Owner",
-      image: "https://randomuser.me/api/portraits/men/32.jpg"
-    },
-    {
-      id: 3,
-      project: "Lakeside Residences",
-      quote: "The design matches our lifestyle and the construction quality is outstanding. Highly recommend!",
-      name: "Emma Rodriguez",
-      role: "Interior Designer",
-      image: "https://randomuser.me/api/portraits/women/68.jpg"
-    }
-  ];
+  const [testimonials, setTestimonials] = useState([]);
 
   useEffect(() => {
     AOS.init({
@@ -47,6 +21,19 @@ const Testimonials = () => {
     if (swiperRef.current?.swiper) {
       swiperRef.current.swiper.autoplay.start();
     }
+
+    // Fetch testimonials from API
+    const fetchTestimonials = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/testimonials');
+        const data = await res.json();
+        setTestimonials(data);
+      } catch (error) {
+        console.error('Error fetching testimonials:', error);
+      }
+    };
+
+    fetchTestimonials();
   }, []);
 
   return (
@@ -81,29 +68,29 @@ const Testimonials = () => {
             autoplay={{
               delay: 5000,
               disableOnInteraction: false,
-              reverseDirection: true
+              reverseDirection: true,
             }}
             pagination={{ clickable: true }}
             className="w-full"
           >
             {testimonials.map((testimonial) => (
-              <SwiperSlide key={testimonial.id} className="w-full">
+              <SwiperSlide key={testimonial._id} className="w-full">
                 <div className="w-full px-4 flex flex-col items-center text-center">
                   <h1 className="text-2xl text-[#c20e35] font-semibold mb-4">
-                    {testimonial.project}
+                    {testimonial.title}
                   </h1>
                   <p className="text-[15px] leading-[24px] text-gray-700 dark:text-gray-200 max-w-4xl mx-auto">
-                    {testimonial.quote}
+                    {testimonial.shortDesc}
                   </p>
                   <p className="mt-4 font-semibold text-black dark:text-white">
-                    — {testimonial.name}
+                    — {testimonial.clientName}
                   </p>
                   <p className="text-gray-700 dark:text-gray-200 mb-6">
-                    {testimonial.role}
+                    {testimonial.designation}
                   </p>
                   <img
-                    src={testimonial.image}
-                    alt={testimonial.name}
+                    src={testimonial.photo}
+                    alt={testimonial.clientName}
                     className="w-32 h-32 rounded-full border-4 border-[#c20e35] object-cover"
                   />
                 </div>

@@ -21,12 +21,16 @@ export const EditProject = () => {
     innerBannerImage: '',
     mainImage: ''
   });
+  const [newPhotos, setNewPhotos] = useState([]);
 
   useEffect(() => {
     const fetchProject = async () => {
       const res = await fetch(`http://localhost:5000/api/projects/${id}`);
       const data = await res.json();
-      setForm(data);
+      setForm({
+        ...data,
+        multiplePhotos: Array.isArray(data.multiplePhotos) ? data.multiplePhotos : []
+      });
     };
     fetchProject();
   }, [id]);
@@ -51,7 +55,14 @@ export const EditProject = () => {
   };
 
   const handleMultiplePhotosChange = (e) => {
-    setForm({ ...form, multiplePhotos: Array.from(e.target.files) });
+    const files = Array.from(e.target.files);
+    setNewPhotos(files);
+  };
+
+  const removeExistingPhoto = (index) => {
+    const updated = [...form.multiplePhotos];
+    updated.splice(index, 1);
+    setForm({ ...form, multiplePhotos: updated });
   };
 
   const handleImageUpload = async (file) => {
@@ -71,18 +82,18 @@ export const EditProject = () => {
     e.preventDefault();
 
     try {
+      Swal.fire({ title: 'Uploading...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
       const featureImageUrl = form.featureImage instanceof File ? await handleImageUpload(form.featureImage) : form.featureImage;
       const innerBannerImageUrl = form.innerBannerImage instanceof File ? await handleImageUpload(form.innerBannerImage) : form.innerBannerImage;
       const mainImageUrl = form.mainImage instanceof File ? await handleImageUpload(form.mainImage) : form.mainImage;
 
-      const multiplePhotoUrls = [];
-      if (form.multiplePhotos.length > 0 && form.multiplePhotos[0] instanceof File) {
-        for (const file of form.multiplePhotos) {
+      const uploadedNewPhotos = [];
+      for (const file of newPhotos) {
+        if (file instanceof File) {
           const url = await handleImageUpload(file);
-          multiplePhotoUrls.push(url);
+          uploadedNewPhotos.push(url);
         }
-      } else {
-        multiplePhotoUrls.push(...form.multiplePhotos);
       }
 
       const payload = {
@@ -90,7 +101,7 @@ export const EditProject = () => {
         featureImage: featureImageUrl,
         innerBannerImage: innerBannerImageUrl,
         mainImage: mainImageUrl,
-        multiplePhotos: multiplePhotoUrls
+        multiplePhotos: [...form.multiplePhotos, ...uploadedNewPhotos]
       };
 
       const res = await fetch(`http://localhost:5000/api/projects/${id}`, {
@@ -155,10 +166,19 @@ export const EditProject = () => {
 
         <div className="col-span-2">
           <label className="block mb-1 font-semibold">Multiple Photos</label>
-          {Array.isArray(form.multiplePhotos) && form.multiplePhotos.length > 0 && typeof form.multiplePhotos[0] === 'string' && (
-            <div className="flex gap-2 mb-2">
-              {form.multiplePhotos.slice(0, 3).map((url, idx) => (
-                <img key={idx} src={url} alt={`Photo ${idx}`} className="w-20 h-16 rounded" />
+          {Array.isArray(form.multiplePhotos) && form.multiplePhotos.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-2">
+              {form.multiplePhotos.map((url, idx) => (
+                <div key={idx} className="relative">
+                  <img src={url} alt={`Photo ${idx}`} className="object-cover w-20 h-16 rounded" />
+                  <button
+                    type="button"
+                    className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 text-xs text-white bg-red-600 rounded-full"
+                    onClick={() => removeExistingPhoto(idx)}
+                  >
+                    <FaTrash size={10} />
+                  </button>
+                </div>
               ))}
             </div>
           )}

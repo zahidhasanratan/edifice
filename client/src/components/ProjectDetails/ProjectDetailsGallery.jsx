@@ -2,18 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 
-const galleryImages = [
-  { src: '/assets/images/hero/1.jpg', alt: 'Gallery Image 1' },
-  { src: '/assets/images/hero/2.jpg', alt: 'Gallery Image 2' },
-  { src: '/assets/images/hero/3.jpg', alt: 'Gallery Image 3' },
-];
-
-const ProjectDetailsGallery = () => {
+const ProjectDetailsGallery = ({ images = [] }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loadedImages, setLoadedImages] = useState([]);
 
+  // Preload images
   useEffect(() => {
+    if (!images || !images.length) return;
+
     const loadImage = (src) => {
       return new Promise((resolve, reject) => {
         const img = new Image();
@@ -23,10 +20,16 @@ const ProjectDetailsGallery = () => {
       });
     };
 
-    Promise.all(galleryImages.map((image) => loadImage(image.src)))
-      .then(() => setLoadedImages(galleryImages))
+    Promise.all(images.map((src) => loadImage(src)))
+      .then(() => {
+        const formatted = images.map((src, index) => ({
+          src,
+          alt: `Gallery Image ${index + 1}`,
+        }));
+        setLoadedImages(formatted);
+      })
       .catch(console.error);
-  }, []);
+  }, [images]);
 
   const openModal = (index) => {
     setCurrentImageIndex(index);
@@ -42,18 +45,17 @@ const ProjectDetailsGallery = () => {
   const navigateImage = (direction) => {
     setCurrentImageIndex((prevIndex) => {
       if (direction === 'prev') {
-        return (prevIndex - 1 + galleryImages.length) % galleryImages.length;
+        return (prevIndex - 1 + loadedImages.length) % loadedImages.length;
       } else {
-        return (prevIndex + 1) % galleryImages.length;
+        return (prevIndex + 1) % loadedImages.length;
       }
     });
   };
 
+  if (!loadedImages.length) return null;
+
   return (
-    <section
-      className="transition-colors duration-300 ease-in-out py-16 px-4 md:px-10"
-      style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
-    >
+    <section className="bg-white text-black dark:bg-black dark:text-white py-16 px-4 md:px-10">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {loadedImages.map((image, index) => (
