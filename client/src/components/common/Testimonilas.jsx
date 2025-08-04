@@ -39,7 +39,7 @@ const Testimonials = () => {
   return (
     <section
       data-aos="fade-up"
-      className="relative text-white dark:text-black py-20 bg-center bg-cover"
+      className="relative fixed text-white dark:text-black py-20 bg-center bg-cover"
       style={{ backgroundImage: `url('/assets/images/hero/01.jpg')` }}
     >
       <div className="bg-white/60 dark:bg-black/60 absolute inset-0 z-0 transition-colors duration-300"></div>

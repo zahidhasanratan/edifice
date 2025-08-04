@@ -10,7 +10,7 @@ const Footer = () => {
   useEffect(() => {
     const fetchContact = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/contact");
+        const res = await fetch("http://localhost:5000/api/contactInfo");
         const data = await res.json();
         setContact(data);
       } catch (err) {

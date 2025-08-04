@@ -8,6 +8,7 @@ import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
 import DarkModeToggle from '@/components/common/DarkModeToggle';
 import NProgressBar from '@/components/common/NProgressBar';
+import CookieBanner from '@/components/common/CookieBanner';
 
 // Load fonts
 const geistSans = Geist({
@@ -40,6 +41,7 @@ export default function RootLayout({ children }) {
         <main>{children}</main>
         <DarkModeToggle />
         <Footer />
+        <CookieBanner />
       </body>
     </html>
   );
