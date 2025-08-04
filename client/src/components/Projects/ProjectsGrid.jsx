@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
-const ProjectsGrid = ({ title = '', subtitle = '' }) => {
+const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
@@ -18,14 +18,23 @@ const ProjectsGrid = ({ title = '', subtitle = '' }) => {
       try {
         const res = await fetch('http://localhost:5000/api/projects');
         const data = await res.json();
-        setProjects(data);
+
+        // ✅ Filter by projectType if "type" is provided
+        const filteredProjects = type
+          ? data.filter(
+              (project) =>
+                project.projectType?.toLowerCase() === type.toLowerCase()
+            )
+          : data;
+
+        setProjects(filteredProjects);
       } catch (err) {
         console.error('Failed to fetch projects:', err);
       }
     };
 
     fetchProjects();
-  }, []);
+  }, [type]);
 
   return (
     <section
@@ -49,34 +58,38 @@ const ProjectsGrid = ({ title = '', subtitle = '' }) => {
 
         {/* Project Grid */}
         <div className="-mx-4 flex flex-wrap justify-center">
-          {projects.map((project) => (
-            <div key={project._id} className="w-full px-4 md:w-1/2 lg:w-1/3">
-              <div
-                className="group mx-auto mb-10 max-w-[380px] text-center md:mb-16"
-                data-aos="fade-up"
-              >
-                <div className="bg-[var(--background)] text-[var(--foreground)] shadow-lg overflow-hidden group cursor-pointer transition-colors duration-300">
-                  <a href={`/projects/${project._id}`} className="block">
-                    <div className="overflow-hidden">
-                      <img
-                        src={project.featureImage}
-                        alt={project.title}
-                        className="w-full max-h-[450px] object-cover transition-transform group-hover:scale-110 duration-1000 ease-in-out"
-                      />
-                    </div>
-                    <div className="p-5">
-                      <h3 className="text-xl font-semibold group-hover:text-[#c20e35] transition duration-300">
-                        {project.title}
-                      </h3>
-                      <p className="mt-1">
-                        {project.address || project.exactLocation || 'No location available'}
-                      </p>
-                    </div>
-                  </a>
+          {projects.length > 0 ? (
+            projects.map((project) => (
+              <div key={project._id} className="w-full px-4 md:w-1/2 lg:w-1/3">
+                <div
+                  className="group mx-auto mb-10 max-w-[380px] text-center md:mb-16"
+                  data-aos="fade-up"
+                >
+                  <div className="bg-[var(--background)] text-[var(--foreground)] shadow-lg overflow-hidden group cursor-pointer transition-colors duration-300">
+                    <a href={`/projects/${project._id}`} className="block">
+                      <div className="overflow-hidden">
+                        <img
+                          src={project.featureImage}
+                          alt={project.title}
+                          className="w-full max-h-[450px] object-cover transition-transform group-hover:scale-110 duration-1000 ease-in-out"
+                        />
+                      </div>
+                      <div className="p-5">
+                        <h3 className="text-xl font-semibold group-hover:text-[#c20e35] transition duration-300">
+                          {project.title}
+                        </h3>
+                        <p className="mt-1">
+                          {project.address || project.exactLocation || 'No location available'}
+                        </p>
+                      </div>
+                    </a>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-lg text-gray-500">No projects found.</p>
+          )}
         </div>
       </div>
     </section>

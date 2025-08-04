@@ -92,7 +92,7 @@ const Gallery = () => {
 
   return (
     <>
-      <InnerHero subtitle="Our" title={albumTitle} backgroundImage="" />
+      <InnerHero subtitle="Our Gallery" title={albumTitle} backgroundImage="" />
 
       <section
         data-aos="fade-up"
