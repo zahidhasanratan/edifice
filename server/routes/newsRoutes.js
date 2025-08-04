@@ -1,30 +1,27 @@
 // routes/newsRoutes.js
 const express = require('express');
 const router = express.Router();
-const News = require('../models/News');
+const {
+  createNews,
+  getAllNews,
+  getNewsById,
+  updateNews,
+  deleteNews,
+} = require('../controllers/newsController');
 
-// GET all news with optional search and pagination
-router.get('/', async (req, res) => {
-  try {
-    const { page = 1, search = '' } = req.query;
-    const limit = 10;
-    const query = search
-      ? { title: { $regex: search, $options: 'i' } }
-      : {};
+// ✅ GET single news article by ID
+router.get('/:id', getNewsById);
 
-    const news = await News.find(query)
-      .sort({ publishDate: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit);
+// ✅ GET all news with search and pagination
+router.get('/', getAllNews);
 
-    const totalCount = await News.countDocuments(query);
-    const totalPages = Math.ceil(totalCount / limit);
+// ✅ Create news
+router.post('/', createNews);
 
-    res.json({ news, totalPages });
-  } catch (error) {
-    console.error('Error fetching news:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
+// ✅ Update news
+router.put('/:id', updateNews);
+
+// ✅ Delete news
+router.delete('/:id', deleteNews);
 
 module.exports = router;
