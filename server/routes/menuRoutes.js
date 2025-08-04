@@ -1,3 +1,4 @@
+// routes/menuRoutes.js
 const express = require('express');
 const router = express.Router();
 const {
@@ -6,10 +7,10 @@ const {
   reorderMenus,
   deleteMenu,
   getMenuById,
-  updateMenu
+  updateMenu,
 } = require('../controllers/menuController');
 
-router.get('/all', getAllMenus); // ✅ this line must exist
+router.get('/all', getAllMenus);
 router.post('/', createMenu);
 router.put('/reorder', reorderMenus);
 router.get('/:id', getMenuById);

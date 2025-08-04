@@ -1,3 +1,4 @@
+// frontend/src/pages/EditMenu.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
@@ -41,7 +42,7 @@ const EditMenu = () => {
       const res = await fetch('http://localhost:5000/api/menus/all');
       const data = await res.json();
       const onlyParents = data.filter(menu => !menu.parent || menu.parent === null);
-      setParentMenus(onlyParents.filter(menu => menu._id !== id)); // exclude self
+      setParentMenus(onlyParents.filter(menu => menu._id !== id));
     };
 
     fetchMenu();
@@ -58,7 +59,6 @@ const EditMenu = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const res = await fetch(`http://localhost:5000/api/menus/${id}`, {
         method: 'PUT',
@@ -68,9 +68,10 @@ const EditMenu = () => {
 
       if (res.ok) {
         Swal.fire('Success', 'Menu updated successfully!', 'success');
-        navigate('/menu'); // ✅ correct redirect
+        navigate('/menu');
       } else {
-        Swal.fire('Error', 'Failed to update menu', 'error');
+        const error = await res.json();
+        Swal.fire('Error', error.message || 'Failed to update menu', 'error');
       }
     } catch (err) {
       console.error('Update error:', err);
@@ -81,7 +82,6 @@ const EditMenu = () => {
   return (
     <div className="max-w-4xl p-6 mx-auto">
       <h2 className="mb-4 text-2xl font-semibold">Edit Menu</h2>
-
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
@@ -152,38 +152,18 @@ const EditMenu = () => {
         </div>
 
         <div className="flex gap-6">
-          <label className="gap-2 cursor-pointer label">
-            <span className="label-text">Display</span>
-            <input
-              type="checkbox"
-              name="display"
-              checked={menuData.display}
-              onChange={handleChange}
-              className="checkbox"
-            />
-          </label>
-
-          <label className="gap-2 cursor-pointer label">
-            <span className="label-text">Footer1</span>
-            <input
-              type="checkbox"
-              name="footer1"
-              checked={menuData.footer1}
-              onChange={handleChange}
-              className="checkbox"
-            />
-          </label>
-
-          <label className="gap-2 cursor-pointer label">
-            <span className="label-text">Footer2</span>
-            <input
-              type="checkbox"
-              name="footer2"
-              checked={menuData.footer2}
-              onChange={handleChange}
-              className="checkbox"
-            />
-          </label>
+          {['display', 'footer1', 'footer2'].map((field) => (
+            <label key={field} className="gap-2 cursor-pointer label">
+              <span className="capitalize label-text">{field}</span>
+              <input
+                type="checkbox"
+                name={field}
+                checked={menuData[field]}
+                onChange={handleChange}
+                className="checkbox"
+              />
+            </label>
+          ))}
         </div>
 
         <button type="submit" className="w-full btn btn-primary">
