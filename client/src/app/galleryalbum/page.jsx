@@ -1,34 +1,15 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { useRouter } from 'next/navigation';
 import InnerHero from '@/components/Hero/InnerHero';
 
-const galleryItems = [
-  {
-    id: 1,
-    imageSrc: '/assets/images/news/1.jpg',
-    altText: 'Gallery Image',
-    title: 'Penthouse Balcony View',
-  },
-  {
-    id: 2,
-    imageSrc: '/assets/images/news/2.jpg',
-    altText: 'Gallery Image',
-    title: 'Luxury Apartment Lobby',
-  },
-  {
-    id: 3,
-    imageSrc: '/assets/images/news/3.jpg',
-    altText: 'Gallery Image',
-    title: 'Modern Kitchen Design',
-  },
-];
-
 const GalleryAlbum = () => {
   const router = useRouter();
+  const [albums, setAlbums] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     AOS.init({
@@ -38,10 +19,23 @@ const GalleryAlbum = () => {
     });
     document.title = 'Gallery | EDIFICE';
     window.scrollTo(0, 0);
+    fetchAlbums();
   }, []);
 
-  const handleGalleryClick = () => {
-    router.push('/gallery');
+  const fetchAlbums = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/albums');
+      const data = await res.json();
+      setAlbums(data);
+    } catch (error) {
+      console.error('Error fetching albums:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGalleryClick = (albumId) => {
+    router.push(`/gallery/${albumId}`);
   };
 
   return (
@@ -54,33 +48,37 @@ const GalleryAlbum = () => {
         style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
       >
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {galleryItems.map((item) => (
-              <div
-                key={item.id}
-                className="group relative overflow-hidden rounded-xl shadow-lg cursor-pointer"
-                onClick={handleGalleryClick}
-              >
-                <img
-                  src={item.imageSrc}
-                  alt={item.altText}
-                  className="w-full h-72 object-cover transform transition duration-500 group-hover:scale-110"
-                  loading="lazy"
-                />
+          {loading ? (
+            <p className="text-center text-lg">Loading...</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {albums.map((album) => (
                 <div
-                  className="absolute bottom-0 w-full text-center py-3 backdrop-blur-sm transition duration-300"
-                  style={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                    color: 'var(--foreground)',
-                  }}
+                  key={album._id}
+                  className="group relative overflow-hidden rounded-xl shadow-lg cursor-pointer"
+                  onClick={() => handleGalleryClick(album._id)}
                 >
-                  <h3 className="text-lg font-semibold transition duration-300 group-hover:text-[#c20e35]">
-                    {item.title}
-                  </h3>
+                  <img
+                    src={album.coverPhoto}
+                    alt={album.title}
+                    className="w-full h-72 object-cover transform transition duration-500 group-hover:scale-110"
+                    loading="lazy"
+                  />
+                  <div
+                    className="absolute bottom-0 w-full text-center py-3 backdrop-blur-sm transition duration-300"
+                    style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                      color: 'var(--foreground)',
+                    }}
+                  >
+                    <h3 className="text-lg font-semibold transition duration-300 group-hover:text-[#c20e35]">
+                      {album.title}
+                    </h3>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </>

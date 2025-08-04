@@ -80,7 +80,7 @@ export const AllAlbum = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <Link to="/albums/add" className="btn btn-primary">+ Add Album</Link>
+          <Link to="/album/add" className="btn btn-primary">+ Add Album</Link>
         </div>
       </div>
 
