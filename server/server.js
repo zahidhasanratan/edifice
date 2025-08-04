@@ -7,7 +7,7 @@ const app = express();
 
 // ========== Middlewares ==========
 app.use(cors());
-app.use(express.json()); // To parse JSON requests
+app.use(express.json());
 
 // ========== MongoDB Connection ==========
 mongoose.connect(process.env.MONGO_URI, {
@@ -18,7 +18,7 @@ mongoose.connect(process.env.MONGO_URI, {
   .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
 // ========== Route Imports ==========
-const pageRoutes = require("./routes/pageRoutes");         // ✅ Make sure this comes before use()
+const pageRoutes = require("./routes/pageRoutes");
 const sliderRoutes = require("./routes/sliderRoutes");
 const testimonialRoutes = require("./routes/testimonialRoutes");
 const projectRoutes = require("./routes/projectRoutes");
@@ -28,11 +28,12 @@ const albumRoutes = require("./routes/albumRoutes");
 const photoRoutes = require("./routes/photoRoutes");
 const mediaRoutes = require("./routes/mediaRoutes");
 const aboutRoutes = require("./routes/aboutRoutes");
-const contactRoutes = require("./routes/contactRoutes");
+const contactMailRoutes = require("./routes/contactMailRoutes"); // ✅ updated
 const menuRoutes = require("./routes/menuRoutes");
-
+const visitorRoutes = require("./routes/visitorRoutes");
+const contactInfoRoutes = require('./routes/contactInfo.route');
 // ========== API Routes ==========
-app.use("/api/pages", pageRoutes);               // ✅ FIXED position
+app.use("/api/pages", pageRoutes);
 app.use("/api/sliders", sliderRoutes);
 app.use("/api/testimonials", testimonialRoutes);
 app.use("/api/projects", projectRoutes);
@@ -42,16 +43,17 @@ app.use("/api/albums", albumRoutes);
 app.use("/api/photos", photoRoutes);
 app.use("/api/media", mediaRoutes);
 app.use("/api/about", aboutRoutes);
-app.use("/api/contact", contactRoutes);
+app.use("/api/contact", contactMailRoutes); // ✅ correct usage
 app.use("/api/menus", menuRoutes);
-app.use("/api/visitors", require("./routes/visitorRoutes"));
+app.use("/api/visitors", visitorRoutes);
+app.use('/api/contactInfo', contactInfoRoutes);
 
-// ========== Optional Base Route ==========
+// ========== Root Route ==========
 app.get("/", (req, res) => {
   res.send("🚀 API Server is running...");
 });
 
-// ========== Error Handler (Optional) ==========
+// ========== Error Handler ==========
 app.use((err, req, res, next) => {
   console.error("Unhandled Error:", err.stack);
   res.status(500).json({ message: "Something went wrong!", error: err.message });

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 
@@ -8,7 +10,7 @@ export const EditContact = () => {
     home: '',
     hotline: '',
     email: '',
-    mapIframe: '', // Insert iframe directly
+    mapIframe: '',
   });
 
   useEffect(() => {
@@ -17,7 +19,7 @@ export const EditContact = () => {
 
   const fetchContact = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/contact');
+      const res = await fetch('http://localhost:5000/api/contactInfo');
       const data = await res.json();
       if (data) setForm(data);
     } catch (err) {
@@ -33,7 +35,7 @@ export const EditContact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:5000/api/contact', {
+      const res = await fetch('http://localhost:5000/api/contactInfo', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),

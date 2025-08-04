@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 
 const ContactForm = () => {
@@ -6,7 +8,7 @@ const ContactForm = () => {
     email: '',
     phone: '',
     subject: '',
-    message: ''
+    message: '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -14,28 +16,48 @@ const ContactForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitStatus(null);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setSubmitStatus({ success: true, message: 'Message sent successfully!' });
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: ''
+      const res = await fetch('http://localhost:5000/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setSubmitStatus({
+          success: true,
+          message: 'Message sent successfully!',
+        });
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: '',
+        });
+      } else {
+        throw new Error(data.error || 'Failed to send message.');
+      }
     } catch (error) {
-      setSubmitStatus({ success: false, message: 'Failed to send message. Please try again.' });
+      setSubmitStatus({
+        success: false,
+        message: error.message || 'Something went wrong.',
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -111,7 +133,13 @@ const ContactForm = () => {
 
         <div className="text-center">
           {submitStatus && (
-            <p className={`mb-4 ${submitStatus.success ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
+            <p
+              className={`mb-4 ${
+                submitStatus.success
+                  ? 'text-green-500 dark:text-green-400'
+                  : 'text-red-500 dark:text-red-400'
+              }`}
+            >
               {submitStatus.message}
             </p>
           )}
@@ -119,7 +147,11 @@ const ContactForm = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`bg-[#c20e35] text-white px-8 py-3 rounded transition ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#a00d2c] hover:shadow-lg'}`}
+            className={`bg-[#c20e35] text-white px-8 py-3 rounded transition ${
+              isSubmitting
+                ? 'opacity-70 cursor-not-allowed'
+                : 'hover:bg-[#a00d2c] hover:shadow-lg'
+            }`}
           >
             {isSubmitting ? 'Sending...' : 'Send Message'}
           </button>
