@@ -61,9 +61,11 @@ const Footer = () => {
             {footerMenus.map(menu => {
               const isExternal = menu.page_type === "url";
               const href = isExternal ? menu.external_link : `/page/${menu.slug}`;
-              return (
-                <li key={menu._id}>
-                  {isExternal ? (
+              const target = menu.target || "_self";
+
+              if (target === "_blank") {
+                return (
+                  <li key={menu._id}>
                     <a
                       href={href}
                       target="_blank"
@@ -72,13 +74,17 @@ const Footer = () => {
                     >
                       {menu.menu_name}
                     </a>
-                  ) : (
+                  </li>
+                );
+              } else {
+                return (
+                  <li key={menu._id}>
                     <Link href={href} className="hover:text-[#c20e35] transition">
                       {menu.menu_name}
                     </Link>
-                  )}
-                </li>
-              );
+                  </li>
+                );
+              }
             })}
           </ul>
         </div>

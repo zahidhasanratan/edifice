@@ -6,6 +6,7 @@ import Link from 'next/link';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [menus, setMenus] = useState([]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,8 +16,33 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  // Fetch menus from API
+  useEffect(() => {
+    const fetchMenus = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/menus/all');
+        const data = await res.json();
+        setMenus(data);
+      } catch (err) {
+        console.error('Error fetching menus:', err);
+      }
+    };
+    fetchMenus();
+  }, []);
+
+  const mainMenus = menus.filter(menu => menu.display && menu.parent === null);
+  const getChildren = (parentId) =>
+    menus.filter(menu => menu.parent === parentId);
+
+  const getLinkHref = (menu) => {
+    if (menu.page_type === 'url') {
+      return `/${menu.external_link}`;
+    } else if (menu.page_type === 'external') {
+      return menu.external_link;
+    }
+    return '#';
   };
 
   return (
@@ -83,6 +109,9 @@ const Header = () => {
         />
 
         {/* Slide Menu */}
+
+
+
         <div
           className={`fixed top-0 right-0 h-full w-[80%] max-w-xs bg-black text-white z-50 transform transition-transform duration-500 ease-in-out ${
             isMenuOpen ? 'translate-x-0' : 'translate-x-full'
@@ -95,56 +124,71 @@ const Header = () => {
           </div>
           <div className="h-[calc(100%-60px)] overflow-y-auto">
             <ul className="px-6 pb-8 space-y-2">
-              <li>
+             <li>
                 <Link href="/" className="block py-2" onClick={toggleMenu}>Home</Link>
               </li>
-              <li>
-                <Link href="/about" className="block py-2" onClick={toggleMenu}>About</Link>
-              </li>
-              <li>
-                <details className="group">
-                  <summary className="flex justify-between items-center cursor-pointer py-2">
-                    Projects
-                    <svg
-                      className="h-4 w-4 group-open:rotate-180 transition-transform"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </summary>
-                  <ul className="ml-4 mt-2 space-y-2">
-                    <li>
-                      <Link href="/projects" className="block py-2" onClick={toggleMenu}>Ongoing</Link>
+
+              {mainMenus.map((menu) => {
+                const children = getChildren(menu._id);
+                const href = getLinkHref(menu);
+                const target = menu.target === '_blank' ? '_blank' : '_self';
+
+                if (children.length === 0) {
+                  return (
+                    <li key={menu._id}>
+                      <Link
+                        href={href}
+                        target={target}
+                        className="block py-2"
+                        onClick={toggleMenu}
+                      >
+                        {menu.menu_name}
+                      </Link>
                     </li>
-                    <li>
-                      <Link href="/projects" className="block py-2" onClick={toggleMenu}>Upcoming</Link>
-                    </li>
-                    <li>
-                      <Link href="/projects" className="block py-2" onClick={toggleMenu}>Completed</Link>
-                    </li>
-                  </ul>
-                </details>
-              </li>
-              <li>
-                <Link href="/news" className="block py-2" onClick={toggleMenu}>Blog</Link>
-              </li>
-              <li>
-                <Link href="/galleryalbum" className="block py-2" onClick={toggleMenu}>Gallery</Link>
-              </li>
-              <li>
-                <Link href="/career" className="block py-2" onClick={toggleMenu}>Career</Link>
-              </li>
-            
-              <li>
-                <Link href="/contact" className="block py-2" onClick={toggleMenu}>Contact</Link>
-              </li>
+                  );
+                }
+
+                return (
+                  <li key={menu._id}>
+                    <details className="group">
+                      <summary className="flex justify-between items-center cursor-pointer py-2">
+                        {menu.menu_name}
+                        <svg
+                          className="h-4 w-4 group-open:rotate-180 transition-transform"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </summary>
+                      <ul className="ml-4 mt-2 space-y-2">
+                        {children.map((child) => {
+                          const childHref = getLinkHref(child);
+                          const childTarget = child.target === '_blank' ? '_blank' : '_self';
+                          return (
+                            <li key={child._id}>
+                              <Link
+                                href={childHref}
+                                target={childTarget}
+                                className="block py-2"
+                                onClick={toggleMenu}
+                              >
+                                {child.menu_name}
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </details>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>

@@ -1,16 +1,36 @@
 'use client';
 
 import AOS from "aos";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import 'aos/dist/aos.css';
 
 const AboutSection = () => {
+  const [about, setAbout] = useState(null);
+
   useEffect(() => {
     AOS.init({
       duration: 800,
       easing: 'ease-in-out',
     });
   }, []);
+
+  useEffect(() => {
+    const fetchAbout = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/about');
+        const data = await res.json();
+        setAbout(data);
+      } catch (error) {
+        console.error("Failed to fetch about data:", error);
+      }
+    };
+
+    fetchAbout();
+  }, []);
+
+  if (!about) {
+    return <section className="py-20 text-center text-gray-500">Loading...</section>;
+  }
 
   return (
     <section className="bg-[var(--background)] text-[var(--foreground)] py-20 transition-colors duration-300" data-aos="fade-up">
@@ -21,25 +41,12 @@ const AboutSection = () => {
             About Us
           </p>
           <h2 className="text-2xl md:text-2xl font-bold leading-tight">
-            We Build Real Value for Your Dream Living
+            {about.title}
           </h2>
-          <p className="text-[14px] leading-[20px] text-[var(--foreground)]/80">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua... Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-            proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-
-          <p className="text-[14px] leading-[20px] text-[var(--foreground)]/80">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua... Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-            proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </p>
+          <div
+  className="text-[14px] leading-[20px] text-[var(--foreground)]/80 space-y-4"
+  dangerouslySetInnerHTML={{ __html: about.description }}
+></div>
         </div>
       </div>
     </section>
