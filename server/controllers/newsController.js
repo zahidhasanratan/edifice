@@ -4,9 +4,16 @@ const News = require("../models/News");
 // @route POST /api/news
 exports.createNews = async (req, res) => {
   try {
-    const { title, publishDate, shortDetails, featuredPhoto, description } = req.body;
+    const {
+      title,
+      publishDate,
+      shortDetails,
+      featuredPhoto,
+      coverPhoto,
+      description,
+    } = req.body;
 
-    if (!title || !publishDate || !shortDetails || !featuredPhoto || !description) {
+    if (!title || !publishDate || !shortDetails || !featuredPhoto || !coverPhoto || !description) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -15,6 +22,7 @@ exports.createNews = async (req, res) => {
       publishDate,
       shortDetails,
       featuredPhoto,
+      coverPhoto,
       description,
     });
 
@@ -65,11 +73,25 @@ exports.getNewsById = async (req, res) => {
 // @route PUT /api/news/:id
 exports.updateNews = async (req, res) => {
   try {
-    const { title, publishDate, shortDetails, featuredPhoto, description } = req.body;
+    const {
+      title,
+      publishDate,
+      shortDetails,
+      featuredPhoto,
+      coverPhoto,
+      description,
+    } = req.body;
 
     const updated = await News.findByIdAndUpdate(
       req.params.id,
-      { title, publishDate, shortDetails, featuredPhoto, description },
+      {
+        title,
+        publishDate,
+        shortDetails,
+        featuredPhoto,
+        coverPhoto,
+        description,
+      },
       { new: true }
     );
 

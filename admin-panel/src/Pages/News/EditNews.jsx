@@ -11,15 +11,17 @@ const EditNews = () => {
     publishDate: '',
     shortDetails: '',
     featuredPhoto: '',
+    coverPhoto: '',
     description: '',
   });
 
-  const [newPhotoFile, setNewPhotoFile] = useState(null);
+  const [newFeaturedFile, setNewFeaturedFile] = useState(null);
+  const [newCoverFile, setNewCoverFile] = useState(null);
   const editorRef = useRef();
   const editorInstanceRef = useRef();
-  const [editorReady, setEditorReady] = useState(false); // ✅ flag to initialize editor only once with data
+  const [editorReady, setEditorReady] = useState(false);
 
-  // Step 1: Fetch data first
+  // Step 1: Fetch existing news data
   useEffect(() => {
     fetch(`http://localhost:5000/api/news/${id}`)
       .then((res) => res.json())
@@ -28,7 +30,7 @@ const EditNews = () => {
           ...data,
           publishDate: data.publishDate?.slice(0, 10),
         });
-        setEditorReady(true); // ✅ now CKEditor can safely initialize
+        setEditorReady(true);
       })
       .catch((err) => {
         console.error('Error fetching news:', err);
@@ -36,7 +38,7 @@ const EditNews = () => {
       });
   }, [id]);
 
-  // Step 2: Load CKEditor dynamically and bind it after data load
+  // Step 2: Load CKEditor dynamically
   useEffect(() => {
     const loadEditor = () => {
       if (!window.ClassicEditor) {
@@ -67,9 +69,7 @@ const EditNews = () => {
       }
     };
 
-    if (editorReady) {
-      loadEditor();
-    }
+    if (editorReady) loadEditor();
 
     return () => {
       if (editorInstanceRef.current) {
@@ -84,8 +84,12 @@ const EditNews = () => {
     setForm({ ...form, [name]: value });
   };
 
-  const handlePhotoChange = (e) => {
-    setNewPhotoFile(e.target.files[0]);
+  const handleFeaturedPhotoChange = (e) => {
+    setNewFeaturedFile(e.target.files[0]);
+  };
+
+  const handleCoverPhotoChange = (e) => {
+    setNewCoverFile(e.target.files[0]);
   };
 
   const uploadImageToImgbb = async (file) => {
@@ -106,14 +110,20 @@ const EditNews = () => {
     e.preventDefault();
 
     try {
-      let photoUrl = form.featuredPhoto;
-      if (newPhotoFile) {
-        photoUrl = await uploadImageToImgbb(newPhotoFile);
+      let featuredUrl = form.featuredPhoto;
+      let coverUrl = form.coverPhoto;
+
+      if (newFeaturedFile) {
+        featuredUrl = await uploadImageToImgbb(newFeaturedFile);
+      }
+      if (newCoverFile) {
+        coverUrl = await uploadImageToImgbb(newCoverFile);
       }
 
       const payload = {
         ...form,
-        featuredPhoto: photoUrl,
+        featuredPhoto: featuredUrl,
+        coverPhoto: coverUrl,
       };
 
       const res = await fetch(`http://localhost:5000/api/news/${id}`, {
@@ -169,21 +179,43 @@ const EditNews = () => {
           required
         ></textarea>
 
+        {/* Featured Photo */}
         {form.featuredPhoto && (
-          <img
-            src={form.featuredPhoto}
-            alt="Current"
-            className="object-cover w-40 h-24 border rounded"
-          />
+          <div>
+            <label className="block font-semibold">Current Featured Photo:</label>
+            <img
+              src={form.featuredPhoto}
+              alt="Featured"
+              className="object-cover w-40 h-24 mb-2 border rounded"
+            />
+          </div>
         )}
-
         <input
           type="file"
           accept="image/*"
-          onChange={handlePhotoChange}
+          onChange={handleFeaturedPhotoChange}
           className="w-full file-input file-input-bordered"
         />
 
+        {/* Cover Photo */}
+        {form.coverPhoto && (
+          <div>
+            <label className="block font-semibold">Current Cover Photo:</label>
+            <img
+              src={form.coverPhoto}
+              alt="Cover"
+              className="object-cover w-40 h-24 mb-2 border rounded"
+            />
+          </div>
+        )}
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleCoverPhotoChange}
+          className="w-full file-input file-input-bordered"
+        />
+
+        {/* Description */}
         <label className="font-medium">News Description</label>
         <div ref={editorRef} />
 

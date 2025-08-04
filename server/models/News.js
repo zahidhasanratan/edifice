@@ -18,6 +18,10 @@ const newsSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    coverPhoto: {
+      type: String,
+      required: true, // ✅ added coverPhoto as required
+    },
     description: {
       type: String,
       required: true,

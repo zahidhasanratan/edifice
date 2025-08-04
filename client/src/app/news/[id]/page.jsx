@@ -1,11 +1,16 @@
 'use client';
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import InnerHero from '@/components/Hero/InnerHero';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
 const NewsDetails = () => {
+  const { id } = useParams();
+  const [news, setNews] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     AOS.init({
       duration: 800,
@@ -15,14 +20,36 @@ const NewsDetails = () => {
     });
     document.title = "News | EDIFICE";
     window.scrollTo(0, 0);
-  }, []);
+
+    const fetchNews = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/news/${id}`);
+        const data = await res.json();
+        setNews(data);
+      } catch (err) {
+        console.error("Error fetching news:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) fetchNews();
+  }, [id]);
+
+  if (loading) {
+    return <div className="text-center py-20 text-gray-500">Loading...</div>;
+  }
+
+  if (!news) {
+    return <div className="text-center py-20 text-red-500">News not found.</div>;
+  }
 
   return (
     <>
       <InnerHero
         subtitle="Latest Releases"
-        title="News and events"
-        backgroundImage="/assets/images/hero/1.jpg"
+        title={news.title}
+        backgroundImage={news.coverPhoto || "/assets/images/hero/1.jpg"}
       />
 
       <section
@@ -34,8 +61,8 @@ const NewsDetails = () => {
           <div className="w-full md:w-4/5 mb-10">
             <div className="overflow-hidden shadow-md rounded-xl">
               <img
-                src="/assets/images/hero/1.jpg"
-                alt="News Header"
+                src={news.featuredPhoto}
+                alt={news.title}
                 className="w-full h-[350px] md:h-[550px] object-cover transition-all duration-300"
               />
             </div>
@@ -43,16 +70,12 @@ const NewsDetails = () => {
 
           <div className="w-full md:w-4/5">
             <h3 className="text-xl font-semibold mb-3" style={{ color: 'var(--foreground)' }}>
-              News Title Name Here
+              {news.title}
             </h3>
-            <p className="leading-relaxed mb-4" style={{ color: 'var(--muted-text)' }}>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-              tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-              quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-              consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-              cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-              proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
+            <div
+              className="leading-relaxed mb-4 prose prose-sm md:prose-lg dark:prose-invert max-w-none"
+              dangerouslySetInnerHTML={{ __html: news.description }}
+            />
           </div>
         </div>
       </section>

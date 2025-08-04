@@ -1,56 +1,15 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import InnerHero from '@/components/Hero/InnerHero';
-
-const newsItems = [
-  {
-    id: 1,
-    image: "/assets/images/news/1.jpg",
-    date: "June 30, 2025",
-    title: "Exciting Updates on Our Latest Projects",
-    link: "/news/1"
-  },
-  {
-    id: 2,
-    image: "/assets/images/news/2.jpg",
-    date: "June 28, 2025",
-    title: "Construction Milestones Reached",
-    link: "/news/2"
-  },
-  {
-    id: 3,
-    image: "/assets/images/news/3.jpg",
-    date: "June 25, 2025",
-    title: "CEO's Future Development Vision",
-    link: "/news/3"
-  },
-  {
-    id: 4,
-    image: "/assets/images/news/4.jpg",
-    date: "June 22, 2025",
-    title: "New Green Building Initiative",
-    link: "/news/4"
-  },
-  {
-    id: 5,
-    image: "/assets/images/news/5.jpg",
-    date: "June 20, 2025",
-    title: "Award-Winning Design Recognized",
-    link: "/news/5"
-  },
-  {
-    id: 6,
-    image: "/assets/images/news/6.jpg",
-    date: "June 18, 2025",
-    title: "Community Program Update",
-    link: "/news/6"
-  }
-];
+import Link from 'next/link';
 
 const News = () => {
+  const [newsItems, setNewsItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     AOS.init({
       duration: 800,
@@ -59,7 +18,27 @@ const News = () => {
     });
     document.title = "News | EDIFICE";
     window.scrollTo(0, 0);
+
+    fetch('http://localhost:5000/api/news')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.news && Array.isArray(data.news)) {
+          setNewsItems(data.news);
+        }
+      })
+      .catch((err) => {
+        console.error('Error fetching news:', err);
+      })
+      .finally(() => setLoading(false));
   }, []);
+
+  if (loading) {
+    return (
+      <section className="py-20 text-center text-gray-500">
+        Loading news...
+      </section>
+    );
+  }
 
   return (
     <>
@@ -78,14 +57,14 @@ const News = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {newsItems.map((item) => (
               <div
-                key={item.id}
+                key={item._id}
                 className="group rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl"
                 style={{ backgroundColor: 'var(--card-bg)', color: 'var(--foreground)' }}
               >
-                <a href={item.link} className="block">
+                <Link href={`/news/${item._id}`} className="block">
                   <div className="overflow-hidden h-60">
                     <img
-                      src={item.image}
+                      src={item.featuredPhoto}
                       alt={item.title}
                       className="w-full h-full object-cover transform transition duration-500 group-hover:scale-110"
                       loading="lazy"
@@ -93,13 +72,17 @@ const News = () => {
                   </div>
                   <div className="p-6">
                     <p className="text-sm mb-2" style={{ color: 'var(--muted-text)' }}>
-                      {item.date}
+                      {new Date(item.publishDate).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
                     </p>
                     <h3 className="text-xl font-semibold transition duration-300 group-hover:text-[#c20e35]">
                       {item.title}
                     </h3>
                   </div>
-                </a>
+                </Link>
               </div>
             ))}
           </div>

@@ -10,6 +10,7 @@ const AddNews = () => {
     publishDate: '',
     shortDetails: '',
     featuredPhoto: null,
+    coverPhoto: null,
     description: '',
   });
 
@@ -59,7 +60,8 @@ const AddNews = () => {
   };
 
   const handlePhotoChange = (e) => {
-    setForm({ ...form, featuredPhoto: e.target.files[0] });
+    const { name, files } = e.target;
+    setForm({ ...form, [name]: files[0] });
   };
 
   const uploadImageToImgbb = async (file) => {
@@ -80,16 +82,22 @@ const AddNews = () => {
     e.preventDefault();
 
     try {
-      let photoUrl = '';
+      let featuredPhotoUrl = '';
+      let coverPhotoUrl = '';
+
       if (form.featuredPhoto) {
-        photoUrl = await uploadImageToImgbb(form.featuredPhoto);
+        featuredPhotoUrl = await uploadImageToImgbb(form.featuredPhoto);
+      }
+      if (form.coverPhoto) {
+        coverPhotoUrl = await uploadImageToImgbb(form.coverPhoto);
       }
 
       const payload = {
         title: form.title,
         publishDate: form.publishDate,
         shortDetails: form.shortDetails,
-        featuredPhoto: photoUrl,
+        featuredPhoto: featuredPhotoUrl,
+        coverPhoto: coverPhotoUrl,
         description: form.description,
       };
 
@@ -146,12 +154,29 @@ const AddNews = () => {
           required
         ></textarea>
 
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handlePhotoChange}
-          className="w-full file-input file-input-bordered"
-        />
+        {/* Featured Photo */}
+        <div>
+          <label className="block mb-1 font-medium">Featured Photo</label>
+          <input
+            type="file"
+            accept="image/*"
+            name="featuredPhoto"
+            onChange={handlePhotoChange}
+            className="w-full file-input file-input-bordered"
+          />
+        </div>
+
+        {/* Cover Photo */}
+        <div>
+          <label className="block mb-1 font-medium">Cover Photo</label>
+          <input
+            type="file"
+            accept="image/*"
+            name="coverPhoto"
+            onChange={handlePhotoChange}
+            className="w-full file-input file-input-bordered"
+          />
+        </div>
 
         <label className="font-medium">News Description</label>
         <div ref={editorRef} />
