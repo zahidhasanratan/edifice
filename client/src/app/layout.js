@@ -21,12 +21,52 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-// ✅ Metadata for title, description, favicon
+// ✅ SEO Metadata
 export const metadata = {
-  title: 'EDIFICE',
-  description: 'Benchmark of Excellence',
+  title: {
+    default: 'EDIFICE',
+    template: '%s | EDIFICE',
+  },
+  description:
+    'EDIFICE is the benchmark of excellence in real estate and architecture, crafting visionary living spaces.',
+  keywords: [
+    'EDIFICE',
+    'Architecture',
+    'Real Estate',
+    'Luxury Living',
+    'Interior Design',
+    'Modern Homes',
+  ],
+  authors: [{ name: 'EDIFICE Team', url: 'https://edificerealtybdopc.com' }],
+  creator: 'EDIFICE',
+  publisher: 'EDIFICE',
+  metadataBase: new URL('https://edificerealtybdopc.com'),
+  openGraph: {
+    title: 'EDIFICE – Benchmark of Excellence',
+    description:
+      'Discover luxury architecture, innovative living, and design excellence with EDIFICE.',
+    url: 'https://edificerealtybdopc.com',
+    siteName: 'EDIFICE',
+    images: [
+      {
+        url: '/og-image.jpg', 
+        width: 1200,
+        height: 630,
+        alt: 'EDIFICE Preview Image',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'EDIFICE – Benchmark of Excellence',
+    description: 'Explore modern living and visionary design with EDIFICE.',
+    images: ['/og-image.jpg'], // Same image
+    creator: '@edifice_official', // 🔁 Optional: update with your Twitter/X handle
+  },
   icons: {
-    icon: '/favicon.ico', // MUST exist in /public
+    icon: '/favicon.ico', // 🔁 Must be placed in /public
   },
 };
 
