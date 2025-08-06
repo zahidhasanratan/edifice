@@ -30,7 +30,7 @@ const GalleryAlbum = () => {
     } catch (error) {
       console.error('Error fetching albums:', error);
     } finally {
-      setLoading(false);
+      setTimeout(() => setLoading(false), 300); // slight delay for smoother loading
     }
   };
 
@@ -40,7 +40,7 @@ const GalleryAlbum = () => {
 
   return (
     <>
-      <InnerHero subtitle="Our" title="GALLERY" backgroundImage="" />
+      <InnerHero subtitle="Our" title="GALLERY" backgroundImage="/assets/images/hero/gallery.jpg" />
 
       <section
         data-aos="fade-up"
@@ -49,7 +49,14 @@ const GalleryAlbum = () => {
       >
         <div className="max-w-7xl mx-auto">
           {loading ? (
-            <p className="text-center text-lg">Loading...</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 animate-pulse">
+              {[...Array(6)].map((_, index) => (
+                <div
+                  key={index}
+                  className="rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-700 h-72"
+                />
+              ))}
+            </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {albums.map((album) => (

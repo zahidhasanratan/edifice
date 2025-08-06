@@ -8,6 +8,7 @@ import ContactForm from '@/components/common/ContactForm';
 
 const ContactPage = () => {
   const [contactData, setContactData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
@@ -22,11 +23,32 @@ const ContactPage = () => {
       setContactData(data);
     } catch (err) {
       console.error('Failed to load contact info:', err);
+    } finally {
+      setTimeout(() => setIsLoading(false), 300);
     }
   };
 
-  if (!contactData) {
-    return <p className="text-center py-20">Loading contact information...</p>;
+  if (isLoading || !contactData) {
+    return (
+      <main>
+        <InnerHero
+          subtitle="Get In Touch"
+          title="Contact Us"
+          backgroundImage="/assets/images/hero/contact.jpg"
+        />
+
+        <section className="bg-white text-black dark:bg-black dark:text-white max-w-6xl mx-auto grid md:grid-cols-2 gap-10 px-6 py-16 animate-pulse">
+          <div className="space-y-8">
+            <div className="h-6 w-2/3 bg-gray-300 dark:bg-gray-700 rounded" />
+            <div className="h-4 w-full bg-gray-200 dark:bg-gray-800 rounded" />
+            <div className="h-4 w-5/6 bg-gray-200 dark:bg-gray-800 rounded" />
+            <div className="h-4 w-4/6 bg-gray-200 dark:bg-gray-800 rounded" />
+            <div className="h-4 w-1/2 bg-gray-200 dark:bg-gray-800 rounded" />
+          </div>
+          <div className="w-full h-[350px] bg-gray-200 dark:bg-gray-800 rounded-xl" />
+        </section>
+      </main>
+    );
   }
 
   return (

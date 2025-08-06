@@ -2,19 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import AOS from 'aos';
+import Image from 'next/image';
 import 'aos/dist/aos.css';
 
 const TeamSection = () => {
   const [teamMembers, setTeamMembers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    AOS.init({
-      duration: 800,
-      easing: 'ease-in-out',
-    });
-  }, []);
+    AOS.init({ duration: 800, easing: 'ease-in-out' });
 
-  useEffect(() => {
     const fetchTeam = async () => {
       try {
         const res = await fetch('http://localhost:5000/api/team');
@@ -23,6 +20,8 @@ const TeamSection = () => {
         setTeamMembers(sorted);
       } catch (error) {
         console.error('Failed to fetch team members:', error);
+      } finally {
+        setTimeout(() => setIsLoading(false), 300);
       }
     };
 
@@ -35,6 +34,7 @@ const TeamSection = () => {
       className="py-16 bg-[var(--background)] text-[var(--foreground)] transition-colors duration-300"
     >
       <div className="max-w-7xl mx-auto px-4 text-center">
+        {/* Header */}
         <div className="text-center mb-10" data-aos="fade-up">
           <p className="text-[#c20e35] text-sm uppercase tracking-wider relative inline-block mb-2 before:content-[''] before:absolute before:-left-4 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-2 before:bg-[#c20e35] before:rounded-full">
             Team
@@ -44,28 +44,39 @@ const TeamSection = () => {
           </h2>
         </div>
 
+        {/* Team Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {teamMembers.map((member, index) => (
-            <div
-              key={member._id}
-              className="group relative overflow-hidden"
-              data-aos="fade-up"
-              data-aos-delay={(index % 4) * 100}
-            >
-              <div className="relative rounded-lg overflow-hidden shadow-lg transition-transform duration-300 transform group-hover:scale-105 cursor-pointer">
-                <img
-                  src={member.photo}
-                  alt={member.name}
-                  className="w-full h-[400px] md:h-[350px] object-cover"
-                  loading="lazy"
+          {isLoading
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="w-full h-[400px] bg-gray-300 dark:bg-gray-700 rounded-lg animate-pulse"
                 />
-                <div className="absolute bottom-0 left-0 w-full bg-[var(--foreground)]/90 text-[var(--background)] p-4 transition-all duration-300 group-hover:bg-opacity-100">
-                  <h3 className="text-lg font-semibold">{member.name}</h3>
-                  <p className="text-sm text-[#c20e35]">{member.designation}</p>
+              ))
+            : teamMembers.map((member, index) => (
+                <div
+                  key={member._id}
+                  className="group relative overflow-hidden"
+                  data-aos="fade-up"
+                  data-aos-delay={(index % 4) * 100}
+                >
+                  <div className="relative rounded-lg overflow-hidden shadow-lg transition-transform duration-300 transform group-hover:scale-105 cursor-pointer">
+                    <div className="relative w-full h-[400px] md:h-[350px]">
+                      <Image
+                        src={member.photo || '/fallback.jpg'}
+                        alt={member.name}
+                        fill
+                        className="object-cover"
+                        unoptimized // optional if image from external domain
+                      />
+                    </div>
+                    <div className="absolute bottom-0 left-0 w-full bg-[var(--foreground)]/90 text-[var(--background)] p-4 transition-all duration-300 group-hover:bg-opacity-100">
+                      <h3 className="text-lg font-semibold">{member.name}</h3>
+                      <p className="text-sm text-[#c20e35]">{member.designation}</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              ))}
         </div>
       </div>
     </section>

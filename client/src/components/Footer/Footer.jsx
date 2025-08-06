@@ -6,6 +6,7 @@ import Link from 'next/link';
 const Footer = () => {
   const [contact, setContact] = useState(null);
   const [footerMenus, setFooterMenus] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchContact = async () => {
@@ -29,14 +30,36 @@ const Footer = () => {
       }
     };
 
-    fetchContact();
-    fetchMenus();
+    const load = async () => {
+      await Promise.all([fetchContact(), fetchMenus()]);
+      setTimeout(() => setIsLoading(false), 300); // smooth transition
+    };
+
+    load();
   }, []);
 
-  if (!contact) {
+  if (isLoading || !contact) {
     return (
-      <footer className="py-20 text-center text-sm text-gray-400 animate-pulse">
-        Loading contact information...
+      <footer className="py-20 px-4 animate-pulse bg-[var(--background)] text-[var(--foreground)]">
+        <div className="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
+          <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-32 mb-2"></div>
+
+          <div className="space-y-2">
+            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-20"></div>
+            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-24"></div>
+            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-28"></div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-28"></div>
+            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-24"></div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-full"></div>
+            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-2/3"></div>
+          </div>
+        </div>
       </footer>
     );
   }
@@ -151,7 +174,6 @@ const Footer = () => {
                   href={`mailto:${contact.email}`}
                   className="hover:text-[#c20e35]"
                 >
-                  {' '}
                   {contact.email}
                 </a>
               </li>

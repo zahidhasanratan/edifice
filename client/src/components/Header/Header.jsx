@@ -37,9 +37,9 @@ const Header = () => {
     menus.filter(menu => menu.parent === parentId);
 
   const getLinkHref = (menu) => {
-    if (menu.page_type === 'url') {
-      return `/${menu.external_link}`;
-    } else if (menu.page_type === 'external') {
+    if (menu.page_type === 'page') {
+      return `/page/${menu.slug}`;
+    } else if (menu.page_type === 'external' || menu.page_type === 'url') {
       return menu.external_link;
     }
     return '#';
@@ -52,7 +52,7 @@ const Header = () => {
           isMenuOpen ? 'bg-black' : scrolled ? 'bg-black/80 backdrop-blur-sm' : 'bg-black/10'
         }`}
       >
-        <nav className="flex items-center justify-between px-6 py-1 relative">
+        <nav className="relative flex items-center justify-between px-6 py-1">
           <div className="z-50 max-w-[250px]">
             <Link href="/" className="inline-block">
               <img
@@ -63,7 +63,7 @@ const Header = () => {
             </Link>
           </div>
 
-          <div className="flex items-center gap-4 z-50">
+          <div className="z-50 flex items-center gap-4">
             <div className="relative w-[200px] hidden md:block">
               <input
                 type="text"
@@ -71,7 +71,7 @@ const Header = () => {
                 className="w-full border border-white bg-transparent text-white rounded-[30px] px-3 pr-10 py-1 text-sm placeholder-white focus:outline-none"
               />
               <svg
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-white pointer-events-none"
+                className="absolute w-4 h-4 text-white -translate-y-1/2 pointer-events-none right-2 top-1/2"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -109,23 +109,22 @@ const Header = () => {
         />
 
         {/* Slide Menu */}
-
-
-
         <div
           className={`fixed top-0 right-0 h-full w-[80%] max-w-xs bg-black text-white z-50 transform transition-transform duration-500 ease-in-out ${
             isMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
           <div className="flex justify-end px-6 py-4">
-            <button className="text-white text-2xl" onClick={toggleMenu}>
+            <button className="text-2xl text-white" onClick={toggleMenu}>
               ×
             </button>
           </div>
           <div className="h-[calc(100%-60px)] overflow-y-auto">
             <ul className="px-6 pb-8 space-y-2">
-             <li>
-                <Link href="/" className="block py-2" onClick={toggleMenu}>Home</Link>
+              <li>
+                <Link href="/" className="block py-2" onClick={toggleMenu}>
+                  Home
+                </Link>
               </li>
 
               {mainMenus.map((menu) => {
@@ -151,10 +150,10 @@ const Header = () => {
                 return (
                   <li key={menu._id}>
                     <details className="group">
-                      <summary className="flex justify-between items-center cursor-pointer py-2">
+                      <summary className="flex items-center justify-between py-2 cursor-pointer">
                         {menu.menu_name}
                         <svg
-                          className="h-4 w-4 group-open:rotate-180 transition-transform"
+                          className="w-4 h-4 transition-transform group-open:rotate-180"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -167,7 +166,7 @@ const Header = () => {
                           />
                         </svg>
                       </summary>
-                      <ul className="ml-4 mt-2 space-y-2">
+                      <ul className="mt-2 ml-4 space-y-2">
                         {children.map((child) => {
                           const childHref = getLinkHref(child);
                           const childTarget = child.target === '_blank' ? '_blank' : '_self';

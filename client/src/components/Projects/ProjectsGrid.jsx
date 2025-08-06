@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import AOS from 'aos';
+import Image from 'next/image';
 import 'aos/dist/aos.css';
 
 const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
   const [projects, setProjects] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     AOS.init({
@@ -19,17 +21,18 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
         const res = await fetch('http://localhost:5000/api/projects');
         const data = await res.json();
 
-        // ✅ Filter by projectType if "type" is provided
-        const filteredProjects = type
+        const filtered = type
           ? data.filter(
               (project) =>
                 project.projectType?.toLowerCase() === type.toLowerCase()
             )
           : data;
 
-        setProjects(filteredProjects);
+        setProjects(filtered);
       } catch (err) {
         console.error('Failed to fetch projects:', err);
+      } finally {
+        setTimeout(() => setIsLoading(false), 300); // smoother loading
       }
     };
 
@@ -58,28 +61,44 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
 
         {/* Project Grid */}
         <div className="-mx-4 flex flex-wrap justify-center">
-          {projects.length > 0 ? (
+          {isLoading ? (
+            // Skeleton loader
+            Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="w-full px-4 md:w-1/2 lg:w-1/3 animate-pulse"
+              >
+                <div className="mx-auto mb-10 max-w-[380px] bg-gray-200 dark:bg-gray-800 h-[300px] rounded-lg" />
+              </div>
+            ))
+          ) : projects.length > 0 ? (
             projects.map((project) => (
               <div key={project._id} className="w-full px-4 md:w-1/2 lg:w-1/3">
                 <div
                   className="group mx-auto mb-10 max-w-[380px] text-center md:mb-16"
                   data-aos="fade-up"
                 >
-                  <div className="bg-[var(--background)] text-[var(--foreground)] shadow-lg overflow-hidden group cursor-pointer transition-colors duration-300">
+                  <div className="bg-[var(--background)] text-[var(--foreground)] shadow-lg overflow-hidden transition-colors duration-300 rounded-lg group cursor-pointer">
                     <a href={`/projects/${project._id}`} className="block">
-                      <div className="overflow-hidden">
-                        <img
-                          src={project.featureImage}
+                      <div className="relative w-full h-[250px] overflow-hidden">
+                        <Image
+                          src={project.featureImage || '/fallback.jpg'}
                           alt={project.title}
-                          className="w-full max-h-[450px] object-cover transition-transform group-hover:scale-110 duration-1000 ease-in-out"
+                          fill
+                          className="object-cover transition-transform group-hover:scale-110 duration-1000 ease-in-out"
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          unoptimized // optional if not using internal image domain
+                          priority
                         />
                       </div>
                       <div className="p-5">
                         <h3 className="text-xl font-semibold group-hover:text-[#c20e35] transition duration-300">
                           {project.title}
                         </h3>
-                        <p className="mt-1">
-                          {project.address || project.exactLocation || 'No location available'}
+                        <p className="mt-1 text-sm text-[var(--foreground)]/70">
+                          {project.address ||
+                            project.exactLocation ||
+                            'No location available'}
                         </p>
                       </div>
                     </a>

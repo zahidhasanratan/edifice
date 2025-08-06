@@ -8,6 +8,7 @@ const HeroSlider = () => {
   const [slides, setSlides] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Fetch slides from API
   useEffect(() => {
@@ -15,9 +16,12 @@ const HeroSlider = () => {
       try {
         const res = await fetch('http://localhost:5000/api/sliders');
         const data = await res.json();
-        setSlides(data.filter(slide => slide.status === true)); // only active
+        const activeSlides = data.filter(slide => slide.status === true);
+        setSlides(activeSlides);
       } catch (error) {
         console.error('Failed to fetch slides:', error);
+      } finally {
+        setTimeout(() => setIsLoading(false), 500); // smooth transition
       }
     };
 
@@ -79,8 +83,21 @@ const HeroSlider = () => {
     },
   };
 
-  if (slides.length === 0) {
-    return <div className="h-[300px] flex items-center justify-center">Loading...</div>;
+  // ✅ Skeleton loading UI
+  if (isLoading || slides.length === 0) {
+    return (
+      <div className="relative w-full h-[250px] md:h-screen bg-gray-200 dark:bg-gray-900 overflow-hidden">
+        {/* Simulated background shimmer */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-300 to-gray-100 dark:from-gray-800 dark:to-gray-700 animate-pulse" />
+
+        {/* Simulated text blocks */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center space-y-4">
+          <div className="w-2/3 md:w-1/3 h-5 bg-gray-300 dark:bg-gray-600 rounded"></div>
+          <div className="w-3/4 md:w-2/4 h-8 bg-gray-300 dark:bg-gray-700 rounded"></div>
+          <div className="w-16 h-[2px] bg-gray-400 dark:bg-gray-600 rounded"></div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -88,7 +105,7 @@ const HeroSlider = () => {
       <div>
         <AnimatePresence custom={1} initial={false}>
           <motion.div
-            key={slides[currentSlide]._id}
+            key={slides[currentSlide]?._id}
             className="absolute inset-0 w-full h-full"
             custom={1}
             variants={slideVariants}
@@ -98,11 +115,10 @@ const HeroSlider = () => {
           >
             {/* Background image */}
             <Image
-              src={slides[currentSlide].image}
-              alt={slides[currentSlide].title}
+              src={slides[currentSlide]?.image || '/fallback.jpg'}
+              alt={slides[currentSlide]?.title || 'Hero Image'}
               layout="fill"
               objectFit="cover"
-              unoptimized // 👈 Important for external images (or set domain in next.config.js)
               priority
             />
 
@@ -120,14 +136,14 @@ const HeroSlider = () => {
                   className="text-white text-2xl md:text-3xl uppercase tracking-wider mb-2"
                   variants={textVariants}
                 >
-                  {slides[currentSlide].title}
+                  {slides[currentSlide]?.title}
                 </motion.h2>
 
                 <motion.span
                   className="block text-white text-3xl md:text-6xl leading-tight"
                   variants={textVariants}
                 >
-                  {slides[currentSlide].subtitle}
+                  {slides[currentSlide]?.subtitle}
                 </motion.span>
 
                 <motion.div
