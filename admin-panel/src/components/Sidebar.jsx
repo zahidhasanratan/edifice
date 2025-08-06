@@ -317,7 +317,34 @@ const Sidebar = () => {
             </ul>
           </details>
         </li>
- 
+  {/* Career - Collapsible Submenu */}
+        <li>
+          <details className="group">
+            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
+  <FaNewspaper className="mr-2" /> Career
+</summary>
+            <ul className="pl-8 space-y-1">
+              <li>
+                <Link
+                  to="/career/add"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/career/add")}`}
+                >
+                  <FaPlus className="mr-2" /> Add Career
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/career"
+                  onClick={closeDrawerOnMobile}
+                  className={`btn btn-ghost w-full justify-start ${isActive("/career")}`}
+                >
+                  <FaThList className="mr-2" /> All Career
+                </Link>
+              </li>
+            </ul>
+          </details>
+        </li>
  {/* Others - Collapsible Submenu */}
         <li>
           <details className="group">

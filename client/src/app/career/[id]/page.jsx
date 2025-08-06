@@ -1,118 +1,89 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import InnerHero from '@/components/Hero/InnerHero';
 
 const JobDetailsPage = () => {
+  const { id } = useParams();
   const router = useRouter();
-  const params = useParams();
-  const id = params?.id;
+  const [job, setJob] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     AOS.init({ duration: 800, easing: 'ease-in-out' });
     document.title = 'Career | EDIFICE';
     window.scrollTo(0, 0);
+    fetchJobDetails();
   }, []);
 
-  const jobData = {
-    id,
-    title: "Sr. Executive/Assistant Manager",
-    location: "Head Office",
-    postedDate: "December 27, 2021",
-    deadline: "January 2, 2022",
-    description: [
-      "We are looking for an experienced professional to join our team as a Senior Executive/Assistant Manager.",
-      "The ideal candidate will have excellent organizational skills and the ability to manage multiple tasks simultaneously.",
-      "This position requires strong communication skills and the ability to work collaboratively across departments.",
-    ],
-    responsibilities: [
-      "Receive and deliver materials in FIFO method.",
-      "Prepare the indent and inventorial works combination with all maintenance section.",
-      "Prepare daily store statement and update stock register.",
-      "Observe and monitor the local purchase, bill entry, IOU Adjust etc in emergency time.",
-      "Ensure maximum use of all material and reserve store related documents.",
-    ],
-    requirements: [
-      "Knowledge on material distribution.",
-      "Excellent Writing Skill in English and Bengali",
-      "Basic knowledge on computer applications",
-      "Inventory Management knowledge",
-      "3+ years of relevant experience",
-    ],
-    benefits:
-      "Festival Bonus, Contributory Provident Fund, Gratuity, Health & Life Insurance and others as per organisation policy.",
-    summary: {
-      published: "27 Dec 2025",
-      vacancy: "01",
-      employmentStatus: "Full-time",
-      experience: "3 to 4 year(s)",
-      age: "24 to 36 years",
-      jobLocation: "Dhaka",
-      salary: "Negotiable",
-      deadline: "27 Jan 2026",
-    },
+  const fetchJobDetails = async () => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/careers/${id}`);
+      const data = await res.json();
+      setJob(data);
+    } catch (err) {
+      console.error('Error fetching job details:', err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loading) return <p className="py-10 text-center text-gray-500">Loading job details...</p>;
+  if (!job) return <p className="py-10 text-center text-red-500">Job not found</p>;
 
   return (
     <>
       <InnerHero subtitle="Latest Releases" title="Career" backgroundImage="" />
+
       <section
         data-aos="fade-up"
-        className="py-16 px-4 md:px-10 transition-colors duration-300 ease-in-out"
+        className="px-4 py-16 transition-colors duration-300 ease-in-out md:px-10"
         style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
       >
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col lg:flex-row gap-8">
+        <div className="container px-4 mx-auto">
+          <div className="flex flex-col gap-8 lg:flex-row">
             {/* Main Content */}
             <div className="lg:w-3/4">
               <div
-                className="p-6 sm:p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
+                className="max-w-4xl p-6 mx-auto rounded-lg shadow-lg sm:p-8"
                 style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
               >
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-4">
-                  {jobData.title}
+                <h1 className="mb-4 text-xl font-semibold sm:text-2xl md:text-3xl">
+                  {job.title}
                 </h1>
 
-                <div className="text-sm space-y-1 mb-4 text-gray-600 dark:text-gray-400">
-                  <p><strong>Location:</strong> {jobData.location}</p>
-                  <p><strong>Date Posted:</strong> {jobData.postedDate}</p>
-                  <p><strong>Last Date of Application:</strong> {jobData.deadline}</p>
+                <div className="mb-4 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                  <p><strong>Location:</strong> {job.location}</p>
+                  <p><strong>Job Function:</strong> {job.jobFunction}</p>
+                  <p><strong>Job Type:</strong> {job.jobType}</p>
                 </div>
 
-                <div className="text-base space-y-4 mb-6 text-gray-700 dark:text-gray-300">
-                  {jobData.description.map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
-                  ))}
-                </div>
+                {job.description && (
+                  <div className="mb-6 space-y-2 text-base text-gray-700 dark:text-gray-300">
+                    <h2 className="mb-2 text-lg font-semibold">Description</h2>
+                    <div dangerouslySetInnerHTML={{ __html: job.description }} />
+                  </div>
+                )}
 
-                <div className="mb-6">
-                  <h2 className="text-lg font-semibold mb-2">Key Responsibilities</h2>
-                  <ul className="list-disc list-inside space-y-1 text-gray-700 dark:text-gray-300">
-                    {jobData.responsibilities.map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="mb-6">
-                  <h2 className="text-lg font-semibold mb-2">Job Requirements</h2>
-                  <ul className="list-disc list-inside space-y-1 text-gray-700 dark:text-gray-300">
-                    {jobData.requirements.map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
+                {job.job_summary && (
+                  <div className="mb-6 space-y-2 text-base text-gray-700 dark:text-gray-300">
+                    <h2 className="mb-2 text-lg font-semibold">Job Summary</h2>
+                    <div dangerouslySetInnerHTML={{ __html: job.job_summary }} />
+                  </div>
+                )}
 
                 <div className="mb-8">
-                  <h2 className="text-lg font-semibold mb-2">Benefits</h2>
-                  <p className="text-gray-700 dark:text-gray-300">{jobData.benefits}</p>
+                  <h2 className="mb-2 text-lg font-semibold">Benefits</h2>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    Festival Bonus, Contributory Provident Fund, Gratuity, Health & Life Insurance and others as per organisation policy.
+                  </p>
                 </div>
 
                 <button
-                  onClick={() => router.push(`/career/${id}/apply`)}
+                  onClick={() => router.push(`/career/${job._id}/apply`)}
                   className="flex items-center gap-2 px-6 py-2 bg-[#c20e35] text-white text-sm sm:text-base font-semibold rounded-xl hover:bg-indigo-900 transition-colors"
                 >
                   Apply Now
@@ -138,12 +109,11 @@ const JobDetailsPage = () => {
               >
                 <h3 className="text-lg text-white bg-[#c20e35] p-3 rounded-md mb-4">Job Summary</h3>
                 <div className="space-y-3">
-                  {Object.entries(jobData.summary).map(([key, value]) => (
-                    <div key={key}>
-                      <span className="font-medium capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
-                      <span className="text-gray-600 dark:text-gray-400"> {value}</span>
-                    </div>
-                  ))}
+                  <div><strong>Title:</strong> {job.title}</div>
+                  <div><strong>Location:</strong> {job.location}</div>
+                  <div><strong>Job Function:</strong> {job.jobFunction}</div>
+                  <div><strong>Job Type:</strong> {job.jobType}</div>
+                  <div><strong>Application Link:</strong> <a href={job.link} className="text-blue-600 underline" target="_blank" rel="noreferrer">Click Here</a></div>
                 </div>
               </div>
             </div>

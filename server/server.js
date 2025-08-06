@@ -1,6 +1,8 @@
+// server.js
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const path = require("path");
 require("dotenv").config();
 
 const app = express();
@@ -8,12 +10,13 @@ const app = express();
 // ========== Middlewares ==========
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// ✅ Serve uploaded resume files if needed (optional)
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ========== MongoDB Connection ==========
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
@@ -28,10 +31,13 @@ const albumRoutes = require("./routes/albumRoutes");
 const photoRoutes = require("./routes/photoRoutes");
 const mediaRoutes = require("./routes/mediaRoutes");
 const aboutRoutes = require("./routes/aboutRoutes");
-const contactMailRoutes = require("./routes/contactMailRoutes"); // ✅ updated
+const contactMailRoutes = require("./routes/contactMailRoutes");
 const menuRoutes = require("./routes/menuRoutes");
 const visitorRoutes = require("./routes/visitorRoutes");
 const contactInfoRoutes = require('./routes/contactInfo.route');
+const careerRoutes = require('./routes/careerRoutes');
+const careerApplicationRoutes = require('./routes/careerApplicationRoutes');
+
 // ========== API Routes ==========
 app.use("/api/pages", pageRoutes);
 app.use("/api/sliders", sliderRoutes);
@@ -43,10 +49,12 @@ app.use("/api/albums", albumRoutes);
 app.use("/api/photos", photoRoutes);
 app.use("/api/media", mediaRoutes);
 app.use("/api/about", aboutRoutes);
-app.use("/api/contact", contactMailRoutes); // ✅ correct usage
+app.use("/api/contact", contactMailRoutes);
 app.use("/api/menus", menuRoutes);
 app.use("/api/visitors", visitorRoutes);
-app.use('/api/contactInfo', contactInfoRoutes);
+app.use("/api/contactInfo", contactInfoRoutes);
+app.use("/api/careers", careerRoutes);
+app.use("/api/career-applications", careerApplicationRoutes);
 
 // ========== Root Route ==========
 app.get("/", (req, res) => {

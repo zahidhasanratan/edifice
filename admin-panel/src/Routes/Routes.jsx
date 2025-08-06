@@ -39,6 +39,10 @@ import  AllMenu  from "../Pages/Menu/AllMenu";
 import  AddPage  from "../Pages/Page/AddPage";
 import { EditPage } from "../Pages/Page/EditPage";
 import { AllPage } from "../Pages/Page/AllPage";
+import  AddCareer  from "../Pages/Career/AddCareer";
+import  EditCareer  from "../Pages/Career/EditCareer";
+import { AllCareer } from "../Pages/Career/AllCareer";
+import { CareerApplicant } from "../Pages/Career/CareerApplicant";
 
 export const router = createBrowserRouter([
   {
@@ -91,6 +95,11 @@ export const router = createBrowserRouter([
       { path: "/photo/add", element: <AddPhoto /> },
       { path: "/photos/edit/:id", element: <EditPhoto /> },
       { path: "/photos", element: <AllPhoto /> },
+
+       { path: "/career/add", element: <AddCareer /> },
+      { path: "/career/edit/:id", element: <EditCareer /> },
+      { path: "/career", element: <AllCareer /> },
+      { path: "/career/applicant/:id", element: <CareerApplicant /> },
 
 
       { path: "/media", element: <MediaGallery /> },
