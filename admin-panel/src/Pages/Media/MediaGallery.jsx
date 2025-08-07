@@ -25,7 +25,7 @@ export const MediaGallery = () => {
 
   const fetchMedia = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/media');
+      const res = await fetch('https://edifice-tau.vercel.app/api/media');
       const data = await res.json();
       setMedia(data);
     } catch (err) {
@@ -43,7 +43,7 @@ export const MediaGallery = () => {
       formData.append('file', file);
       formData.append('title', title);
 
-      const res = await fetch('http://localhost:5000/api/media', {
+      const res = await fetch('https://edifice-tau.vercel.app/api/media', {
         method: 'POST',
         body: formData,
       });
@@ -74,7 +74,7 @@ export const MediaGallery = () => {
       confirmButtonText: 'Delete',
     });
     if (confirm.isConfirmed) {
-      await fetch(`http://localhost:5000/api/media/${id}`, { method: 'DELETE' });
+      await fetch(`https://edifice-tau.vercel.app/api/media/${id}`, { method: 'DELETE' });
       fetchMedia();
     }
   };

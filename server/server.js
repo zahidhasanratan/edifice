@@ -1,4 +1,3 @@
-// server.js
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -7,20 +6,40 @@ require("dotenv").config();
 
 const app = express();
 
-// ========== Middlewares ==========
-app.use(cors());
+// ✅ Parse allowed origins from .env
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim())
+  : [];
+
+// ✅ CORS Configuration
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like Postman, mobile apps)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
+// ✅ Body Parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ Serve uploaded resume files if needed (optional)
+// ✅ Optional: Serve uploaded resume files if needed
 // app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// ========== MongoDB Connection ==========
-mongoose.connect(process.env.MONGO_URI)
+// ✅ MongoDB Connection
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
-// ========== Route Imports ==========
+// ✅ Route Imports
 const pageRoutes = require("./routes/pageRoutes");
 const sliderRoutes = require("./routes/sliderRoutes");
 const testimonialRoutes = require("./routes/testimonialRoutes");
@@ -34,11 +53,11 @@ const aboutRoutes = require("./routes/aboutRoutes");
 const contactMailRoutes = require("./routes/contactMailRoutes");
 const menuRoutes = require("./routes/menuRoutes");
 const visitorRoutes = require("./routes/visitorRoutes");
-const contactInfoRoutes = require('./routes/contactInfo.route');
-const careerRoutes = require('./routes/careerRoutes');
-const careerApplicationRoutes = require('./routes/careerApplicationRoutes');
+const contactInfoRoutes = require("./routes/contactInfo.route");
+const careerRoutes = require("./routes/careerRoutes");
+const careerApplicationRoutes = require("./routes/careerApplicationRoutes");
 
-// ========== API Routes ==========
+// ✅ API Routes
 app.use("/api/pages", pageRoutes);
 app.use("/api/sliders", sliderRoutes);
 app.use("/api/testimonials", testimonialRoutes);
@@ -56,17 +75,19 @@ app.use("/api/contactInfo", contactInfoRoutes);
 app.use("/api/careers", careerRoutes);
 app.use("/api/career-applications", careerApplicationRoutes);
 
-// ========== Root Route ==========
+// ✅ Root Route
 app.get("/", (req, res) => {
   res.send("🚀 API Server is running...");
 });
 
-// ========== Error Handler ==========
+// ✅ Error Handler
 app.use((err, req, res, next) => {
   console.error("Unhandled Error:", err.stack);
-  res.status(500).json({ message: "Something went wrong!", error: err.message });
+  res
+    .status(500)
+    .json({ message: "Something went wrong!", error: err.message });
 });
 
-// ========== Start Server ==========
+// ✅ Start Server
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`🚀 Server running on port ${port}`));

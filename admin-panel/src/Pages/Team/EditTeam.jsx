@@ -17,7 +17,7 @@ const EditTeam = () => {
   useEffect(() => {
     const fetchMember = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/team/${id}`);
+        const res = await fetch(`https://edifice-tau.vercel.app/api/team/${id}`);
         const data = await res.json();
         setForm({
           name: data.name,
@@ -73,7 +73,7 @@ const EditTeam = () => {
       photo: photoUrl,
     };
 
-    const res = await fetch(`http://localhost:5000/api/team/${id}`, {
+    const res = await fetch(`https://edifice-tau.vercel.app//api/team/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

@@ -20,7 +20,7 @@ const EditSlider = () => {
   useEffect(() => {
     const fetchSlider = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/sliders/${id}`);
+        const res = await fetch(`https://edifice-tau.vercel.app/api/sliders/${id}`);
         const data = await res.json();
         setSlider(data);
         setTitle(data.title || "");
@@ -61,7 +61,7 @@ const EditSlider = () => {
         image: imageUrl,
       };
 
-      const res = await fetch(`http://localhost:5000/api/sliders/${id}`, {
+      const res = await fetch(`https://edifice-tau.vercel.app/api/sliders/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedSlider),
@@ -88,16 +88,16 @@ const EditSlider = () => {
     }
   };
 
-  if (!slider) return <p className="text-center mt-10">Loading...</p>;
+  if (!slider) return <p className="mt-10 text-center">Loading...</p>;
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow rounded">
-      <h2 className="text-2xl font-bold mb-4 text-center">Edit Slider</h2>
+    <div className="max-w-xl p-6 mx-auto mt-10 bg-white rounded shadow">
+      <h2 className="mb-4 text-2xl font-bold text-center">Edit Slider</h2>
       <form onSubmit={handleUpdate} className="space-y-4">
         <input
           type="text"
           placeholder="Title"
-          className="input input-bordered w-full"
+          className="w-full input input-bordered"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
@@ -105,15 +105,15 @@ const EditSlider = () => {
         <input
           type="text"
           placeholder="Subtitle"
-          className="input input-bordered w-full"
+          className="w-full input input-bordered"
           value={subtitle}
           onChange={(e) => setSubtitle(e.target.value)}
         />
-        <div className="flex gap-4 items-center">
+        <div className="flex items-center gap-4">
           <img
             src={slider.image}
             alt="Current"
-            className="w-24 h-12 rounded object-cover"
+            className="object-cover w-24 h-12 rounded"
           />
           <input
             type="file"
@@ -122,14 +122,14 @@ const EditSlider = () => {
           />
         </div>
         <select
-          className="select select-bordered w-full"
+          className="w-full select select-bordered"
           value={status}
           onChange={(e) => setStatus(e.target.value === "true")}
         >
           <option value="true">Active</option>
           <option value="false">Inactive</option>
         </select>
-        <button type="submit" className="btn btn-primary w-full">
+        <button type="submit" className="w-full btn btn-primary">
           {loading ? "Updating..." : "Update Slider"}
         </button>
       </form>

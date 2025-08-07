@@ -44,7 +44,7 @@ const AddSlider = () => {
         status,
       };
 
-      const res = await fetch("http://localhost:5000/api/sliders", {
+      const res = await fetch("https://edifice-tau.vercel.app/api/sliders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(slider),
@@ -65,13 +65,13 @@ const AddSlider = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow rounded">
-      <h2 className="text-2xl font-bold mb-4 text-center">Add New Slider</h2>
+    <div className="max-w-xl p-6 mx-auto mt-10 bg-white rounded shadow">
+      <h2 className="mb-4 text-2xl font-bold text-center">Add New Slider</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
           placeholder="Title"
-          className="input input-bordered w-full"
+          className="w-full input input-bordered"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
@@ -79,25 +79,25 @@ const AddSlider = () => {
         <input
           type="text"
           placeholder="Subtitle"
-          className="input input-bordered w-full"
+          className="w-full input input-bordered"
           value={subtitle}
           onChange={(e) => setSubtitle(e.target.value)}
         />
         <input
           type="file"
-          className="file-input file-input-bordered w-full"
+          className="w-full file-input file-input-bordered"
           onChange={(e) => setImage(e.target.files[0])}
           required
         />
         <select
-          className="select select-bordered w-full"
+          className="w-full select select-bordered"
           value={status}
           onChange={(e) => setStatus(e.target.value === "true")}
         >
           <option value="true">Active</option>
           <option value="false">Inactive</option>
         </select>
-        <button type="submit" className="btn btn-primary w-full">
+        <button type="submit" className="w-full btn btn-primary">
           {loading ? "Uploading..." : "Add Slider"}
         </button>
       </form>

@@ -14,7 +14,7 @@ const TeamSection = () => {
 
     const fetchTeam = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/team');
+        const res = await fetch('https://edifice-tau.vercel.app/api/team');
         const data = await res.json();
         const sorted = data.sort((a, b) => (a.sequence || 0) - (b.sequence || 0));
         setTeamMembers(sorted);
@@ -33,9 +33,9 @@ const TeamSection = () => {
       data-aos="fade-up"
       className="py-16 bg-[var(--background)] text-[var(--foreground)] transition-colors duration-300"
     >
-      <div className="max-w-7xl mx-auto px-4 text-center">
+      <div className="px-4 mx-auto text-center max-w-7xl">
         {/* Header */}
-        <div className="text-center mb-10" data-aos="fade-up">
+        <div className="mb-10 text-center" data-aos="fade-up">
           <p className="text-[#c20e35] text-sm uppercase tracking-wider relative inline-block mb-2 before:content-[''] before:absolute before:-left-4 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-2 before:bg-[#c20e35] before:rounded-full">
             Team
           </p>
@@ -45,7 +45,7 @@ const TeamSection = () => {
         </div>
 
         {/* Team Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
                 <div
@@ -56,11 +56,11 @@ const TeamSection = () => {
             : teamMembers.map((member, index) => (
                 <div
                   key={member._id}
-                  className="group relative overflow-hidden"
+                  className="relative overflow-hidden group"
                   data-aos="fade-up"
                   data-aos-delay={(index % 4) * 100}
                 >
-                  <div className="relative rounded-lg overflow-hidden shadow-lg transition-transform duration-300 transform group-hover:scale-105 cursor-pointer">
+                  <div className="relative overflow-hidden transition-transform duration-300 transform rounded-lg shadow-lg cursor-pointer group-hover:scale-105">
                     <div className="relative w-full h-[400px] md:h-[350px]">
                       <Image
                         src={member.photo || '/fallback.jpg'}

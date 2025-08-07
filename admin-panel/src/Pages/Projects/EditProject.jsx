@@ -25,7 +25,7 @@ export const EditProject = () => {
 
   useEffect(() => {
     const fetchProject = async () => {
-      const res = await fetch(`http://localhost:5000/api/projects/${id}`);
+      const res = await fetch(`https://edifice-tau.vercel.app/api/projects/${id}`);
       const data = await res.json();
       setForm({
         ...data,
@@ -104,7 +104,7 @@ export const EditProject = () => {
         multiplePhotos: [...form.multiplePhotos, ...uploadedNewPhotos]
       };
 
-      const res = await fetch(`http://localhost:5000/api/projects/${id}`, {
+      const res = await fetch(`https://edifice-tau.vercel.app/api/projects/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

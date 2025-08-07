@@ -19,7 +19,7 @@ export const EditContact = () => {
 
   const fetchContact = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/contactInfo');
+      const res = await fetch('https://edifice-tau.vercel.app/api/contactInfo');
       const data = await res.json();
       if (data) setForm(data);
     } catch (err) {
@@ -35,7 +35,7 @@ export const EditContact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:5000/api/contactInfo', {
+      const res = await fetch('https://edifice-tau.vercel.app/api/contactInfo', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),

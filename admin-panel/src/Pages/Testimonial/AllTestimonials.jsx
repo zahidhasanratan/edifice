@@ -14,7 +14,7 @@ const AllTestimonials = () => {
   }, []);
 
   const fetchTestimonials = async () => {
-    const res = await fetch("http://localhost:5000/api/testimonials");
+    const res = await fetch("https://edifice-tau.vercel.app/api/testimonials");
     const data = await res.json();
     setTestimonials(data);
     setFiltered(data);
@@ -30,7 +30,7 @@ const AllTestimonials = () => {
     });
 
     if (confirm.isConfirmed) {
-      const res = await fetch(`http://localhost:5000/api/testimonials/${id}`, {
+      const res = await fetch(`https://edifice-tau.vercel.app/api/testimonials/${id}`, {
         method: "DELETE",
       });
       const result = await res.json();

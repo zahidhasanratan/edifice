@@ -18,7 +18,7 @@ const ContactPage = () => {
 
   const fetchContactData = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/contactInfo');
+      const res = await fetch('https://edifice-tau.vercel.app/api/contactInfo');
       const data = await res.json();
       setContactData(data);
     } catch (err) {
@@ -37,13 +37,13 @@ const ContactPage = () => {
           backgroundImage="/assets/images/hero/contact.jpg"
         />
 
-        <section className="bg-white text-black dark:bg-black dark:text-white max-w-6xl mx-auto grid md:grid-cols-2 gap-10 px-6 py-16 animate-pulse">
+        <section className="grid max-w-6xl gap-10 px-6 py-16 mx-auto text-black bg-white dark:bg-black dark:text-white md:grid-cols-2 animate-pulse">
           <div className="space-y-8">
-            <div className="h-6 w-2/3 bg-gray-300 dark:bg-gray-700 rounded" />
-            <div className="h-4 w-full bg-gray-200 dark:bg-gray-800 rounded" />
-            <div className="h-4 w-5/6 bg-gray-200 dark:bg-gray-800 rounded" />
-            <div className="h-4 w-4/6 bg-gray-200 dark:bg-gray-800 rounded" />
-            <div className="h-4 w-1/2 bg-gray-200 dark:bg-gray-800 rounded" />
+            <div className="w-2/3 h-6 bg-gray-300 rounded dark:bg-gray-700" />
+            <div className="w-full h-4 bg-gray-200 rounded dark:bg-gray-800" />
+            <div className="w-5/6 h-4 bg-gray-200 rounded dark:bg-gray-800" />
+            <div className="w-4/6 h-4 bg-gray-200 rounded dark:bg-gray-800" />
+            <div className="w-1/2 h-4 bg-gray-200 rounded dark:bg-gray-800" />
           </div>
           <div className="w-full h-[350px] bg-gray-200 dark:bg-gray-800 rounded-xl" />
         </section>
@@ -61,7 +61,7 @@ const ContactPage = () => {
 
       <section
         data-aos="fade-up"
-        className="bg-white text-black dark:bg-black dark:text-white max-w-6xl mx-auto grid md:grid-cols-2 gap-10 px-6 py-16 transition-colors duration-300"
+        className="grid max-w-6xl gap-10 px-6 py-16 mx-auto text-black transition-colors duration-300 bg-white dark:bg-black dark:text-white md:grid-cols-2"
       >
         <div className="space-y-8">
           {/* Address */}
@@ -71,8 +71,8 @@ const ContactPage = () => {
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             <div>
-              <h2 className="text-xl font-semibold mb-2">Head Office:</h2>
-              <p className="text-sm text-gray-600 dark:text-white leading-relaxed whitespace-pre-line">
+              <h2 className="mb-2 text-xl font-semibold">Head Office:</h2>
+              <p className="text-sm leading-relaxed text-gray-600 whitespace-pre-line dark:text-white">
                 {contactData.address}
               </p>
             </div>
@@ -84,7 +84,7 @@ const ContactPage = () => {
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h2l2 5-2 2c1.5 3 4.5 6 7.5 7.5l2-2 5 2v2a2 2 0 01-2 2h-1c-9 0-16-7-16-16V5z" />
             </svg>
             <div>
-              <h2 className="text-xl font-semibold mb-2">Phones:</h2>
+              <h2 className="mb-2 text-xl font-semibold">Phones:</h2>
               <p className="text-sm text-gray-600 dark:text-white">{contactData.telephone}</p>
               <p className="text-sm text-gray-600 dark:text-white">{contactData.home}</p>
               <p className="text-sm text-gray-600 dark:text-white">
@@ -100,7 +100,7 @@ const ContactPage = () => {
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6l9 7.5 9-7.5" />
             </svg>
             <div>
-              <h2 className="text-xl font-semibold mb-2">Write Us:</h2>
+              <h2 className="mb-2 text-xl font-semibold">Write Us:</h2>
               <p className="text-sm text-gray-600 dark:text-white">
                 <a
                   href={`mailto:${contactData.email}`}

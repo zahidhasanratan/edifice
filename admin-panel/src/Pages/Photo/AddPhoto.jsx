@@ -14,7 +14,7 @@ export const AddPhoto = () => {
   useEffect(() => {
     const fetchAlbums = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/albums');
+        const res = await fetch('https://edifice-tau.vercel.app/api/albums');
         const data = await res.json();
         setAlbums(data);
       } catch (error) {
@@ -63,7 +63,7 @@ export const AddPhoto = () => {
         imageUrl,
       };
 
-      const res = await fetch('http://localhost:5000/api/photos', {
+      const res = await fetch('https://edifice-tau.vercel.app/api/photos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

@@ -18,7 +18,7 @@ const EditTestimonial = () => {
   useEffect(() => {
     const fetchTestimonial = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/testimonials/${id}`);
+        const res = await fetch(`https://edifice-tau.vercel.app/api/testimonials/${id}`);
         if (!res.ok) throw new Error("Testimonial not found");
         const data = await res.json();
         setTitle(data.title);
@@ -66,7 +66,7 @@ const EditTestimonial = () => {
         photo: imageUrl,
       };
 
-      const res = await fetch(`http://localhost:5000/api/testimonials/${id}`, {
+      const res = await fetch(`https://edifice-tau.vercel.app/api/testimonials/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedTestimonial),

@@ -16,7 +16,7 @@ const AboutSection = () => {
 
     const fetchAbout = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/about');
+        const res = await fetch('https://edifice-tau.vercel.app/api/about');
         const data = await res.json();
         setAbout(data);
       } catch (error) {
@@ -32,13 +32,13 @@ const AboutSection = () => {
   if (isLoading || !about) {
     return (
       <section className="bg-[var(--background)] text-[var(--foreground)] py-20 transition-colors duration-300">
-        <div className="container mx-auto px-4 flex flex-col lg:flex-row justify-between gap-10 animate-pulse">
+        <div className="container flex flex-col justify-between gap-10 px-4 mx-auto lg:flex-row animate-pulse">
           <div className="space-y-6 lg:w-3/4">
-            <div className="h-4 w-24 bg-gray-300 dark:bg-gray-700 rounded" />
-            <div className="h-6 w-2/3 bg-gray-300 dark:bg-gray-600 rounded" />
-            <div className="h-4 w-full bg-gray-300 dark:bg-gray-600 rounded" />
-            <div className="h-4 w-5/6 bg-gray-300 dark:bg-gray-600 rounded" />
-            <div className="h-4 w-2/3 bg-gray-300 dark:bg-gray-600 rounded" />
+            <div className="w-24 h-4 bg-gray-300 rounded dark:bg-gray-700" />
+            <div className="w-2/3 h-6 bg-gray-300 rounded dark:bg-gray-600" />
+            <div className="w-full h-4 bg-gray-300 rounded dark:bg-gray-600" />
+            <div className="w-5/6 h-4 bg-gray-300 rounded dark:bg-gray-600" />
+            <div className="w-2/3 h-4 bg-gray-300 rounded dark:bg-gray-600" />
           </div>
         </div>
       </section>
@@ -50,13 +50,13 @@ const AboutSection = () => {
       className="bg-[var(--background)] text-[var(--foreground)] py-20 transition-colors duration-300"
       data-aos="fade-up"
     >
-      <div className="container mx-auto px-4 flex flex-col lg:flex-row justify-between gap-10">
+      <div className="container flex flex-col justify-between gap-10 px-4 mx-auto lg:flex-row">
         {/* Left Content */}
         <div className="space-y-6">
           <p className="text-[#c20e35] text-sm uppercase tracking-wide">
             About Us
           </p>
-          <h2 className="text-2xl md:text-2xl font-bold leading-tight">
+          <h2 className="text-2xl font-bold leading-tight md:text-2xl">
             {about.title}
           </h2>
           <div

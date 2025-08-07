@@ -18,7 +18,7 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
 
     const fetchProjects = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/projects');
+        const res = await fetch('https://edifice-tau.vercel.app/api/projects');
         const data = await res.json();
 
         const filtered = type
@@ -44,9 +44,9 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
       data-aos="fade-up"
       className="py-16 bg-[var(--background)] text-[var(--foreground)] transition-colors duration-300"
     >
-      <div className="max-w-7xl mx-auto px-4 text-center">
+      <div className="px-4 mx-auto text-center max-w-7xl">
         {/* Title & Subtitle */}
-        <div className="text-center mb-10">
+        <div className="mb-10 text-center">
           {title && (
             <p className="text-[#c20e35] dark:text-red-600 text-sm uppercase tracking-wider relative inline-block mb-2 before:content-[''] before:absolute before:-left-4 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-2 before:bg-[#c20e35] before:rounded-full">
               {title}
@@ -60,7 +60,7 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
         </div>
 
         {/* Project Grid */}
-        <div className="-mx-4 flex flex-wrap justify-center">
+        <div className="flex flex-wrap justify-center -mx-4">
           {isLoading ? (
             // Skeleton loader
             Array.from({ length: 6 }).map((_, i) => (
@@ -85,7 +85,7 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
                           src={project.featureImage || '/fallback.jpg'}
                           alt={project.title}
                           fill
-                          className="object-cover transition-transform group-hover:scale-110 duration-1000 ease-in-out"
+                          className="object-cover transition-transform duration-1000 ease-in-out group-hover:scale-110"
                           sizes="(max-width: 768px) 100vw, 33vw"
                           unoptimized // optional if not using internal image domain
                           priority

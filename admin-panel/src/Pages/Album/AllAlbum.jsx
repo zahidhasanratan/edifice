@@ -19,7 +19,7 @@ export const AllAlbum = () => {
 
   const fetchAlbums = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/albums');
+      const res = await fetch('https://edifice-tau.vercel.app/api/albums');
       const data = await res.json();
       setAlbums(data);
     } catch (err) {
@@ -46,7 +46,7 @@ export const AllAlbum = () => {
 
     if (confirm.isConfirmed) {
       try {
-        const res = await fetch(`http://localhost:5000/api/albums/${id}`, {
+        const res = await fetch(`https://edifice-tau.vercel.app/api/albums/${id}`, {
           method: 'DELETE',
         });
         const result = await res.json();

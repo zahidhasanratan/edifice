@@ -10,7 +10,7 @@ export const AllProjects = () => {
   const projectsPerPage = 5;
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/projects')
+    fetch('https://edifice-tau.vercel.app/api/projects')
       .then(res => res.json())
       .then(data => {
         setProjects(data);
@@ -30,7 +30,7 @@ export const AllProjects = () => {
 
     if (result.isConfirmed) {
       try {
-        const res = await fetch(`http://localhost:5000/api/projects/${id}`, {
+        const res = await fetch(`https://edifice-tau.vercel.app/api/projects/${id}`, {
           method: 'DELETE',
         });
 

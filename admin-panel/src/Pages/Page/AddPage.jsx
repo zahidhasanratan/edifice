@@ -31,7 +31,7 @@ const AddPage = () => {
 
   const fetchMenus = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/menus/all');
+      const res = await fetch('https://edifice-tau.vercel.app/api/menus/all');
       const data = await res.json();
       setMenus(data);
     } catch (err) {
@@ -104,7 +104,7 @@ const AddPage = () => {
         coverPhoto: photoUrl,
       };
 
-      const res = await fetch('http://localhost:5000/api/pages', {
+      const res = await fetch('https://edifice-tau.vercel.app/api/pages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

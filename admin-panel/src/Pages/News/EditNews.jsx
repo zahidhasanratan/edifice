@@ -23,7 +23,7 @@ const EditNews = () => {
 
   // Step 1: Fetch existing news data
   useEffect(() => {
-    fetch(`http://localhost:5000/api/news/${id}`)
+    fetch(`https://edifice-tau.vercel.app/api/news/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setForm({
@@ -126,7 +126,7 @@ const EditNews = () => {
         coverPhoto: coverUrl,
       };
 
-      const res = await fetch(`http://localhost:5000/api/news/${id}`, {
+      const res = await fetch(`https://edifice-tau.vercel.app/api/news/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

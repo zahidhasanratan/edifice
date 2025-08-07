@@ -30,7 +30,7 @@ const CareerApplyPage = () => {
 
   const fetchJobDetails = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/careers/${id}`);
+      const res = await fetch(`https://edifice-tau.vercel.app/api/careers/${id}`);
       if (res.ok) {
         const data = await res.json();
         setJobTitle(data.title || ""); // Adjust if your API returns `data.job.title` or similar
@@ -68,7 +68,7 @@ const CareerApplyPage = () => {
     });
 
     try {
-      const res = await fetch("http://localhost:5000/api/career-applications", {
+      const res = await fetch("https://edifice-tau.vercel.app/api/career-applications", {
         method: "POST",
         body: applicationData,
       });

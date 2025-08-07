@@ -10,7 +10,7 @@ const AllTeam = () => {
 
   const fetchTeam = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/team');
+      const res = await fetch('https://edifice-tau.vercel.app/api/team');
       const data = await res.json();
       setTeam(data);
     } catch (err) {
@@ -32,7 +32,7 @@ const AllTeam = () => {
     });
 
     if (confirm.isConfirmed) {
-      const res = await fetch(`http://localhost:5000/api/team/${id}`, {
+      const res = await fetch(`https://edifice-tau.vercel.app/api/team/${id}`, {
         method: 'DELETE',
       });
       const result = await res.json();

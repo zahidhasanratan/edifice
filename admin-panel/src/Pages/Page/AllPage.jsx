@@ -20,7 +20,7 @@ export const AllPage = () => {
 
   const fetchPages = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/pages');
+      const res = await fetch('https://edifice-tau.vercel.app/api/pages');
       const data = await res.json();
       setPages(data);
     } catch (err) {
@@ -50,7 +50,7 @@ export const AllPage = () => {
 
     if (confirm.isConfirmed) {
       try {
-        const res = await fetch(`http://localhost:5000/api/pages/${id}`, {
+        const res = await fetch(`https://edifice-tau.vercel.app/api/pages/${id}`, {
           method: 'DELETE',
         });
 

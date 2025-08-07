@@ -11,7 +11,7 @@ const DynamicPage = () => {
   useEffect(() => {
     const fetchPageData = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/pages');
+        const res = await fetch('https://edifice-tau.vercel.app/api/pages');
         const data = await res.json();
         const matchedPage = data.find((page) => page.menuSlug === slug);
         setPageData(matchedPage || null);

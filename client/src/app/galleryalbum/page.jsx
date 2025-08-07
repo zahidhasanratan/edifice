@@ -24,7 +24,7 @@ const GalleryAlbum = () => {
 
   const fetchAlbums = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/albums');
+      const res = await fetch('https://edifice-tau.vercel.app/api/albums');
       const data = await res.json();
       setAlbums(data);
     } catch (error) {
@@ -44,35 +44,35 @@ const GalleryAlbum = () => {
 
       <section
         data-aos="fade-up"
-        className="transition-colors duration-300 ease-in-out py-16 px-4 md:px-10"
+        className="px-4 py-16 transition-colors duration-300 ease-in-out md:px-10"
         style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
       >
-        <div className="max-w-7xl mx-auto">
+        <div className="mx-auto max-w-7xl">
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 animate-pulse">
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 animate-pulse">
               {[...Array(6)].map((_, index) => (
                 <div
                   key={index}
-                  className="rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-700 h-72"
+                  className="overflow-hidden bg-gray-200 rounded-xl dark:bg-gray-700 h-72"
                 />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {albums.map((album) => (
                 <div
                   key={album._id}
-                  className="group relative overflow-hidden rounded-xl shadow-lg cursor-pointer"
+                  className="relative overflow-hidden shadow-lg cursor-pointer group rounded-xl"
                   onClick={() => handleGalleryClick(album._id)}
                 >
                   <img
                     src={album.coverPhoto}
                     alt={album.title}
-                    className="w-full h-72 object-cover transform transition duration-500 group-hover:scale-110"
+                    className="object-cover w-full transition duration-500 transform h-72 group-hover:scale-110"
                     loading="lazy"
                   />
                   <div
-                    className="absolute bottom-0 w-full text-center py-3 backdrop-blur-sm transition duration-300"
+                    className="absolute bottom-0 w-full py-3 text-center transition duration-300 backdrop-blur-sm"
                     style={{
                       backgroundColor: 'rgba(255, 255, 255, 0.6)',
                       color: 'var(--foreground)',

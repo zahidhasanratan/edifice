@@ -14,7 +14,7 @@ export const EditAlbum = () => {
   const [newPhotoFile, setNewPhotoFile] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/albums/${id}`)
+    fetch(`https://edifice-tau.vercel.app/api/albums/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setForm(data);
@@ -61,7 +61,7 @@ export const EditAlbum = () => {
         coverPhoto: photoUrl,
       };
 
-      const res = await fetch(`http://localhost:5000/api/albums/${id}`, {
+      const res = await fetch(`https://edifice-tau.vercel.app/api/albums/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

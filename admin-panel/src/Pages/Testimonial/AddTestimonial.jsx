@@ -39,7 +39,7 @@ const AddTestimonial = () => {
         photo: imageUrl,
       };
 
-      const res = await fetch("http://localhost:5000/api/testimonials", {
+      const res = await fetch("https://edifice-tau.vercel.app/api/testimonials", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(testimonial),

@@ -19,13 +19,13 @@ export const AllPhoto = () => {
   }, [selectedAlbum]);
 
   const fetchAlbums = async () => {
-    const res = await fetch('http://localhost:5000/api/albums');
+    const res = await fetch('https://edifice-tau.vercel.app/api/albums');
     const data = await res.json();
     setAlbums(data);
   };
 
   const fetchPhotos = async () => {
-    const res = await fetch('http://localhost:5000/api/photos');
+    const res = await fetch('https://edifice-tau.vercel.app/api/photos');
     const data = await res.json();
     setPhotos(data);
   };
@@ -40,7 +40,7 @@ export const AllPhoto = () => {
     });
 
     if (confirm.isConfirmed) {
-      const res = await fetch(`http://localhost:5000/api/photos/${id}`, {
+      const res = await fetch(`https://edifice-tau.vercel.app/api/photos/${id}`, {
         method: 'DELETE',
       });
       const result = await res.json();

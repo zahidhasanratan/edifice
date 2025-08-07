@@ -33,7 +33,7 @@ export const EditPage = () => {
 
   const fetchMenus = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/menus/all');
+      const res = await fetch('https://edifice-tau.vercel.app/api/menus/all');
       const data = await res.json();
       setMenus(data);
     } catch (err) {
@@ -43,7 +43,7 @@ export const EditPage = () => {
 
   const fetchPage = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/pages/${id}`);
+      const res = await fetch(`https://edifice-tau.vercel.app/api/pages/${id}`);
       const data = await res.json();
       setForm(data);
 
@@ -122,7 +122,7 @@ export const EditPage = () => {
         coverPhoto: form.coverPhoto,
       };
 
-      const res = await fetch(`http://localhost:5000/api/pages/${id}`, {
+      const res = await fetch(`https://edifice-tau.vercel.app/api/pages/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

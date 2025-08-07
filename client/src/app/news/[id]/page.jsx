@@ -23,7 +23,7 @@ const NewsDetails = () => {
 
     const fetchNews = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/news/${id}`);
+        const res = await fetch(`https://edifice-tau.vercel.app/api/news/${id}`);
         const data = await res.json();
         setNews(data);
       } catch (err) {
@@ -37,11 +37,11 @@ const NewsDetails = () => {
   }, [id]);
 
   if (loading) {
-    return <div className="text-center py-20 text-gray-500">Loading...</div>;
+    return <div className="py-20 text-center text-gray-500">Loading...</div>;
   }
 
   if (!news) {
-    return <div className="text-center py-20 text-red-500">News not found.</div>;
+    return <div className="py-20 text-center text-red-500">News not found.</div>;
   }
 
   return (
@@ -57,8 +57,8 @@ const NewsDetails = () => {
         className="transition-colors duration-300 ease-in-out pt-16 pb-[10px] md:pb-16 px-[10px] md:px-10"
         style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
       >
-        <div className="max-w-7xl mx-auto flex flex-col items-center">
-          <div className="w-full md:w-4/5 mb-10">
+        <div className="flex flex-col items-center mx-auto max-w-7xl">
+          <div className="w-full mb-10 md:w-4/5">
             <div className="overflow-hidden shadow-md rounded-xl">
               <img
                 src={news.featuredPhoto}
@@ -69,11 +69,11 @@ const NewsDetails = () => {
           </div>
 
           <div className="w-full md:w-4/5">
-            <h3 className="text-xl font-semibold mb-3" style={{ color: 'var(--foreground)' }}>
+            <h3 className="mb-3 text-xl font-semibold" style={{ color: 'var(--foreground)' }}>
               {news.title}
             </h3>
             <div
-              className="leading-relaxed mb-4 prose prose-sm md:prose-lg dark:prose-invert max-w-none"
+              className="mb-4 leading-relaxed prose-sm prose md:prose-lg dark:prose-invert max-w-none"
               dangerouslySetInnerHTML={{ __html: news.description }}
             />
           </div>

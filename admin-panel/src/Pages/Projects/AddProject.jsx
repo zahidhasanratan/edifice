@@ -82,7 +82,7 @@ export const AddProject = () => {
 
     console.log("Payload to submit:", payload);
 
-    const res = await fetch('http://localhost:5000/api/projects', {
+    const res = await fetch('https://edifice-tau.vercel.app/api/projects', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

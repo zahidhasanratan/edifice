@@ -14,7 +14,7 @@ export const MenuBuilder = () => {
 
   // Fetch menu from backend
   const fetchMenus = async () => {
-    const res = await fetch("http://localhost:5000/api/menus");
+    const res = await fetch("https://edifice-tau.vercel.app/api/menus");
     const data = await res.json();
     setMenus(data);
   };
@@ -25,7 +25,7 @@ export const MenuBuilder = () => {
 
   const saveMenuOrder = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/menus/reorder", {
+      const res = await fetch("https://edifice-tau.vercel.app/api/menus/reorder", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ menus }),

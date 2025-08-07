@@ -51,7 +51,7 @@ const AddTeam = () => {
         photo: imageUrl
       };
 
-      const res = await fetch('http://localhost:5000/api/team', {
+      const res = await fetch('https://edifice-tau.vercel.app/api/team', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

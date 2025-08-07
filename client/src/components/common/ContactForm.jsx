@@ -28,7 +28,7 @@ const ContactForm = () => {
     setSubmitStatus(null);
 
     try {
-      const res = await fetch('http://localhost:5000/api/contact', {
+      const res = await fetch('https://edifice-tau.vercel.app/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,13 +64,13 @@ const ContactForm = () => {
   };
 
   return (
-    <section className="bg-white dark:bg-black max-w-4xl mx-auto py-16 px-6 transition-colors duration-300">
+    <section className="max-w-4xl px-6 py-16 mx-auto transition-colors duration-300 bg-white dark:bg-black">
       <h2 className="text-center text-2xl font-semibold text-[#c20e35] mb-10 tracking-wide uppercase">
         Stay In Touch
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-8" noValidate>
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid gap-6 md:grid-cols-2">
           <div>
             <input
               type="text"

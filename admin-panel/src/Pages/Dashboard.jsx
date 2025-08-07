@@ -27,7 +27,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/projects");
+        const res = await fetch("https://edifice-tau.vercel.app/api/projects");
         const data = await res.json();
         setCompletedProjects(data.filter(p => p.projectType === "Completed").length);
         setOngoingProjects(data.filter(p => p.projectType === "Ongoing").length);
@@ -39,7 +39,7 @@ const Dashboard = () => {
 
     const fetchVisitorCount = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/visitors/count");
+        const res = await fetch("https://edifice-tau.vercel.app/api/visitors/count");
         const data = await res.json();
         setVisitorCount(data.count || 0);
       } catch (err) {

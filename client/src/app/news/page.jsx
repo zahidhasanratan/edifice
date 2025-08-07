@@ -19,7 +19,7 @@ const News = () => {
     document.title = "News | EDIFICE";
     window.scrollTo(0, 0);
 
-    fetch('http://localhost:5000/api/news')
+    fetch('https://edifice-tau.vercel.app/api/news')
       .then((res) => res.json())
       .then((data) => {
         if (data && data.news && Array.isArray(data.news)) {
@@ -53,12 +53,12 @@ const News = () => {
         className="py-16 transition-colors duration-300"
         style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
       >
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="px-4 mx-auto max-w-7xl">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {newsItems.map((item) => (
               <div
                 key={item._id}
-                className="group rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl"
+                className="overflow-hidden transition-all duration-300 shadow-lg group rounded-xl hover:shadow-xl"
                 style={{ backgroundColor: 'var(--card-bg)', color: 'var(--foreground)' }}
               >
                 <Link href={`/news/${item._id}`} className="block">
@@ -66,12 +66,12 @@ const News = () => {
                     <img
                       src={item.featuredPhoto}
                       alt={item.title}
-                      className="w-full h-full object-cover transform transition duration-500 group-hover:scale-110"
+                      className="object-cover w-full h-full transition duration-500 transform group-hover:scale-110"
                       loading="lazy"
                     />
                   </div>
                   <div className="p-6">
-                    <p className="text-sm mb-2" style={{ color: 'var(--muted-text)' }}>
+                    <p className="mb-2 text-sm" style={{ color: 'var(--muted-text)' }}>
                       {new Date(item.publishDate).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',

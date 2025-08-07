@@ -31,7 +31,7 @@ const EditAbout = () => {
 
   const fetchAbout = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/about');
+      const res = await fetch('https://edifice-tau.vercel.app/api/about');
       const data = await res.json();
       if (data) {
         setForm(data);
@@ -109,7 +109,7 @@ const EditAbout = () => {
         coverPhoto: coverPhotoUrl,
       };
 
-      const res = await fetch('http://localhost:5000/api/about', {
+      const res = await fetch('https://edifice-tau.vercel.app/api/about', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

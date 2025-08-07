@@ -25,7 +25,7 @@ const Gallery = () => {
 
   const fetchPhotos = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/photos/album/${albumId}`);
+      const res = await fetch(`https://edifice-tau.vercel.app/api/photos/album/${albumId}`);
       const data = await res.json();
       setPhotos(data);
     } catch (error) {
@@ -85,21 +85,21 @@ const Gallery = () => {
 
       <section
         data-aos="fade-up"
-        className="relative z-0 py-16 px-4 md:px-10 transition-colors duration-300 ease-in-out"
+        className="relative z-0 px-4 py-16 transition-colors duration-300 ease-in-out md:px-10"
         style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
       >
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {photos.map((image, index) => (
               <div
                 key={image._id}
-                className="group relative overflow-hidden rounded-xl shadow-lg cursor-pointer"
+                className="relative overflow-hidden shadow-lg cursor-pointer group rounded-xl"
                 onClick={() => openModal(index)}
               >
                 <img
                   src={image.photoUrl}
                   alt={image.title}
-                  className="w-full h-72 object-cover transform transition duration-500 group-hover:scale-110"
+                  className="object-cover w-full transition duration-500 transform h-72 group-hover:scale-110"
                   loading="lazy"
                 />
               </div>

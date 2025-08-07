@@ -11,7 +11,7 @@ const Footer = () => {
   useEffect(() => {
     const fetchContact = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/contactInfo');
+        const res = await fetch('https://edifice-tau.vercel.app/api/contactInfo');
         const data = await res.json();
         setContact(data);
       } catch (err) {
@@ -21,7 +21,7 @@ const Footer = () => {
 
     const fetchMenus = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/menus/all');
+        const res = await fetch('https://edifice-tau.vercel.app/api/menus/all');
         const data = await res.json();
         const filteredMenus = data.filter((menu) => menu.footer1 === true);
         setFooterMenus(filteredMenus);
@@ -41,23 +41,23 @@ const Footer = () => {
   if (isLoading || !contact) {
     return (
       <footer className="py-20 px-4 animate-pulse bg-[var(--background)] text-[var(--foreground)]">
-        <div className="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
-          <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-32 mb-2"></div>
+        <div className="grid max-w-screen-xl grid-cols-1 gap-10 mx-auto md:grid-cols-4">
+          <div className="w-32 h-6 mb-2 bg-gray-300 rounded dark:bg-gray-700"></div>
 
           <div className="space-y-2">
-            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-20"></div>
-            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-24"></div>
-            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-28"></div>
+            <div className="w-20 h-4 bg-gray-300 rounded dark:bg-gray-600"></div>
+            <div className="w-24 h-4 bg-gray-300 rounded dark:bg-gray-600"></div>
+            <div className="h-4 bg-gray-300 rounded dark:bg-gray-600 w-28"></div>
           </div>
 
           <div className="space-y-2">
-            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-28"></div>
-            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-24"></div>
+            <div className="h-4 bg-gray-300 rounded dark:bg-gray-600 w-28"></div>
+            <div className="w-24 h-4 bg-gray-300 rounded dark:bg-gray-600"></div>
           </div>
 
           <div className="space-y-2">
-            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-full"></div>
-            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-2/3"></div>
+            <div className="w-full h-4 bg-gray-300 rounded dark:bg-gray-600"></div>
+            <div className="w-2/3 h-4 bg-gray-300 rounded dark:bg-gray-600"></div>
           </div>
         </div>
       </footer>
@@ -108,7 +108,7 @@ const Footer = () => {
       <footer className="bg-[var(--background)] text-[var(--foreground)] py-10 transition-colors duration-300">
         <div className="max-w-screen-xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 pt-2 border-t border-[var(--foreground)]/20">
           {/* Logo */}
-          <div className="flex flex-col items-center md:items-start text-center md:text-left">
+          <div className="flex flex-col items-center text-center md:items-start md:text-left">
             <img
               src="/assets/images/logo/logo.png"
               alt="Logo"

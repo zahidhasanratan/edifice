@@ -20,7 +20,7 @@ const ProjectDetails = () => {
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/projects/${id}`);
+        const res = await fetch(`https://edifice-tau.vercel.app/api/projects/${id}`);
         const data = await res.json();
         setProject(data);
       } catch (err) {
@@ -31,7 +31,7 @@ const ProjectDetails = () => {
     if (id) fetchProject();
   }, [id]);
 
-  if (!project) return <div className="text-center py-32">Loading Project...</div>;
+  if (!project) return <div className="py-32 text-center">Loading Project...</div>;
 
   return (
     <main className="bg-[var(--background)] text-[var(--foreground)] transition-colors duration-300">

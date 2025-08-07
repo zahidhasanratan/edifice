@@ -14,7 +14,7 @@ const AllSliders = () => {
   }, []);
 
   const fetchSliders = async () => {
-    const res = await fetch("http://localhost:5000/api/sliders");
+    const res = await fetch("https://edifice-tau.vercel.app/api/sliders");
     const data = await res.json();
     setSliders(data);
     setFilteredSliders(data);
@@ -30,7 +30,7 @@ const AllSliders = () => {
     });
 
     if (confirm.isConfirmed) {
-      const res = await fetch(`http://localhost:5000/api/sliders/${id}`, {
+      const res = await fetch(`https://edifice-tau.vercel.app/api/sliders/${id}`, {
         method: "DELETE",
       });
       const result = await res.json();

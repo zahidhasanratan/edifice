@@ -23,7 +23,7 @@ const EditMenu = () => {
 
   useEffect(() => {
     const fetchMenu = async () => {
-      const res = await fetch(`http://localhost:5000/api/menus/${id}`);
+      const res = await fetch(`https://edifice-tau.vercel.app/api/menus/${id}`);
       const data = await res.json();
       setMenuData({
         menu_name: data.menu_name || '',
@@ -39,7 +39,7 @@ const EditMenu = () => {
     };
 
     const fetchParentMenus = async () => {
-      const res = await fetch('http://localhost:5000/api/menus/all');
+      const res = await fetch('https://edifice-tau.vercel.app/api/menus/all');
       const data = await res.json();
       const onlyParents = data.filter(menu => !menu.parent || menu.parent === null);
       setParentMenus(onlyParents.filter(menu => menu._id !== id));
@@ -60,7 +60,7 @@ const EditMenu = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`http://localhost:5000/api/menus/${id}`, {
+      const res = await fetch(`https://edifice-tau.vercel.app/api/menus/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(menuData),

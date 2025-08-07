@@ -20,7 +20,7 @@ export const EditPhoto = () => {
 
   const fetchAlbums = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/albums');
+      const res = await fetch('https://edifice-tau.vercel.app/api/albums');
       const data = await res.json();
       setAlbums(data);
     } catch (err) {
@@ -30,7 +30,7 @@ export const EditPhoto = () => {
 
   const fetchPhotoById = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/photos/${id}`);
+      const res = await fetch(`https://edifice-tau.vercel.app/api/photos/${id}`);
       if (!res.ok) {
         Swal.fire('Error', 'Photo not found!', 'error');
         return;
@@ -84,7 +84,7 @@ export const EditPhoto = () => {
         imageUrl,
       };
 
-      const res = await fetch(`http://localhost:5000/api/photos/${id}`, {
+      const res = await fetch(`https://edifice-tau.vercel.app/api/photos/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

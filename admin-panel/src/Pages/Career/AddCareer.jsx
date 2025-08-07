@@ -110,7 +110,7 @@ const AddCareer = () => {
         image: imageUrl,
       };
 
-      const res = await fetch('http://localhost:5000/api/careers', {
+      const res = await fetch('https://edifice-tau.vercel.app/api/careers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

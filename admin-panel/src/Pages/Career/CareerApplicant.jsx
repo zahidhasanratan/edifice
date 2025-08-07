@@ -14,7 +14,7 @@ export const CareerApplicant = () => {
   useEffect(() => {
     const fetchApplicants = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/career-applications/job/${jobId}`);
+        const res = await fetch(`https://edifice-tau.vercel.app/api/career-applications/job/${jobId}`);
         const data = await res.json();
         setApplicants(data);
         setFilteredApplicants(data);

@@ -14,7 +14,7 @@ const HeroSlider = () => {
   useEffect(() => {
     const fetchSlides = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/sliders');
+        const res = await fetch('https://edifice-tau.vercel.app/api/sliders');
         const data = await res.json();
         const activeSlides = data.filter(slide => slide.status === true);
         setSlides(activeSlides);
@@ -91,9 +91,9 @@ const HeroSlider = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-gray-300 to-gray-100 dark:from-gray-800 dark:to-gray-700 animate-pulse" />
 
         {/* Simulated text blocks */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center space-y-4">
-          <div className="w-2/3 md:w-1/3 h-5 bg-gray-300 dark:bg-gray-600 rounded"></div>
-          <div className="w-3/4 md:w-2/4 h-8 bg-gray-300 dark:bg-gray-700 rounded"></div>
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-6 space-y-4 text-center">
+          <div className="w-2/3 h-5 bg-gray-300 rounded md:w-1/3 dark:bg-gray-600"></div>
+          <div className="w-3/4 h-8 bg-gray-300 rounded md:w-2/4 dark:bg-gray-700"></div>
           <div className="w-16 h-[2px] bg-gray-400 dark:bg-gray-600 rounded"></div>
         </div>
       </div>
@@ -126,21 +126,21 @@ const HeroSlider = () => {
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60" />
 
             {/* Content */}
-            <div className="w-full px-4 md:px-8 h-full flex items-center justify-center">
+            <div className="flex items-center justify-center w-full h-full px-4 md:px-8">
               <motion.div
                 className="relative max-w-4xl mx-auto text-center"
                 initial="hidden"
                 animate="visible"
               >
                 <motion.h2
-                  className="text-white text-2xl md:text-3xl uppercase tracking-wider mb-2"
+                  className="mb-2 text-2xl tracking-wider text-white uppercase md:text-3xl"
                   variants={textVariants}
                 >
                   {slides[currentSlide]?.title}
                 </motion.h2>
 
                 <motion.span
-                  className="block text-white text-3xl md:text-6xl leading-tight"
+                  className="block text-3xl leading-tight text-white md:text-6xl"
                   variants={textVariants}
                 >
                   {slides[currentSlide]?.subtitle}

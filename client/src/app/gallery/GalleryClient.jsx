@@ -1,52 +1,45 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSearchParams, useRouter, useParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
+import InnerHero from '@/components/Hero/InnerHero';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import InnerHero from '@/components/Hero/InnerHero';
 
 const Gallery = () => {
-  const { albumId } = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [photos, setPhotos] = useState([]);
-  const [albumTitle, setAlbumTitle] = useState('GALLERY');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [loadedImages, setLoadedImages] = useState([]);
 
-  // Load images from API
+  const images = [
+    { src: '/assets/images/news/1.jpg', alt: 'Luxury Apartment Lobby' },
+    { src: '/assets/images/news/2.jpg', alt: 'Modern Kitchen Design' },
+    { src: '/assets/images/news/3.jpg', alt: 'Penthouse Balcony View' },
+  ];
+
+  // Preload images
+  useEffect(() => {
+    const loadImage = (src) =>
+      new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = src;
+        img.onload = () => resolve(src);
+        img.onerror = () => reject(src);
+      });
+
+    Promise.all(images.map((image) => loadImage(image.src)))
+      .then(() => setLoadedImages(images))
+      .catch(console.error);
+  }, []);
+
   useEffect(() => {
     AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
+    document.title = 'Gallery | EDIFICE';
     window.scrollTo(0, 0);
-    fetchPhotos();
-  }, [albumId]);
 
-  const fetchPhotos = async () => {
-    try {
-      const res = await fetch('https://edifice-tau.vercel.app/api/photos');
-      const data = await res.json();
-
-      const filtered = data.filter((item) => item.album?._id === albumId);
-      setPhotos(filtered);
-
-      if (filtered.length > 0 && filtered[0].album?.title) {
-        setAlbumTitle(filtered[0].album.title);
-        document.title = `${filtered[0].album.title} | EDIFICE`;
-      } else {
-        setAlbumTitle('Gallery');
-        document.title = 'Gallery | EDIFICE';
-      }
-    } catch (error) {
-      console.error('Failed to load photos:', error);
-      setAlbumTitle('Gallery');
-      document.title = 'Gallery | EDIFICE';
-    }
-  };
-
-  // Open modal from URL param
-  useEffect(() => {
     const indexFromURL = parseInt(searchParams.get('imageIndex'));
     if (!isNaN(indexFromURL)) {
       setCurrentImageIndex(indexFromURL);
@@ -56,7 +49,7 @@ const Gallery = () => {
   }, [searchParams]);
 
   const openModal = (index) => {
-    router.push(`/gallery/${albumId}?imageIndex=${index}`);
+    router.push(`?imageIndex=${index}`);
     setCurrentImageIndex(index);
     setIsModalOpen(true);
     document.body.style.overflow = 'hidden';
@@ -65,20 +58,20 @@ const Gallery = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     document.body.style.overflow = 'auto';
-    router.push(`/gallery/${albumId}`);
+    router.push('/gallery');
   };
 
   const navigateImage = (direction) => {
-    const total = photos.length;
     const newIndex =
       direction === 'prev'
-        ? (currentImageIndex - 1 + total) % total
-        : (currentImageIndex + 1) % total;
+        ? (currentImageIndex - 1 + loadedImages.length) % loadedImages.length
+        : (currentImageIndex + 1) % loadedImages.length;
 
     setCurrentImageIndex(newIndex);
-    router.push(`/gallery/${albumId}?imageIndex=${newIndex}`);
+    router.push(`?imageIndex=${newIndex}`);
   };
 
+  // Handle keyboard nav
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (!isModalOpen) return;
@@ -92,7 +85,9 @@ const Gallery = () => {
 
   return (
     <>
-      <InnerHero subtitle="Our Gallery" title={albumTitle} backgroundImage="" />
+      <div className="relative z-0">
+        <InnerHero subtitle="Our" title="GALLERY" backgroundImage="" />
+      </div>
 
       <section
         data-aos="fade-up"
@@ -100,30 +95,26 @@ const Gallery = () => {
         style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
       >
         <div className="mx-auto max-w-7xl">
-          {photos.length === 0 ? (
-            <p className="text-lg text-center">No photos found in this album.</p>
-          ) : (
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {photos.map((image, index) => (
-                <div
-                  key={image._id}
-                  className="relative overflow-hidden shadow-lg cursor-pointer group rounded-xl"
-                  onClick={() => openModal(index)}
-                >
-                  <img
-                    src={image.imageUrl}
-                    alt={image.title}
-                    className="object-cover w-full transition duration-500 transform h-72 group-hover:scale-110"
-                    loading="lazy"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {loadedImages.map((image, index) => (
+              <div
+                key={index}
+                className="relative overflow-hidden shadow-lg cursor-pointer group rounded-xl"
+                onClick={() => openModal(index)}
+              >
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="object-cover w-full transition duration-500 transform h-72 group-hover:scale-110"
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {isModalOpen && photos.length > 0 && (
+      {isModalOpen && (
         <div
           className="fixed inset-0 z-[9999] flex items-center justify-center"
           style={{ backgroundColor: 'rgba(0,0,0,0.9)' }}
@@ -151,8 +142,8 @@ const Gallery = () => {
           </button>
           <div className="relative max-w-[90vw] max-h-[90vh]">
             <img
-              src={photos[currentImageIndex]?.imageUrl}
-              alt={photos[currentImageIndex]?.title}
+              src={loadedImages[currentImageIndex]?.src}
+              alt={loadedImages[currentImageIndex]?.alt}
               className="min-w-[80vw] min-h-[80vh] object-contain rounded-xl"
               onClick={(e) => e.stopPropagation()}
             />

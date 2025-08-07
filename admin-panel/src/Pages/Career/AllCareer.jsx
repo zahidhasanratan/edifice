@@ -8,7 +8,7 @@ export const AllCareer = () => {
 
   const fetchCareers = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/careers');
+      const res = await fetch('https://edifice-tau.vercel.app/api/careers');
       const data = await res.json();
       setCareers(data);
     } catch (error) {
@@ -32,7 +32,7 @@ export const AllCareer = () => {
 
     if (confirm.isConfirmed) {
       try {
-        const res = await fetch(`http://localhost:5000/api/careers/${id}`, {
+        const res = await fetch(`https://edifice-tau.vercel.app/api/careers/${id}`, {
           method: 'DELETE',
         });
 

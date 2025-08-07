@@ -21,7 +21,7 @@ const AllMenu = () => {
 
   const fetchMenus = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/menus/all');
+      const res = await fetch('https://edifice-tau.vercel.app/api/menus/all');
       const data = await res.json();
       setMenus(data);
       const flatMap = {};
@@ -76,7 +76,7 @@ const AllMenu = () => {
 
     if (confirm.isConfirmed) {
       try {
-        const res = await fetch(`http://localhost:5000/api/menus/${id}`, {
+        const res = await fetch(`https://edifice-tau.vercel.app/api/menus/${id}`, {
           method: 'DELETE',
         });
 

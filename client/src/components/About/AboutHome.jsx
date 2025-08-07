@@ -13,7 +13,7 @@ const AboutHome = () => {
 
     const fetchAbout = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/about');
+        const res = await fetch('https://edifice-tau.vercel.app/api/about');
         const data = await res.json();
         setAbout(data);
       } catch (error) {
@@ -28,13 +28,13 @@ const AboutHome = () => {
 
   if (isLoading || !about) {
     return (
-      <section className="py-20 px-4">
-        <div className="container mx-auto flex flex-col lg:flex-row gap-10 animate-pulse">
-          <div className="lg:w-1/2 space-y-4">
-            <div className="h-4 w-24 bg-gray-300 dark:bg-gray-700 rounded" />
-            <div className="h-8 w-3/4 bg-gray-300 dark:bg-gray-600 rounded" />
-            <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded" />
-            <div className="h-4 w-5/6 bg-gray-200 dark:bg-gray-700 rounded" />
+      <section className="px-4 py-20">
+        <div className="container flex flex-col gap-10 mx-auto lg:flex-row animate-pulse">
+          <div className="space-y-4 lg:w-1/2">
+            <div className="w-24 h-4 bg-gray-300 rounded dark:bg-gray-700" />
+            <div className="w-3/4 h-8 bg-gray-300 rounded dark:bg-gray-600" />
+            <div className="w-full h-4 bg-gray-200 rounded dark:bg-gray-700" />
+            <div className="w-5/6 h-4 bg-gray-200 rounded dark:bg-gray-700" />
           </div>
           <div className="lg:w-[500px] h-[300px] bg-gray-300 dark:bg-gray-700 rounded-lg" />
         </div>
@@ -47,13 +47,13 @@ const AboutHome = () => {
       data-aos="fade-up"
       className="bg-[var(--background)] text-[var(--foreground)] py-10 md:py-20 transition-colors duration-300"
     >
-      <div className="container mx-auto px-4 flex flex-col lg:flex-row justify-between gap-10">
+      <div className="container flex flex-col justify-between gap-10 px-4 mx-auto lg:flex-row">
         {/* Left Text Area */}
-        <div className="lg:w-1/2 space-y-6">
+        <div className="space-y-6 lg:w-1/2">
           <p className="text-[#c20e35] dark:text-red-600 text-sm uppercase tracking-wide">
             About Us
           </p>
-          <h2 className="text-2xl md:text-5xl font-bold leading-tight">
+          <h2 className="text-2xl font-bold leading-tight md:text-5xl">
             {about.title}
           </h2>
           {about.shortDescription?.split('\n').map((para, index) => (
@@ -73,7 +73,7 @@ const AboutHome = () => {
             alt="About"
             width={500}
             height={400}
-            className="rounded-lg shadow-lg object-cover w-full h-auto"
+            className="object-cover w-full h-auto rounded-lg shadow-lg"
             data-aos="fade-up"
             data-aos-delay="600"
             priority
@@ -81,7 +81,7 @@ const AboutHome = () => {
           />
 
           <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 bg-[#c20e35] dark:bg-red-600 text-white px-5 py-3 shadow-lg text-center">
-            <p className="text-sm uppercase tracking-wide">{about.tag1}</p>
+            <p className="text-sm tracking-wide uppercase">{about.tag1}</p>
             <h3 className="text-4xl font-extrabold tracking-widest">{about.tag2}</h3>
           </div>
         </div>

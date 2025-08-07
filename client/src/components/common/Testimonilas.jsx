@@ -19,7 +19,7 @@ const Testimonials = () => {
 
     const fetchTestimonials = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/testimonials');
+        const res = await fetch('https://edifice-tau.vercel.app/api/testimonials');
         const data = await res.json();
         setTestimonials(data);
       } catch (error) {
@@ -35,14 +35,14 @@ const Testimonials = () => {
   return (
     <section
       data-aos="fade-up"
-      className="relative py-20 text-white dark:text-black bg-center bg-cover transition-colors duration-300"
+      className="relative py-20 text-white transition-colors duration-300 bg-center bg-cover dark:text-black"
       style={{ backgroundImage: `url('/assets/images/hero/01.jpg')` }}
     >
-      <div className="bg-white/60 dark:bg-black/60 absolute inset-0 z-0"></div>
+      <div className="absolute inset-0 z-0 bg-white/60 dark:bg-black/60"></div>
 
-      <div className="relative z-10 container mx-auto px-4">
+      <div className="container relative z-10 px-4 mx-auto">
         {/* Section Header */}
-        <div className="text-center mb-10">
+        <div className="mb-10 text-center">
           <p className="text-[#c20e35] text-sm uppercase tracking-wider relative inline-block mb-2 
               before:content-[''] before:absolute before:-left-4 before:top-1/2 
               before:-translate-y-1/2 before:w-2 before:h-2 before:bg-[#c20e35] before:rounded-full">
@@ -57,11 +57,11 @@ const Testimonials = () => {
         {/* Swiper or Skeleton */}
         <div className="relative w-full">
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center animate-pulse gap-4">
-              <div className="h-5 w-64 bg-gray-300 dark:bg-gray-700 rounded" />
+            <div className="flex flex-col items-center justify-center gap-4 animate-pulse">
+              <div className="w-64 h-5 bg-gray-300 rounded dark:bg-gray-700" />
               <div className="h-4 w-[80%] bg-gray-300 dark:bg-gray-600 rounded" />
               <div className="h-4 w-[60%] bg-gray-300 dark:bg-gray-600 rounded" />
-              <div className="h-24 w-24 bg-gray-300 dark:bg-gray-600 rounded-full mt-6" />
+              <div className="w-24 h-24 mt-6 bg-gray-300 rounded-full dark:bg-gray-600" />
             </div>
           ) : (
             <Swiper
@@ -81,7 +81,7 @@ const Testimonials = () => {
             >
               {testimonials.map((testimonial) => (
                 <SwiperSlide key={testimonial._id} className="w-full">
-                  <div className="w-full px-4 flex flex-col items-center text-center">
+                  <div className="flex flex-col items-center w-full px-4 text-center">
                     <h1 className="text-2xl text-[#c20e35] font-semibold mb-4">
                       {testimonial.title}
                     </h1>
@@ -91,7 +91,7 @@ const Testimonials = () => {
                     <p className="mt-4 font-semibold text-black dark:text-white">
                       — {testimonial.clientName}
                     </p>
-                    <p className="text-gray-700 dark:text-gray-200 mb-6">
+                    <p className="mb-6 text-gray-700 dark:text-gray-200">
                       {testimonial.designation}
                     </p>
                     <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-[#c20e35]">
