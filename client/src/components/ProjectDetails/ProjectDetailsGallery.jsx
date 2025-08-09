@@ -6,19 +6,19 @@ const ProjectDetailsGallery = ({ images = [] }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loadedImages, setLoadedImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Preload images
   useEffect(() => {
     if (!images || !images.length) return;
 
-    const loadImage = (src) => {
-      return new Promise((resolve, reject) => {
+    const loadImage = (src) =>
+      new Promise((resolve, reject) => {
         const img = new Image();
         img.src = src;
         img.onload = () => resolve(src);
         img.onerror = () => reject(src);
       });
-    };
 
     Promise.all(images.map((src) => loadImage(src)))
       .then(() => {
@@ -28,7 +28,8 @@ const ProjectDetailsGallery = ({ images = [] }) => {
         }));
         setLoadedImages(formatted);
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
   }, [images]);
 
   const openModal = (index) => {
@@ -52,33 +53,38 @@ const ProjectDetailsGallery = ({ images = [] }) => {
     });
   };
 
-  if (!loadedImages.length) return null;
-
   return (
-    <section className="bg-white text-black dark:bg-black dark:text-white py-16 px-4 md:px-10">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {loadedImages.map((image, index) => (
-            <div
-              key={index}
-              className="group relative overflow-hidden rounded-xl shadow-lg cursor-pointer"
-              onClick={() => openModal(index)}
-            >
-              <img
-                src={image.src}
-                alt={image.alt}
-                className="w-full h-72 object-cover transform transition duration-500 group-hover:scale-110"
-                loading="lazy"
-              />
-            </div>
-          ))}
+    <section className="px-4 py-16 text-black bg-white dark:bg-black dark:text-white md:px-10">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {isLoading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="w-full bg-gray-200 h-72 dark:bg-gray-800 rounded-xl animate-pulse"
+                />
+              ))
+            : loadedImages.map((image, index) => (
+                <div
+                  key={index}
+                  className="relative overflow-hidden shadow-lg cursor-pointer group rounded-xl"
+                  onClick={() => openModal(index)}
+                >
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    className="object-cover w-full transition duration-500 transform h-72 group-hover:scale-110"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
         </div>
       </div>
 
       {/* Modal */}
       {isModalOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90"
           onClick={closeModal}
         >
           <button

@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { useState } from "react";
 import {
   FaTachometerAlt,
   FaUsers,
@@ -13,11 +14,18 @@ import {
   FaFolderOpen,
   FaBars,
   FaFileAlt,
+  FaAngleRight,
 } from "react-icons/fa";
 
 const Sidebar = () => {
   const { pathname } = useLocation();
-  const isActive = (path) => pathname === path ? "bg-primary text-white" : "";
+  const [openGroup, setOpenGroup] = useState(null);
+
+  const isActive = (path) => (pathname === path ? "bg-primary text-white" : "");
+
+  const toggleGroup = (group) => {
+    setOpenGroup((prev) => (prev === group ? null : group));
+  };
 
   const closeDrawerOnMobile = () => {
     const drawerCheckbox = document.getElementById("dashboard-drawer");
@@ -25,6 +33,26 @@ const Sidebar = () => {
       drawerCheckbox.checked = false;
     }
   };
+
+  const MenuGroup = ({ id, icon, label, children }) => (
+    <li>
+      <div
+        onClick={() => toggleGroup(id)}
+        className="flex items-center justify-between w-full cursor-pointer btn btn-ghost"
+      >
+        <div className="flex items-center">
+          {icon}
+          <span className="ml-2">{label}</span>
+        </div>
+        <FaAngleRight
+          className={`transition-transform duration-300 ${
+            openGroup === id ? "rotate-90" : ""
+          }`}
+        />
+      </div>
+      {openGroup === id && <ul className="pl-8 space-y-1">{children}</ul>}
+    </li>
+  );
 
   return (
     <aside className="w-64 min-h-screen border-r shadow-xl bg-base-200 border-base-300">
@@ -50,331 +78,255 @@ const Sidebar = () => {
             <FaTachometerAlt className="mr-2" /> Dashboard
           </Link>
         </li>
-        {/* Menu - Collapsible Submenu */}
-        <li>
-          <details className="group">
-            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
-              <FaBars className="mr-2" /> Menu
-            </summary>
-            <ul className="pl-8 space-y-1">
-              <li>
-                <Link
-                  to="/menu/add"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/menu/add")}`}
-                >
-                  <FaPlus className="mr-2" /> Add Menu
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/menu"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/menu")}`}
-                >
-                  <FaThList className="mr-2" /> All Menu
-                </Link>
-              </li>
-            </ul>
-          </details>
-        </li>
- {/* Page - Collapsible Submenu */}
-        <li>
-          <details className="group">
-            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
-              <FaFileAlt className="mr-2" /> Page
-            </summary>
-            <ul className="pl-8 space-y-1">
-              <li>
-                <Link
-                  to="/page/add"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/page/add")}`}
-                >
-                  <FaPlus className="mr-2" /> Add Page
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/pages"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/pages")}`}
-                >
-                  <FaThList className="mr-2" /> All Page
-                </Link>
-              </li>
-            </ul>
-          </details>
-        </li>
 
+        {/* Menu */}
+        <MenuGroup id="menu" icon={<FaBars />} label="Menu">
+          <li>
+            <Link
+              to="/menu/add"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/menu/add")}`}
+            >
+              <FaPlus className="mr-2" /> Add Menu
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/menu"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/menu")}`}
+            >
+              <FaThList className="mr-2" /> All Menu
+            </Link>
+          </li>
+        </MenuGroup>
 
-        
+        {/* Page */}
+        <MenuGroup id="page" icon={<FaFileAlt />} label="Page">
+          <li>
+            <Link
+              to="/page/add"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/page/add")}`}
+            >
+              <FaPlus className="mr-2" /> Add Page
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/pages"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/pages")}`}
+            >
+              <FaThList className="mr-2" /> All Page
+            </Link>
+          </li>
+        </MenuGroup>
+
+        {/* Media Gallery */}
         <li>
-          <Link to="/media" className="flex items-center gap-2">
-            <FaPhotoVideo /> Media Gallery
-          </Link>
-        </li>
-
-        {/* Settings */}
-        {/* <li>
           <Link
-            to="/settings"
+            to="/media"
             onClick={closeDrawerOnMobile}
-            className={`btn btn-ghost w-full justify-start ${isActive("/settings")}`}
+            className={`btn btn-ghost w-full justify-start ${isActive("/media")}`}
           >
-            <FaCog className="mr-2" /> Settings
+            <FaPhotoVideo className="mr-2" /> Media Gallery
           </Link>
-        </li> */}
-
-        {/* Banners - Collapsible Submenu */}
-        <li>
-          <details className="group">
-            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
-              <FaImage className="mr-2" /> Banners
-            </summary>
-            <ul className="pl-8 space-y-1">
-              <li>
-                <Link
-                  to="/sliders/add"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/sliders/add")}`}
-                >
-                  <FaPlus className="mr-2" /> Add Banner
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/sliders"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/sliders")}`}
-                >
-                  <FaThList className="mr-2" /> All Banners
-                </Link>
-              </li>
-            </ul>
-          </details>
-        </li>
-        
-        {/* Client Say - Collapsible Submenu */}
-        <li>
-          <details className="group">
-            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
-  <FaQuoteRight className="mr-2" /> Client Say
-</summary>
-            <ul className="pl-8 space-y-1">
-              <li>
-                <Link
-                  to="/testimonial/add"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/testimonial/add")}`}
-                >
-                  <FaPlus className="mr-2" /> Add Testimonial
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/testimonial"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/testimonial")}`}
-                >
-                  <FaThList className="mr-2" /> All Testimonial
-                </Link>
-              </li>
-            </ul>
-          </details>
         </li>
 
- {/* Management - Collapsible Submenu */}
-        <li>
-          <details className="group">
-            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
-  <FaUsers className="mr-2" /> Team
-</summary>
-            <ul className="pl-8 space-y-1">
-              <li>
-                <Link
-                  to="/team/add"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/team/add")}`}
-                >
-                  <FaPlus className="mr-2" /> Add Team
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/team"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/team")}`}
-                >
-                  <FaThList className="mr-2" /> All Team
-                </Link>
-              </li>
-            </ul>
-          </details>
-        
-        </li>
- {/* Project - Collapsible Submenu */}
-        <li>
-          <details className="group">
-            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
-  <FaBuilding className="mr-2" /> Projects
-</summary>
-            <ul className="pl-8 space-y-1">
-              <li>
-                <Link
-                  to="/projects/add"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/projects/add")}`}
-                >
-                  <FaPlus className="mr-2" /> Add Projects
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/projects"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/projects")}`}
-                >
-                  <FaThList className="mr-2" /> All Projects
-                </Link>
-              </li>
-            </ul>
-          </details>
-        </li>
+        {/* Banners */}
+        <MenuGroup id="banners" icon={<FaImage />} label="Banners">
+          <li>
+            <Link
+              to="/sliders/add"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/sliders/add")}`}
+            >
+              <FaPlus className="mr-2" /> Add Banner
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/sliders"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/sliders")}`}
+            >
+              <FaThList className="mr-2" /> All Banners
+            </Link>
+          </li>
+        </MenuGroup>
 
- {/* News - Collapsible Submenu */}
-        <li>
-          <details className="group">
-            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
-  <FaNewspaper className="mr-2" /> News
-</summary>
-            <ul className="pl-8 space-y-1">
-              <li>
-                <Link
-                  to="/news/add"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/news/add")}`}
-                >
-                  <FaPlus className="mr-2" /> Add News
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/news"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/news")}`}
-                >
-                  <FaThList className="mr-2" /> All News
-                </Link>
-              </li>
-            </ul>
-          </details>
-        </li>
- {/* Gallery - Collapsible Submenu */}
-        <li>
-          <details className="group">
-            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
-  <FaImage className="mr-2" /> Gallery
-</summary>
-            <ul className="pl-8 space-y-1">
-              <li>
-                <Link
-                  to="/album/add"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/album/add")}`}
-                >
-                  <FaPlus className="mr-2" /> Add Album
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/albums"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/albums")}`}
-                >
-                  <FaThList className="mr-2" /> All Album
-                </Link>
-              </li>
+        {/* Client Say */}
+        <MenuGroup id="testimonial" icon={<FaQuoteRight />} label="Client Say">
+          <li>
+            <Link
+              to="/testimonial/add"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/testimonial/add")}`}
+            >
+              <FaPlus className="mr-2" /> Add Testimonial
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/testimonial"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/testimonial")}`}
+            >
+              <FaThList className="mr-2" /> All Testimonial
+            </Link>
+          </li>
+        </MenuGroup>
 
-              <li>
-                <Link
-                  to="/photo/add"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/photo/add")}`}
-                >
-                  <FaPlus className="mr-2" /> Add Photo
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/photos"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/photos")}`}
-                >
-                  <FaThList className="mr-2" /> All Photo
-                </Link>
-              </li>
-            </ul>
-          </details>
-        </li>
-  {/* Career - Collapsible Submenu */}
-        <li>
-          <details className="group">
-            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
-  <FaNewspaper className="mr-2" /> Career
-</summary>
-            <ul className="pl-8 space-y-1">
-              <li>
-                <Link
-                  to="/career/add"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/career/add")}`}
-                >
-                  <FaPlus className="mr-2" /> Add Career
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/career"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/career")}`}
-                >
-                  <FaThList className="mr-2" /> All Career
-                </Link>
-              </li>
-            </ul>
-          </details>
-        </li>
- {/* Others - Collapsible Submenu */}
-        <li>
-          <details className="group">
-            <summary className="flex items-center justify-start w-full cursor-pointer btn btn-ghost">
-  <FaFolderOpen className="mr-2" /> Others
-</summary>
-            <ul className="pl-8 space-y-1">
-              <li>
-                <Link
-                  to="/about/edit"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/about")}`}
-                >
-                  <FaPlus className="mr-2" /> About
-                </Link>
-              </li>
-             
-              <li>
-                <Link
-                  to="/contact/edit"
-                  onClick={closeDrawerOnMobile}
-                  className={`btn btn-ghost w-full justify-start ${isActive("/contact")}`}
-                >
-                  <FaPlus className="mr-2" /> Contact
-                </Link>
-              </li>
-            </ul>
-          </details>
-        </li>
+        {/* Team */}
+        <MenuGroup id="team" icon={<FaUsers />} label="Team">
+          <li>
+            <Link
+              to="/team/add"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/team/add")}`}
+            >
+              <FaPlus className="mr-2" /> Add Team
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/team"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/team")}`}
+            >
+              <FaThList className="mr-2" /> All Team
+            </Link>
+          </li>
+        </MenuGroup>
 
+        {/* Projects */}
+        <MenuGroup id="projects" icon={<FaBuilding />} label="Projects">
+          <li>
+            <Link
+              to="/projects/add"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/projects/add")}`}
+            >
+              <FaPlus className="mr-2" /> Add Projects
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/projects"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/projects")}`}
+            >
+              <FaThList className="mr-2" /> All Projects
+            </Link>
+          </li>
+        </MenuGroup>
+
+        {/* News */}
+        <MenuGroup id="news" icon={<FaNewspaper />} label="News">
+          <li>
+            <Link
+              to="/news/add"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/news/add")}`}
+            >
+              <FaPlus className="mr-2" /> Add News
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/news"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/news")}`}
+            >
+              <FaThList className="mr-2" /> All News
+            </Link>
+          </li>
+        </MenuGroup>
+
+        {/* Gallery */}
+        <MenuGroup id="gallery" icon={<FaImage />} label="Gallery">
+          <li>
+            <Link
+              to="/album/add"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/album/add")}`}
+            >
+              <FaPlus className="mr-2" /> Add Album
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/albums"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/albums")}`}
+            >
+              <FaThList className="mr-2" /> All Album
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/photo/add"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/photo/add")}`}
+            >
+              <FaPlus className="mr-2" /> Add Photo
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/photos"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/photos")}`}
+            >
+              <FaThList className="mr-2" /> All Photo
+            </Link>
+          </li>
+        </MenuGroup>
+
+        {/* Career */}
+        <MenuGroup id="career" icon={<FaNewspaper />} label="Career">
+          <li>
+            <Link
+              to="/career/add"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/career/add")}`}
+            >
+              <FaPlus className="mr-2" /> Add Career
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/career"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/career")}`}
+            >
+              <FaThList className="mr-2" /> All Career
+            </Link>
+          </li>
+        </MenuGroup>
+
+        {/* Others */}
+        <MenuGroup id="others" icon={<FaFolderOpen />} label="Others">
+          <li>
+            <Link
+              to="/about/edit"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/about")}`}
+            >
+              <FaPlus className="mr-2" /> About
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/contact/edit"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/contact")}`}
+            >
+              <FaPlus className="mr-2" /> Contact
+            </Link>
+          </li>
+        </MenuGroup>
       </ul>
     </aside>
   );

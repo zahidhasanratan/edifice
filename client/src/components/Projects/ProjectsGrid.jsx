@@ -80,7 +80,7 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
                 >
                   <div className="bg-[var(--background)] text-[var(--foreground)] shadow-lg overflow-hidden transition-colors duration-300 rounded-lg group cursor-pointer">
                     <a href={`/projects/${project._id}`} className="block">
-                      <div className="relative w-full h-[250px] overflow-hidden">
+                      <div className="relative w-full h-[570px] overflow-hidden">
                         <Image
                           src={project.featureImage || '/fallback.jpg'}
                           alt={project.title}
