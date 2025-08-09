@@ -28,11 +28,16 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
             )
           : data;
 
-        setProjects(filtered);
+        // ✅ Sort ascending by title (A → Z)
+        const sorted = [...filtered].sort((a, b) =>
+          a.title.localeCompare(b.title)
+        );
+
+        setProjects(sorted);
       } catch (err) {
         console.error('Failed to fetch projects:', err);
       } finally {
-        setTimeout(() => setIsLoading(false), 300); // smoother loading
+        setTimeout(() => setIsLoading(false), 300);
       }
     };
 
@@ -62,7 +67,6 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
         {/* Project Grid */}
         <div className="flex flex-wrap justify-center -mx-4">
           {isLoading ? (
-            // Skeleton loader
             Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
@@ -87,7 +91,7 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
                           fill
                           className="object-cover transition-transform duration-1000 ease-in-out group-hover:scale-110"
                           sizes="(max-width: 768px) 100vw, 33vw"
-                          unoptimized // optional if not using internal image domain
+                          unoptimized
                           priority
                         />
                       </div>
