@@ -1,8 +1,7 @@
-// server.js
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-require("dotenv").config();
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 
@@ -14,7 +13,7 @@ const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // allow server-to-server / SSR / curl (no Origin header)
+    // Allow server-to-server / SSR / curl (no Origin header)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
     return callback(new Error("Not allowed by CORS: " + origin));
@@ -31,10 +30,10 @@ const corsOptions = {
   optionsSuccessStatus: 204,
 };
 
-// CORS first
+// Use CORS middleware first
 app.use(cors(corsOptions));
 
-// ✅ Express 5–safe preflight fast-path (avoid app.options("*", ...))
+// ✅ Express 5-safe preflight fast-path (avoid app.options("*", ...))
 app.use((req, res, next) => {
   if (req.method === "OPTIONS") return res.sendStatus(204);
   next();
@@ -82,6 +81,7 @@ const visitorRoutes = require("./routes/visitorRoutes");
 const contactInfoRoutes = require("./routes/contactInfo.route");
 const careerRoutes = require("./routes/careerRoutes");
 const careerApplicationRoutes = require("./routes/careerApplicationRoutes");
+const consentRoutes = require("./routes/consentRoutes"); // Consent route for cookie data
 
 /* ===================== Health Check ===================== */
 app.get("/", (req, res) => {
@@ -110,6 +110,9 @@ app.use("/api/visitors", visitorRoutes);
 app.use("/api/contactInfo", contactInfoRoutes);
 app.use("/api/careers", careerRoutes);
 app.use("/api/career-applications", careerApplicationRoutes);
+
+// Mount consent route
+app.use("/api/consents", consentRoutes);
 
 /* ===================== Error Handler ===================== */
 app.use((err, req, res, next) => {

@@ -28,10 +28,18 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
             )
           : data;
 
-        // ✅ Sort ascending by title (A → Z)
-        const sorted = [...filtered].sort((a, b) =>
-          a.title.localeCompare(b.title)
-        );
+        // ✅ Sort ascending by _id
+        const sorted = [...filtered].sort((a, b) => {
+          const aId = a?._id ?? '';
+          const bId = b?._id ?? '';
+          const numA = /^[0-9]+$/.test(aId) ? BigInt(aId) : null;
+          const numB = /^[0-9]+$/.test(bId) ? BigInt(bId) : null;
+
+          if (numA !== null && numB !== null) {
+            return numA < numB ? -1 : numA > numB ? 1 : 0; // ascending
+          }
+          return String(aId).localeCompare(String(bId)); // fallback lexicographic
+        });
 
         setProjects(sorted);
       } catch (err) {

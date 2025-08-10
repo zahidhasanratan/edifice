@@ -43,6 +43,7 @@ import  AddCareer  from "../Pages/Career/AddCareer";
 import  EditCareer  from "../Pages/Career/EditCareer";
 import { AllCareer } from "../Pages/Career/AllCareer";
 import { CareerApplicant } from "../Pages/Career/CareerApplicant";
+import AdminConsentList from "../Pages/Consent/AdminConsentList";
 
 export const router = createBrowserRouter([
   {
@@ -106,6 +107,7 @@ export const router = createBrowserRouter([
 
       { path: "/about/edit", element: <EditAbout /> },
       { path: "/contact/edit", element: <EditContact /> },
+      { path: "/consent/list", element: <AdminConsentList /> },
 
 
 

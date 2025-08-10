@@ -15,6 +15,7 @@ import {
   FaBars,
   FaFileAlt,
   FaAngleRight,
+  FaCookieBite,
 } from "react-icons/fa";
 
 const Sidebar = () => {
@@ -327,6 +328,17 @@ const Sidebar = () => {
             </Link>
           </li>
         </MenuGroup>
+        
+       
+         <li>
+          <Link
+            to="/consent/list"
+            onClick={closeDrawerOnMobile}
+            className={`btn btn-ghost w-full justify-start ${isActive("/consent")}`}
+          >
+            <FaCookieBite className="mr-2" /> Coockie Consent List
+          </Link>
+        </li>
       </ul>
     </aside>
   );
