@@ -3,6 +3,16 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
+const isExternal = (href = '') =>
+  /^(https?:)?\/\//i.test(href) || /^mailto:/i.test(href) || /^tel:/i.test(href);
+
+const ensureRootRelative = (href = '') => {
+  const trimmed = href.trim();
+  if (!trimmed) return '#';
+  if (trimmed.startsWith('/')) return trimmed;
+  return `/${trimmed.replace(/^\/+/, '')}`;
+};
+
 const Footer = () => {
   const [contact, setContact] = useState(null);
   const [footerMenus, setFooterMenus] = useState([]);
@@ -32,7 +42,7 @@ const Footer = () => {
 
     const load = async () => {
       await Promise.all([fetchContact(), fetchMenus()]);
-      setTimeout(() => setIsLoading(false), 300); // smooth transition
+      setTimeout(() => setIsLoading(false), 300);
     };
 
     load();
@@ -43,18 +53,15 @@ const Footer = () => {
       <footer className="py-20 px-4 animate-pulse bg-[var(--background)] text-[var(--foreground)]">
         <div className="grid max-w-screen-xl grid-cols-1 gap-10 mx-auto md:grid-cols-4">
           <div className="w-32 h-6 mb-2 bg-gray-300 rounded dark:bg-gray-700"></div>
-
           <div className="space-y-2">
             <div className="w-20 h-4 bg-gray-300 rounded dark:bg-gray-600"></div>
             <div className="w-24 h-4 bg-gray-300 rounded dark:bg-gray-600"></div>
             <div className="h-4 bg-gray-300 rounded dark:bg-gray-600 w-28"></div>
           </div>
-
           <div className="space-y-2">
             <div className="h-4 bg-gray-300 rounded dark:bg-gray-600 w-28"></div>
             <div className="w-24 h-4 bg-gray-300 rounded dark:bg-gray-600"></div>
           </div>
-
           <div className="space-y-2">
             <div className="w-full h-4 bg-gray-300 rounded dark:bg-gray-600"></div>
             <div className="w-2/3 h-4 bg-gray-300 rounded dark:bg-gray-600"></div>
@@ -128,19 +135,23 @@ const Footer = () => {
                 </Link>
               </li>
               {footerMenus.map((menu) => {
-                const isExternal = menu.page_type === 'url';
-                const href = isExternal
-                  ? menu.external_link
-                  : `/page/${menu.slug}`;
+                const rawHref =
+                  menu.page_type === 'url'
+                    ? menu.external_link
+                    : `/page/${menu.slug}`;
+                const href = isExternal(rawHref)
+                  ? rawHref
+                  : ensureRootRelative(rawHref);
+                const external = isExternal(href);
                 const target = menu.target || '_self';
 
                 return (
                   <li key={menu._id}>
-                    {isExternal || target === '_blank' ? (
+                    {external ? (
                       <a
                         href={href}
                         target={target}
-                        rel="noopener noreferrer"
+                        rel={target === '_blank' ? 'noopener noreferrer' : undefined}
                         className="hover:text-[#c20e35] transition"
                       >
                         {menu.menu_name}
@@ -169,10 +180,10 @@ const Footer = () => {
                 <strong>H :</strong> {contact.hotline}
               </li>
               <li>
-                <strong>E :</strong>
+                <strong>E :</strong>{' '}
                 <a
                   href={`mailto:${contact.email}`}
-                  className="hover:text-[#c20e35]"
+                  className="hover:text-[#c20e35] transition"
                 >
                   {contact.email}
                 </a>
@@ -199,7 +210,7 @@ const Footer = () => {
               href="https://www.esoft.com.bd/"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-[#c20e35]"
+              className="hover:text-[#c20e35] transition"
             >
               Web Design Company :{' '}
               <span className="font-cursive">

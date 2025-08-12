@@ -133,14 +133,14 @@ const HeroSlider = () => {
                 animate="visible"
               >
                 <motion.h2
-                  className="mb-2 text-2xl tracking-wider text-white uppercase md:text-3xl"
+                  className="mb-2 text-xl tracking-wider text-white uppercase lg:text-3xl"
                   variants={textVariants}
                 >
                   {slides[currentSlide]?.title}
                 </motion.h2>
 
                 <motion.span
-                  className="block text-3xl leading-tight text-white md:text-6xl"
+                  className="block text-xl leading-tight text-white lg:text-6xl"
                   variants={textVariants}
                 >
                   {slides[currentSlide]?.subtitle}

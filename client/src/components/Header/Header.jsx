@@ -3,6 +3,16 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 
+const isExternal = (href = '') =>
+  /^(https?:)?\/\//i.test(href) || /^mailto:/i.test(href) || /^tel:/i.test(href);
+
+const ensureRootRelative = (href = '') => {
+  const trimmed = href.trim();
+  if (!trimmed) return '#';
+  if (trimmed.startsWith('/')) return trimmed;
+  return `/${trimmed.replace(/^\/+/, '')}`;
+};
+
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -12,22 +22,20 @@ const Header = () => {
   const [allProjects, setAllProjects] = useState([]);
   const searchRef = useRef();
 
-  // Handle scroll background
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleMenu = () => setIsMenuOpen((s) => !s);
 
-  // Fetch menus
   useEffect(() => {
     const fetchMenus = async () => {
       try {
         const res = await fetch('https://edifice-tau.vercel.app/api/menus/all');
         const data = await res.json();
-        setMenus(data);
+        setMenus(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error('Error fetching menus:', err);
       }
@@ -35,21 +43,25 @@ const Header = () => {
     fetchMenus();
   }, []);
 
-  const mainMenus = menus.filter(menu => menu.display && menu.parent === null);
-  const getChildren = parentId => menus.filter(menu => menu.parent === parentId);
-  const getLinkHref = menu => {
-    if (menu.page_type === 'page') return `/page/${menu.slug}`;
-    if (menu.page_type === 'external' || menu.page_type === 'url') return menu.external_link;
+  const mainMenus = menus.filter((m) => m.display && m.parent === null);
+  const getChildren = (parentId) => menus.filter((m) => m.parent === parentId);
+
+  // ✅ Normalize hrefs:
+  const getLinkHref = (menu) => {
+    if (menu.page_type === 'page') return `/page/${menu.slug}`; // already internal + absolute
+    if (menu.page_type === 'external' || menu.page_type === 'url') {
+      const href = (menu.external_link || '').trim();
+      return isExternal(href) ? href : ensureRootRelative(href); // make internal links absolute
+    }
     return '#';
   };
 
-  // Fetch all projects for search
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const res = await fetch('https://edifice-tau.vercel.app/api/projects');
         const data = await res.json();
-        setAllProjects(data);
+        setAllProjects(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error('Failed to fetch projects for search:', err);
       }
@@ -57,20 +69,16 @@ const Header = () => {
     fetchProjects();
   }, []);
 
-  // Handle search
   useEffect(() => {
-    if (searchQuery.trim() === '') {
+    if (!searchQuery.trim()) {
       setSearchResults([]);
       return;
     }
-
-    const filtered = allProjects.filter(project =>
-      project.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setSearchResults(filtered.slice(0, 5)); // show max 5 results
+    const q = searchQuery.toLowerCase();
+    const filtered = allProjects.filter((p) => p?.title?.toLowerCase().includes(q));
+    setSearchResults(filtered.slice(0, 5));
   }, [searchQuery, allProjects]);
 
-  // Close search result on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
@@ -123,13 +131,12 @@ const Header = () => {
                 />
               </svg>
 
-              {/* 🔎 Dropdown Results */}
               {searchResults.length > 0 && (
                 <div className="absolute z-50 w-full mt-2 overflow-hidden text-black bg-white rounded shadow-md">
                   {searchResults.map((item) => (
                     <Link
                       key={item._id}
-                      href={`/projects/${item.slug || item._id}`}
+                      href={`/projects/${item.slug || item._id}`} // absolute path
                       className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100"
                       onClick={() => setSearchQuery('')}
                     >
@@ -192,13 +199,26 @@ const Header = () => {
                 const children = getChildren(menu._id);
                 const href = getLinkHref(menu);
                 const target = menu.target === '_blank' ? '_blank' : '_self';
+                const external = isExternal(href);
 
                 if (children.length === 0) {
                   return (
                     <li key={menu._id}>
-                      <Link href={href} target={target} className="block py-2" onClick={toggleMenu}>
-                        {menu.menu_name}
-                      </Link>
+                      {external ? (
+                        <a
+                          href={href}
+                          target={target}
+                          rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+                          className="block py-2"
+                          onClick={toggleMenu}
+                        >
+                          {menu.menu_name}
+                        </a>
+                      ) : (
+                        <Link href={href} className="block py-2" onClick={toggleMenu}>
+                          {menu.menu_name}
+                        </Link>
+                      )}
                     </li>
                   );
                 }
@@ -221,16 +241,28 @@ const Header = () => {
                         {children.map((child) => {
                           const childHref = getLinkHref(child);
                           const childTarget = child.target === '_blank' ? '_blank' : '_self';
+                          const childExternal = isExternal(childHref);
                           return (
                             <li key={child._id}>
-                              <Link
-                                href={childHref}
-                                target={childTarget}
-                                className="block py-2"
-                                onClick={toggleMenu}
-                              >
-                                {child.menu_name}
-                              </Link>
+                              {childExternal ? (
+                                <a
+                                  href={childHref}
+                                  target={childTarget}
+                                  rel={childTarget === '_blank' ? 'noopener noreferrer' : undefined}
+                                  className="block py-2"
+                                  onClick={toggleMenu}
+                                >
+                                  {child.menu_name}
+                                </a>
+                              ) : (
+                                <Link
+                                  href={childHref}
+                                  className="block py-2"
+                                  onClick={toggleMenu}
+                                >
+                                  {child.menu_name}
+                                </Link>
+                              )}
                             </li>
                           );
                         })}

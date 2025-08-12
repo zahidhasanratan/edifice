@@ -1,19 +1,12 @@
 'use client';
 
-import AOS from 'aos';
 import { useEffect, useState } from 'react';
-import 'aos/dist/aos.css';
 
 const AboutSection = () => {
   const [about, setAbout] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    AOS.init({
-      duration: 800,
-      easing: 'ease-in-out',
-    });
-
     const fetchAbout = async () => {
       try {
         const res = await fetch('https://edifice-tau.vercel.app/api/about');
@@ -46,10 +39,7 @@ const AboutSection = () => {
   }
 
   return (
-    <section
-      className="bg-[var(--background)] text-[var(--foreground)] py-20 transition-colors duration-300"
-      data-aos="fade-up"
-    >
+    <section className="bg-[var(--background)] text-[var(--foreground)] py-20 transition-colors duration-300">
       <div className="container flex flex-col justify-between gap-10 px-4 mx-auto lg:flex-row">
         {/* Left Content */}
         <div className="space-y-6">

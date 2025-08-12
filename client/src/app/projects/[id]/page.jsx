@@ -1,37 +1,43 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
+import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
 import InnerHero from '@/components/Hero/InnerHero';
-import SingleProjectDetails from '@/components/ProjectDetails/SingleProjectDetails';
-import ProjectDetailsGallery from '@/components/ProjectDetails/ProjectDetailsGallery';
-import ProjectVideo from '@/components/ProjectDetails/ProjectVideo';
-import ProjectLocation from '@/components/ProjectDetails/ProjectLocation';
-import ProjectsGrid from '@/components/Projects/ProjectsGrid';
 
-const ProjectDetails = () => {
-  const { id } = useParams();
-  const [project, setProject] = useState(null);
+export const revalidate = 120; // ISR: refresh every 120s
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [id]);
+async function getProject(id) {
+  const res = await fetch(`https://edifice-tau.vercel.app/api/projects/${id}`, {
+    next: { revalidate },
+  });
+  if (!res.ok) notFound();
+  return res.json();
+}
 
-  useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        const res = await fetch(`https://edifice-tau.vercel.app/api/projects/${id}`);
-        const data = await res.json();
-        setProject(data);
-      } catch (err) {
-        console.error('Failed to fetch project details:', err);
-      }
-    };
+// Use suspense only — no ssr:false in Server Components
+const SingleProjectDetails = dynamic(
+  () => import('@/components/ProjectDetails/SingleProjectDetails'),
+  { suspense: true }
+);
+const ProjectDetailsGallery = dynamic(
+  () => import('@/components/ProjectDetails/ProjectDetailsGallery'),
+  { suspense: true }
+);
+const ProjectVideo = dynamic(
+  () => import('@/components/ProjectDetails/ProjectVideo'),
+  { suspense: true }
+);
+const ProjectLocation = dynamic(
+  () => import('@/components/ProjectDetails/ProjectLocation'),
+  { suspense: true }
+);
+const ProjectsGrid = dynamic(
+  () => import('@/components/Projects/ProjectsGrid'),
+  { suspense: true }
+);
 
-    if (id) fetchProject();
-  }, [id]);
-
-  if (!project) return <div className="py-32 text-center">Loading Project...</div>;
+export default async function ProjectDetailsPage({ params }) {
+  const { id } = params;
+  const project = await getProject(id);
 
   return (
     <main className="bg-[var(--background)] text-[var(--foreground)] transition-colors duration-300">
@@ -40,13 +46,67 @@ const ProjectDetails = () => {
         title={project.title}
         backgroundImage={project.innerBannerImage || '/assets/images/hero/01.jpg'}
       />
-      <SingleProjectDetails project={project} />
-      <ProjectDetailsGallery images={project.multiplePhotos} />
-      <ProjectVideo youtubeUrl={project.youtubeUrl} />
-      <ProjectLocation address={project.address} mapEmbedLink={project.googleMapLocation} />
-      <ProjectsGrid title="Projects" subtitle="Related Projects" />
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <SingleProjectDetails project={project} />
+      </Suspense>
+
+      <Suspense fallback={<GallerySkeleton />}>
+        <ProjectDetailsGallery images={project.multiplePhotos} />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <ProjectVideo youtubeUrl={project.youtubeUrl} />
+      </Suspense>
+
+      <Suspense fallback={<MapSkeleton />}>
+        <ProjectLocation address={project.address} mapEmbedLink={project.googleMapLocation} />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <ProjectsGrid title="Projects" subtitle="Related Projects" />
+      </Suspense>
     </main>
   );
-};
+}
 
-export default ProjectDetails;
+// --- lightweight server-safe skeletons ---
+function shimmer() {
+  return 'animate-pulse bg-[color-mix(in_srgb,var(--foreground)_/10%,transparent)]';
+}
+function SectionSkeleton() {
+  return (
+    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+      <div className={`w-1/2 max-w-[420px] h-7 mb-6 rounded-2xl ${shimmer()}`} />
+      <div className="grid gap-6 md:grid-cols-2">
+        <div className={`h-32 rounded-2xl ${shimmer()}`} />
+        <div className="space-y-3">
+          <div className={`w-5/6 h-4 rounded ${shimmer()}`} />
+          <div className={`w-full h-4 rounded ${shimmer()}`} />
+          <div className={`w-4/5 h-4 rounded ${shimmer()}`} />
+          <div className={`w-3/4 h-4 rounded ${shimmer()}`} />
+        </div>
+      </div>
+    </section>
+  );
+}
+function GallerySkeleton() {
+  return (
+    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+      <div className={`w-44 h-6 mb-6 rounded-2xl ${shimmer()}`} />
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className={`aspect-[4/3] rounded-2xl ${shimmer()}`} />
+        ))}
+      </div>
+    </section>
+  );
+}
+function MapSkeleton() {
+  return (
+    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+      <div className={`w-36 h-6 mb-4 rounded-2xl ${shimmer()}`} />
+      <div className={`w-full h-[320px] md:h-[420px] rounded-2xl ${shimmer()}`} />
+    </section>
+  );
+}

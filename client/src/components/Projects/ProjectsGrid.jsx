@@ -1,56 +1,69 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import AOS from 'aos';
 import Image from 'next/image';
+import Link from 'next/link';
 import 'aos/dist/aos.css';
 
 const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const abortRef = useRef(null);
 
   useEffect(() => {
-    AOS.init({
-      duration: 800,
-      easing: 'ease-in-out',
-      once: true,
-    });
+    AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
+  }, []);
+
+  useEffect(() => {
+    // abort previous fetch on prop change/unmount
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
 
     const fetchProjects = async () => {
       try {
-        const res = await fetch('https://edifice-tau.vercel.app/api/projects');
-        const data = await res.json();
-
-        const filtered = type
-          ? data.filter(
-              (project) =>
-                project.projectType?.toLowerCase() === type.toLowerCase()
-            )
-          : data;
-
-        // ✅ Sort ascending by _id
-        const sorted = [...filtered].sort((a, b) => {
-          const aId = a?._id ?? '';
-          const bId = b?._id ?? '';
-          const numA = /^[0-9]+$/.test(aId) ? BigInt(aId) : null;
-          const numB = /^[0-9]+$/.test(bId) ? BigInt(bId) : null;
-
-          if (numA !== null && numB !== null) {
-            return numA < numB ? -1 : numA > numB ? 1 : 0; // ascending
-          }
-          return String(aId).localeCompare(String(bId)); // fallback lexicographic
+        const res = await fetch('https://edifice-tau.vercel.app/api/projects', {
+          signal: controller.signal,
+          headers: { Accept: 'application/json' },
+          cache: 'no-store', // feel free to change to 'force-cache' if API has good cache headers
         });
-
-        setProjects(sorted);
+        const data = await res.json();
+        setProjects(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error('Failed to fetch projects:', err);
+        if (err?.name !== 'AbortError') {
+          console.error('Failed to fetch projects:', err);
+        }
       } finally {
-        setTimeout(() => setIsLoading(false), 300);
+        setTimeout(() => setIsLoading(false), 200);
       }
     };
 
+    setIsLoading(true);
     fetchProjects();
+
+    return () => controller.abort();
   }, [type]);
+
+  // filter + sort without redoing work on every render
+  const visibleProjects = useMemo(() => {
+    const filtered = type
+      ? projects.filter(
+          (p) => p?.projectType?.toLowerCase() === type.toLowerCase()
+        )
+      : projects;
+
+    const sorted = [...filtered].sort((a, b) => {
+      const aId = a?._id ?? '';
+      const bId = b?._id ?? '';
+      const numA = /^[0-9]+$/.test(aId) ? BigInt(aId) : null;
+      const numB = /^[0-9]+$/.test(bId) ? BigInt(bId) : null;
+      if (numA !== null && numB !== null) return numA < numB ? -1 : numA > numB ? 1 : 0;
+      return String(aId).localeCompare(String(bId));
+    });
+
+    return sorted;
+  }, [projects, type]);
 
   return (
     <section
@@ -76,31 +89,36 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
         <div className="flex flex-wrap justify-center -mx-4">
           {isLoading ? (
             Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="w-full px-4 md:w-1/2 lg:w-1/3 animate-pulse"
-              >
-                <div className="mx-auto mb-10 max-w-[380px] bg-gray-200 dark:bg-gray-800 h-[300px] rounded-lg" />
+              <div key={i} className="w-full px-4 md:w-1/2 lg:w-1/3">
+                <div className="mx-auto mb-10 max-w-[380px]">
+                  <div className="relative w-full h-[570px] rounded-lg overflow-hidden">
+                    <div className="absolute inset-0 animate-pulse bg-[color-mix(in_srgb,var(--foreground)_/10%,transparent)]" />
+                  </div>
+                  <div className="mt-4 h-6 w-3/4 mx-auto rounded animate-pulse bg-[color-mix(in_srgb,var(--foreground)_/10%,transparent)]" />
+                  <div className="mt-2 h-4 w-1/2 mx-auto rounded animate-pulse bg-[color-mix(in_srgb,var(--foreground)_/10%,transparent)]" />
+                </div>
               </div>
             ))
-          ) : projects.length > 0 ? (
-            projects.map((project) => (
+          ) : visibleProjects.length > 0 ? (
+            visibleProjects.map((project, idx) => (
               <div key={project._id} className="w-full px-4 md:w-1/2 lg:w-1/3">
                 <div
                   className="group mx-auto mb-10 max-w-[380px] text-center md:mb-16"
                   data-aos="fade-up"
                 >
                   <div className="bg-[var(--background)] text-[var(--foreground)] shadow-lg overflow-hidden transition-colors duration-300 rounded-lg group cursor-pointer">
-                    <a href={`/projects/${project._id}`} className="block">
+                    {/* Use Next Link for SPA navigation + prefetch */}
+                    <Link href={`/projects/${project._id}`} prefetch scroll className="block">
                       <div className="relative w-full h-[570px] overflow-hidden">
                         <Image
                           src={project.featureImage || '/fallback.jpg'}
                           alt={project.title}
                           fill
-                          className="object-cover transition-transform duration-1000 ease-in-out group-hover:scale-110"
+                          className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
                           sizes="(max-width: 768px) 100vw, 33vw"
-                          unoptimized
-                          priority
+                          // Avoid forcing priority on every card; give it to the first couple only
+                          priority={idx < 2}
+                          // Next/Image is already lazy for non-priority; keep it smooth
                         />
                       </div>
                       <div className="p-5">
@@ -108,12 +126,10 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
                           {project.title}
                         </h3>
                         <p className="mt-1 text-sm text-[var(--foreground)]/70">
-                          {project.address ||
-                            project.exactLocation ||
-                            'No location available'}
+                          {project.address || project.exactLocation || 'No location available'}
                         </p>
                       </div>
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
