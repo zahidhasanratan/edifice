@@ -222,7 +222,26 @@ const Sidebar = () => {
             </Link>
           </li>
         </MenuGroup>
-
+<MenuGroup id="news" icon={<FaNewspaper />} label="Projects Status">
+          <li>
+            <Link
+              to="/status/add"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/status/add")}`}
+            >
+              <FaPlus className="mr-2" /> Add Status
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/status"
+              onClick={closeDrawerOnMobile}
+              className={`btn btn-ghost w-full justify-start ${isActive("/status")}`}
+            >
+              <FaThList className="mr-2" /> All Status
+            </Link>
+          </li>
+        </MenuGroup>
         {/* News */}
         <MenuGroup id="news" icon={<FaNewspaper />} label="News">
           <li>

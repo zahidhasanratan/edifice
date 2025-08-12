@@ -82,6 +82,7 @@ const contactInfoRoutes = require("./routes/contactInfo.route");
 const careerRoutes = require("./routes/careerRoutes");
 const careerApplicationRoutes = require("./routes/careerApplicationRoutes");
 const consentRoutes = require("./routes/consentRoutes"); // Consent route for cookie data
+const statusRoutes = require("./routes/statusRoutes");
 
 /* ===================== Health Check ===================== */
 app.get("/", (req, res) => {
@@ -110,7 +111,7 @@ app.use("/api/visitors", visitorRoutes);
 app.use("/api/contactInfo", contactInfoRoutes);
 app.use("/api/careers", careerRoutes);
 app.use("/api/career-applications", careerApplicationRoutes);
-
+app.use("/api/status", statusRoutes);
 // Mount consent route
 app.use("/api/consents", consentRoutes);
 

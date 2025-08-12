@@ -44,6 +44,9 @@ import  EditCareer  from "../Pages/Career/EditCareer";
 import { AllCareer } from "../Pages/Career/AllCareer";
 import { CareerApplicant } from "../Pages/Career/CareerApplicant";
 import AdminConsentList from "../Pages/Consent/AdminConsentList";
+import  AddStatus  from "../Pages/Status/AddStatus";
+import EditStatus from "../Pages/Status/EditStatus";
+import AllStatus from "../Pages/Status/AllStatus";
 
 export const router = createBrowserRouter([
   {
@@ -88,6 +91,10 @@ export const router = createBrowserRouter([
       { path: "/news/add", element: <AddNews /> },
       { path: "/news/edit/:id", element: <EditNews /> },
       { path: "/news", element: <AllNews /> },
+      
+      { path: "/status/add", element: <AddStatus /> },
+      { path: "/status/edit/:id", element: <EditStatus /> },
+      { path: "/status", element: <AllStatus /> },
 
       { path: "/album/add", element: <AddAlbum /> },
       { path: "/albums/edit/:id", element: <EditAlbum /> },
