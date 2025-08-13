@@ -41,13 +41,13 @@ const Testimonials = () => {
     fetchTestimonials();
   }, []);
 
-  // Classes that switch without relying on `dark:` variants
-  const sectionText = isDark ? 'text-black' : 'text-white';
-  const overlayBg = isDark ? 'bg-white/80' : 'bg-black/80';
-  const headingText = isDark ? 'text-black' : 'text-white';
-  const bodyText = isDark ? 'text-gray-700' : 'text-gray-200';
-  const roleText = isDark ? 'text-gray-600' : 'text-gray-300';
-  const nameText = isDark ? 'text-black' : 'text-white';
+  // Corrected colors for dark/light modes
+  const sectionText = isDark ? 'text-white' : 'text-black';
+  const overlayBg = isDark ? 'bg-black/80' : 'bg-white/80';
+  const headingText = isDark ? 'text-white' : 'text-black';
+  const bodyText = isDark ? 'text-gray-200' : 'text-gray-700';
+  const roleText = isDark ? 'text-gray-300' : 'text-gray-600';
+  const nameText = isDark ? 'text-white' : 'text-black';
 
   return (
     <section
@@ -75,10 +75,10 @@ const Testimonials = () => {
         <div className="relative w-full">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center gap-4 animate-pulse">
-              <div className={`w-64 h-5 rounded ${isDark ? 'bg-black/30' : 'bg-white/50'}`} />
-              <div className={`h-4 w-[80%] rounded ${isDark ? 'bg-black/20' : 'bg-white/40'}`} />
-              <div className={`h-4 w-[60%] rounded ${isDark ? 'bg-black/20' : 'bg-white/40'}`} />
-              <div className={`w-24 h-24 mt-6 rounded-full ${isDark ? 'bg-black/30' : 'bg-white/50'}`} />
+              <div className={`w-64 h-5 rounded ${isDark ? 'bg-white/50' : 'bg-black/30'}`} />
+              <div className={`h-4 w-[80%] rounded ${isDark ? 'bg-white/40' : 'bg-black/20'}`} />
+              <div className={`h-4 w-[60%] rounded ${isDark ? 'bg-white/40' : 'bg-black/20'}`} />
+              <div className={`w-24 h-24 mt-6 rounded-full ${isDark ? 'bg-white/50' : 'bg-black/30'}`} />
             </div>
           ) : (
             <Swiper

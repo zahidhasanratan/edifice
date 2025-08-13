@@ -54,7 +54,6 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '', showHomeOnly = fal
       } catch (err) {
         if (err?.name !== 'AbortError') console.error('Failed to fetch projects:', err);
       } finally {
-        // small delay for smoother skeleton removal, but no CSS transitions
         setTimeout(() => setIsLoading(false), 100);
       }
     };
@@ -79,20 +78,20 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '', showHomeOnly = fal
     });
   }, [projects, type]);
 
-  // THEME-SAFE CLASSES (no `dark:` usage)
-  // Light mode => bg-gray-900 text-white
-  // Dark mode  => bg-gray-100 text-black
-  const sectionBg = isDark ? 'bg-gray-100' : 'bg-gray-900';
-  const sectionText = isDark ? 'text-black' : 'text-white';
-  const headingText = isDark ? 'text-black' : 'text-white';
-  const accentText = isDark ? 'text-red-600' : 'text-[#c20e35]';
+  // Corrected dark/light theme classes
+  // Dark mode  => dark background, light text
+  // Light mode => light background, dark text
+  const sectionBg = isDark ? 'bg-gray-900' : 'bg-gray-100';
+  const sectionText = isDark ? 'text-white' : 'text-black';
+  const headingText = isDark ? 'text-white' : 'text-black';
+  const accentText = isDark ? 'text-[#c20e35]' : 'text-red-600';
 
-  const cardShellBg = isDark ? 'bg-black' : 'bg-white';
-  const cardFooterBg = isDark ? 'bg-white' : 'bg-black';
-  const cardTitle = isDark ? 'text-black' : 'text-white';
-  const cardSubtitle = isDark ? 'text-gray-600' : 'text-gray-300';
+  const cardShellBg = isDark ? 'bg-white' : 'bg-black';
+  const cardFooterBg = isDark ? 'bg-black' : 'bg-white';
+  const cardTitle = isDark ? 'text-white' : 'text-black';
+  const cardSubtitle = isDark ? 'text-gray-300' : 'text-gray-600';
 
-  const skelBlock = isDark ? 'bg-black/10' : 'bg-white/20';
+  const skelBlock = isDark ? 'bg-white/20' : 'bg-black/10';
 
   return (
     <section className={`py-16 ${sectionBg} ${sectionText}`}>
@@ -100,12 +99,19 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '', showHomeOnly = fal
         {/* Title & Subtitle */}
         <div className="mb-10 text-center">
           {title && (
-            <p className={`${accentText} text-sm uppercase tracking-wider relative inline-block mb-2 before:content-[''] before:absolute before:-left-4 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-2 before:bg-[#c20e35] before:rounded-full`}>
+            <p
+              className={`${accentText} text-sm uppercase tracking-wider relative inline-block mb-2 
+              before:content-[''] before:absolute before:-left-4 before:top-1/2 
+              before:-translate-y-1/2 before:w-2 before:h-2 before:bg-[#c20e35] before:rounded-full`}
+            >
               {title}
             </p>
           )}
           {subtitle && (
-            <h2 className={`relative text-3xl md:text-4xl font-bold ${headingText} text-center mb-6 after:content-[''] after:block after:w-20 after:h-1 after:bg-[#c20e35] after:mx-auto after:mt-4`}>
+            <h2
+              className={`relative text-3xl md:text-4xl font-bold ${headingText} text-center mb-6 
+              after:content-[''] after:block after:w-20 after:h-1 after:bg-[#c20e35] after:mx-auto after:mt-4`}
+            >
               {subtitle}
             </h2>
           )}
@@ -161,7 +167,7 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '', showHomeOnly = fal
               </div>
             ))
           ) : (
-            <p className={`${isDark ? 'text-gray-600' : 'text-gray-300'} text-lg`}>
+            <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} text-lg`}>
               No projects found.
             </p>
           )}

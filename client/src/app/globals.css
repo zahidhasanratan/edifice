@@ -19,3 +19,37 @@ body {
   font-family: var(--font-sans, Arial, Helvetica, sans-serif);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* ===== Side preview strips (prev/next) ===== */
+.c-preview {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 12vw;                 /* slim edge peeks; adjust 10–18vw if you want */
+  min-width: 140px;            /* ensure visibility on very wide screens */
+  background-position: center;
+  background-size: cover;
+  z-index: 2;                  /* sit above the center slide background but below its text */
+  pointer-events: none;        /* don't block clicks */
+  filter: brightness(.85);     /* subtle dim for context */
+}
+.c-preview::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.25); /* soft overlay like your main slide gradient */
+}
+.c-preview--prev { left: 0; }
+.c-preview--next { right: 0; }
+
+/* tighten the look during scale transition */
+.u-scale-out .c-preview {
+  transform: scale(.98);
+  transition: transform .5s ease, opacity .5s ease;
+  opacity: .96;
+}
+
+/* hide on small screens (keeps your mobile 250px hero clean) */
+@media (max-width: 768px) {
+  .c-preview { display: none; }
+}
