@@ -100,7 +100,7 @@ const Header = () => {
           <div className="z-50 max-w-[250px]">
             <Link href="/" className="inline-block">
               <img
-                src="/assets/images/logo/logo.png"
+                src="/assets/images/logo/logo.svg"
                 alt="logo"
                 className="h-[80px] md:h-[120px] w-auto"
               />
@@ -109,7 +109,7 @@ const Header = () => {
 
           <div className="z-50 flex items-center gap-4">
             {/* 🔍 Search */}
-            <div className="relative w-[200px] hidden md:block" ref={searchRef}>
+            {/* <div className="relative w-[200px] hidden md:block" ref={searchRef}>
               <input
                 type="text"
                 value={searchQuery}
@@ -150,7 +150,7 @@ const Header = () => {
                   ))}
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* ☰ Mobile Menu Button */}
             <button
@@ -158,7 +158,7 @@ const Header = () => {
               className="flex items-center gap-1 text-white"
               onClick={toggleMenu}
             >
-              <span className="text-xl font-semibold uppercase text-[#c20e35] mr-3">Menu</span>
+              {/* <span className="text-xl font-semibold uppercase text-[#c20e35] mr-3">Menu</span> */}
               <svg className="w-7 h-7" viewBox="0 0 100 80" fill="currentColor">
                 <rect width="100" height="10" rx="5"></rect>
                 <rect y="30" width="100" height="10" rx="5"></rect>

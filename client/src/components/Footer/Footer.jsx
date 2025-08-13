@@ -117,7 +117,7 @@ const Footer = () => {
           {/* Logo */}
           <div className="flex flex-col items-center text-center md:items-start md:text-left">
             <img
-              src="/assets/images/logo/logo.png"
+              src="/assets/images/logo/logo.svg"
               alt="Logo"
               className="w-32 mb-2"
             />

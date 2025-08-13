@@ -1,5 +1,15 @@
 const News = require("../models/News");
 
+// Small helper to prevent caching on list/detail GETs
+const setNoStore = (res) => {
+  res.set({
+    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+    Pragma: "no-cache",
+    Expires: "0",
+    "Surrogate-Control": "no-store",
+  });
+};
+
 // @desc Create a news article
 // @route POST /api/news
 exports.createNews = async (req, res) => {
@@ -13,7 +23,14 @@ exports.createNews = async (req, res) => {
       description,
     } = req.body;
 
-    if (!title || !publishDate || !shortDetails || !featuredPhoto || !coverPhoto || !description) {
+    if (
+      !title ||
+      !publishDate ||
+      !shortDetails ||
+      !featuredPhoto ||
+      !coverPhoto ||
+      !description
+    ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -27,33 +44,60 @@ exports.createNews = async (req, res) => {
     });
 
     const savedNews = await newNews.save();
-    res.status(201).json(savedNews);
+    return res.status(201).json(savedNews);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 };
 
-// @desc Get all news with optional pagination
+// @desc Get all news with search & pagination
 // @route GET /api/news
 exports.getAllNews = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 5;
+    setNoStore(res);
 
-    const total = await News.countDocuments();
-    const news = await News.find()
-      .sort({ publishDate: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit);
+    const pageRaw = parseInt(req.query.page, 10);
+    const limitRaw = parseInt(req.query.limit, 10);
+    const search = (req.query.search || "").trim();
 
-    res.json({
+    const page = Number.isFinite(pageRaw) && pageRaw > 0 ? pageRaw : 1;
+    const limit =
+      Number.isFinite(limitRaw) && limitRaw > 0 && limitRaw <= 50
+        ? limitRaw
+        : 5;
+
+    const query = search
+      ? {
+          $or: [
+            { title: { $regex: search, $options: "i" } },
+            { shortDetails: { $regex: search, $options: "i" } },
+            { description: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {};
+
+    const total = await News.countDocuments(query);
+    const totalPages = Math.max(1, Math.ceil(total / limit));
+
+    // If current page exceeds totalPages (e.g., after deletions),
+    // clamp to last page.
+    const safePage = Math.min(page, totalPages);
+
+    const news = await News.find(query)
+      .sort({ publishDate: -1, _id: -1 }) // deterministic sort
+      .skip((safePage - 1) * limit)
+      .limit(limit)
+      .lean();
+
+    return res.json({
       total,
-      page,
+      page: safePage,
       limit,
+      totalPages,
       news,
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -61,11 +105,13 @@ exports.getAllNews = async (req, res) => {
 // @route GET /api/news/:id
 exports.getNewsById = async (req, res) => {
   try {
-    const news = await News.findById(req.params.id);
+    setNoStore(res);
+
+    const news = await News.findById(req.params.id).lean();
     if (!news) return res.status(404).json({ message: "News not found" });
-    res.json(news);
+    return res.json(news);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -92,14 +138,14 @@ exports.updateNews = async (req, res) => {
         coverPhoto,
         description,
       },
-      { new: true }
-    );
+      { new: true, runValidators: true }
+    ).lean();
 
     if (!updated) return res.status(404).json({ message: "News not found" });
 
-    res.json(updated);
+    return res.json(updated);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -107,10 +153,18 @@ exports.updateNews = async (req, res) => {
 // @route DELETE /api/news/:id
 exports.deleteNews = async (req, res) => {
   try {
-    const deleted = await News.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ message: "News not found" });
-    res.json({ message: "News deleted successfully" });
+    // Use deleteOne so we can return deletedCount reliably
+    const result = await News.deleteOne({ _id: req.params.id });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: "News not found", deletedCount: 0 });
+    }
+
+    return res.json({
+      message: "News deleted successfully",
+      deletedCount: result.deletedCount,
+    });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 };

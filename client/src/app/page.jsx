@@ -13,7 +13,7 @@ export default function HomePage() {
   useEffect(() => {
     AOS.init({ once: true });
     window.scrollTo(0, 0);
-    document.title = 'Home | EDIFICE';
+    document.title = 'Home | EDIFICE'; // ✅ Dynamically set title
   }, []);
 
   return (
@@ -23,7 +23,7 @@ export default function HomePage() {
       <ProjectsGrid 
   subtitle="Latest Launches" 
   title="Projects" 
-  showHomeOnly={true} 
+  showHomeOnly={true} // ✅ only show showHome:true
 />
       <Testimonials />
     </main>

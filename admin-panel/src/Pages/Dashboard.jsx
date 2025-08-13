@@ -56,9 +56,9 @@ const Dashboard = () => {
       <h1 className="text-3xl font-bold text-primary">Dashboard Overview</h1>
 
       {/* 📊 Stat Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {/* 🟦 Total Visitors */}
-        <div className="w-full transition-transform duration-300 shadow-md card bg-primary text-primary-content hover:shadow-xl hover:scale-105">
+        {/* <div className="w-full transition-transform duration-300 shadow-md card bg-primary text-primary-content hover:shadow-xl hover:scale-105">
           <div className="card-body">
             <div className="flex items-center justify-between">
               <div>
@@ -69,7 +69,7 @@ const Dashboard = () => {
               <FaUsers className="text-4xl opacity-30" />
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* ✅ Completed Projects */}
         <div className="w-full text-green-100 transition-transform duration-300 bg-green-600 shadow-md card hover:shadow-xl hover:scale-105">
