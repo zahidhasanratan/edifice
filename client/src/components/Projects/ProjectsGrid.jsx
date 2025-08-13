@@ -140,7 +140,7 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '', showHomeOnly = fal
                     <Link href={`/projects/${project._id}`} prefetch scroll className="block">
                       {/* Image */}
                       <div className="overflow-hidden">
-                        <div className="relative w-full h-[450px]">
+                        <div className="relative w-full h-[550px]">
                           <Image
                             src={project.featureImage || '/fallback.jpg'}
                             alt={project.title || 'Project'}
