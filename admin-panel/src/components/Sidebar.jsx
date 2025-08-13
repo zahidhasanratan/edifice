@@ -222,7 +222,7 @@ const Sidebar = () => {
             </Link>
           </li>
         </MenuGroup>
-<MenuGroup id="news" icon={<FaNewspaper />} label="Projects Status">
+<MenuGroup id="projectStatus" icon={<FaNewspaper />} label="Projects Status">
           <li>
             <Link
               to="/status/add"
