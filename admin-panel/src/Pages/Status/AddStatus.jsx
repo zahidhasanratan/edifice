@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 // Configure your API base
 const API_BASE =
   (import.meta?.env?.VITE_API_URL && import.meta.env.VITE_API_URL.replace(/\/+$/, "")) ||
-  "http://localhost:5000/api";
+  "https://edifice-tau.vercel.app/api";
 
 const AddStatus = () => {
   const navigate = useNavigate();
@@ -15,6 +15,7 @@ const AddStatus = () => {
     title: "",
     sequence: "",
     featuredPhoto: null,
+    coverPhoto: null,      // NEW
     description: "",
   });
 
@@ -64,12 +65,13 @@ const AddStatus = () => {
   };
 
   const handlePhotoChange = (e) => {
-    const { files } = e.target;
-    setForm((prev) => ({ ...prev, featuredPhoto: files?.[0] || null }));
+    const { name, files } = e.target;
+    const file = files?.[0] || null;
+    setForm((prev) => ({ ...prev, [name]: file }));
   };
 
   const uploadImageToImgbb = async (file) => {
-    if (!file) throw new Error("Please select a featured photo.");
+    if (!file) return "";
     const imgbbKey = import.meta.env.VITE_IMGBB_KEY;
     if (!imgbbKey) throw new Error("Missing VITE_IMGBB_KEY in frontend env.");
 
@@ -99,14 +101,19 @@ const AddStatus = () => {
       if (!form.description || !form.description.trim()) throw new Error("Description cannot be empty.");
       if (!form.sequence && form.sequence !== 0) throw new Error("Sequence is required.");
       if (isNaN(Number(form.sequence))) throw new Error("Sequence must be a number.");
+      if (!form.featuredPhoto) throw new Error("Please select a Featured Photo.");
 
+      // Upload images
       const featuredPhotoUrl = await uploadImageToImgbb(form.featuredPhoto);
+      const coverPhotoUrl = await uploadImageToImgbb(form.coverPhoto); // optional
 
+      // Build payload (omit undefined/empty values automatically)
       const payload = {
         title: form.title.trim(),
         sequence: Number(form.sequence),
         featuredPhoto: featuredPhotoUrl,
         description: form.description,
+        ...(coverPhotoUrl ? { coverPhoto: coverPhotoUrl } : {}), // include only if provided
       };
 
       const res = await fetch(`${API_BASE}/status`, {
@@ -131,7 +138,6 @@ const AddStatus = () => {
       }
     } catch (error) {
       console.error("Submission error:", error);
-      // Try to parse server JSON message if present
       let message = error.message;
       try {
         const parsed = JSON.parse(error.message);
@@ -182,6 +188,18 @@ const AddStatus = () => {
             onChange={handlePhotoChange}
             className="w-full file-input file-input-bordered"
             required
+          />
+        </div>
+
+        {/* Cover Photo (optional) */}
+        <div>
+          <label className="block mb-1 font-medium">Cover Photo (optional)</label>
+          <input
+            type="file"
+            accept="image/*"
+            name="coverPhoto"
+            onChange={handlePhotoChange}
+            className="w-full file-input file-input-bordered"
           />
         </div>
 

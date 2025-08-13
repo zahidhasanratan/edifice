@@ -33,17 +33,18 @@ exports.getById = async (req, res) => {
 /**
  * POST /api/status
  * Create a new status
- * Body: { title, description, featuredPhoto, sequence }
+ * Body: { title, description, featuredPhoto, coverPhoto?, sequence }
  */
 exports.create = async (req, res) => {
   try {
-    const { title, description, featuredPhoto, sequence } = req.body;
+    const { title, description, featuredPhoto, coverPhoto, sequence } = req.body;
 
     const missing = [];
     if (!title || !String(title).trim()) missing.push("title");
     if (!description || !String(description).trim()) missing.push("description");
     if (!featuredPhoto || !String(featuredPhoto).trim()) missing.push("featuredPhoto");
     if (sequence === undefined || sequence === null || isNaN(Number(sequence))) missing.push("sequence");
+
     if (missing.length) {
       return res.status(400).json({ message: `Missing/invalid: ${missing.join(", ")}` });
     }
@@ -52,6 +53,7 @@ exports.create = async (req, res) => {
       title: String(title).trim(),
       description,
       featuredPhoto,
+      coverPhoto: coverPhoto || "",               // optional
       sequence: Number(sequence),
     });
 
@@ -68,15 +70,17 @@ exports.create = async (req, res) => {
 /**
  * PUT/PATCH /api/status/:id
  * Update status by ID
+ * Body can include any of: { title, description, featuredPhoto, coverPhoto, sequence }
  */
 exports.update = async (req, res) => {
   try {
-    const { title, description, featuredPhoto, sequence } = req.body;
+    const { title, description, featuredPhoto, coverPhoto, sequence } = req.body;
 
     const update = {};
     if (title !== undefined) update.title = String(title).trim();
     if (description !== undefined) update.description = description;
     if (featuredPhoto !== undefined) update.featuredPhoto = featuredPhoto;
+    if (coverPhoto !== undefined) update.coverPhoto = coverPhoto;
     if (sequence !== undefined) {
       if (isNaN(Number(sequence))) {
         return res.status(400).json({ message: "sequence must be a number" });

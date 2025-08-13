@@ -9,14 +9,5 @@
       "dest": "server.js",
       "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
     }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Vary", "value": "Origin" },
-        { "key": "Cache-Control", "value": "no-store" }
-      ]
-    }
   ]
 }

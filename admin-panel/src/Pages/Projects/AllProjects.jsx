@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
+// AllProjects.jsx
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
+
+const API_BASE = 'https://edifice-tau.vercel.app/api';
 
 export const AllProjects = () => {
   const [projects, setProjects] = useState([]);
@@ -10,11 +13,11 @@ export const AllProjects = () => {
   const projectsPerPage = 5;
 
   useEffect(() => {
-    fetch('https://edifice-tau.vercel.app/api/projects')
+    fetch(`${API_BASE}/projects`)
       .then(res => res.json())
       .then(data => {
-        setProjects(data);
-        setFilteredProjects(data);
+        setProjects(data || []);
+        setFilteredProjects(data || []);
       })
       .catch(err => console.error('Error fetching projects:', err));
   }, []);
@@ -28,24 +31,24 @@ export const AllProjects = () => {
       confirmButtonText: 'Yes, delete it!',
     });
 
-    if (result.isConfirmed) {
-      try {
-        const res = await fetch(`https://edifice-tau.vercel.app/api/projects/${id}`, {
-          method: 'DELETE',
-        });
+    if (!result.isConfirmed) return;
 
-        if (res.ok) {
-          const updated = projects.filter(p => p._id !== id);
-          setProjects(updated);
-          setFilteredProjects(updated);
-          Swal.fire('Deleted!', 'Project has been deleted.', 'success');
-        } else {
-          Swal.fire('Error!', 'Failed to delete project.', 'error');
-        }
-      } catch (err) {
-        console.error('Delete error:', err);
-        Swal.fire('Error!', 'Something went wrong.', 'error');
+    try {
+      const res = await fetch(`${API_BASE}/projects/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        const updated = projects.filter(p => p._id !== id);
+        setProjects(updated);
+        setFilteredProjects(prev => prev.filter(p => p._id !== id));
+        Swal.fire('Deleted!', 'Project has been deleted.', 'success');
+      } else {
+        Swal.fire('Error!', 'Failed to delete project.', 'error');
       }
+    } catch (err) {
+      console.error('Delete error:', err);
+      Swal.fire('Error!', 'Something went wrong.', 'error');
     }
   };
 
@@ -53,16 +56,50 @@ export const AllProjects = () => {
     const query = e.target.value.toLowerCase();
     setSearch(query);
     setCurrentPage(1);
-    const filtered = projects.filter(project =>
-      project.title.toLowerCase().includes(query) ||
-      project.subtitle.toLowerCase().includes(query)
-    );
+
+    const filtered = projects.filter(project => {
+      const t = (project.title || '').toLowerCase();
+      const s = (project.subtitle || '').toLowerCase();
+      return t.includes(query) || s.includes(query);
+    });
+
     setFilteredProjects(filtered);
+  };
+
+  const toggleShowHome = async (projectId, newValue) => {
+    // optimistic update
+    const prev = projects;
+    const updatedLocal = prev.map(p => (p._id === projectId ? { ...p, showHome: newValue } : p));
+    setProjects(updatedLocal);
+    setFilteredProjects(fp => fp.map(p => (p._id === projectId ? { ...p, showHome: newValue } : p)));
+
+    try {
+      const res = await fetch(`${API_BASE}/projects/${projectId}/show-home`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ showHome: newValue }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to update showHome');
+      }
+    } catch (err) {
+      console.error('Toggle error:', err);
+      // revert if failed
+      setProjects(prev);
+      setFilteredProjects(fp =>
+        fp.map(p => (p._id === projectId ? { ...p, showHome: !newValue } : p))
+      );
+      Swal.fire('Error!', 'Failed to update Show on Home.', 'error');
+    }
   };
 
   const indexOfLast = currentPage * projectsPerPage;
   const indexOfFirst = indexOfLast - projectsPerPage;
-  const currentItems = filteredProjects.slice(indexOfFirst, indexOfLast);
+  const currentItems = useMemo(
+    () => filteredProjects.slice(indexOfFirst, indexOfLast),
+    [filteredProjects, indexOfFirst, indexOfLast]
+  );
   const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
 
   return (
@@ -93,6 +130,7 @@ export const AllProjects = () => {
               <th>Title</th>
               <th>Subtitle</th>
               <th>Type</th>
+              <th>Show on Home</th> {/* ✅ New column */}
               <th>Actions</th>
             </tr>
           </thead>
@@ -115,6 +153,17 @@ export const AllProjects = () => {
                 <td>
                   <span className="badge badge-info">{project.projectType}</span>
                 </td>
+
+                {/* ✅ Toggle Switch */}
+                <td>
+                  <input
+                    type="checkbox"
+                    className="toggle toggle-primary"
+                    checked={!!project.showHome}
+                    onChange={(e) => toggleShowHome(project._id, e.target.checked)}
+                  />
+                </td>
+
                 <td className="space-x-2">
                   <Link to={`/projects/edit/${project._id}`} className="text-white btn btn-xs btn-info">
                     Edit
@@ -130,7 +179,7 @@ export const AllProjects = () => {
             ))}
             {currentItems.length === 0 && (
               <tr>
-                <td colSpan="5" className="py-4 text-center text-gray-500">
+                <td colSpan="6" className="py-4 text-center text-gray-500">
                   No projects found.
                 </td>
               </tr>

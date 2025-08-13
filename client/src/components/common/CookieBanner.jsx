@@ -31,7 +31,7 @@ const CookieBanner = () => {
     Cookies.set('visitorId', visitorId, { expires: 365 });
 
     try {
-      await fetch('http://localhost:5000/api/consents', {
+      await fetch('https://edifice-tau.vercel.app/api/consents', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

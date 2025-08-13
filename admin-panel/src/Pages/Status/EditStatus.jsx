@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 // API base
 const API_BASE =
   (import.meta?.env?.VITE_API_URL && import.meta.env.VITE_API_URL.replace(/\/+$/, "")) ||
-  "http://localhost:5000/api";
+  "https://edifice-tau.vercel.app/api";
 
 const EditStatus = () => {
   const navigate = useNavigate();
@@ -17,6 +17,8 @@ const EditStatus = () => {
     sequence: "",
     featuredPhoto: null,
     featuredPhotoPreview: "",
+    coverPhoto: null,             // NEW
+    coverPhotoPreview: "",        // NEW
     description: "",
   });
 
@@ -45,7 +47,6 @@ const EditStatus = () => {
               setForm((prev) => ({ ...prev, description: editor.getData() }));
             });
             editorInstanceRef.current = editor;
-            // Set initial description if available
             if (form.description) {
               editor.setData(form.description);
             }
@@ -74,9 +75,11 @@ const EditStatus = () => {
         const data = await res.json();
         setForm({
           title: data.title || "",
-          sequence: data.sequence || "",
+          sequence: data.sequence ?? "",
           featuredPhoto: null,
           featuredPhotoPreview: data.featuredPhoto || "",
+          coverPhoto: null,                                   // NEW
+          coverPhotoPreview: data.coverPhoto || "",           // NEW
           description: data.description || "",
         });
         if (editorInstanceRef.current) {
@@ -96,13 +99,22 @@ const EditStatus = () => {
   };
 
   const handlePhotoChange = (e) => {
-    const { files } = e.target;
+    const { name, files } = e.target;
     const file = files?.[0] || null;
-    setForm((prev) => ({
-      ...prev,
-      featuredPhoto: file,
-      featuredPhotoPreview: file ? URL.createObjectURL(file) : prev.featuredPhotoPreview,
-    }));
+
+    if (name === "featuredPhoto") {
+      setForm((prev) => ({
+        ...prev,
+        featuredPhoto: file,
+        featuredPhotoPreview: file ? URL.createObjectURL(file) : prev.featuredPhotoPreview,
+      }));
+    } else if (name === "coverPhoto") {
+      setForm((prev) => ({
+        ...prev,
+        coverPhoto: file,
+        coverPhotoPreview: file ? URL.createObjectURL(file) : prev.coverPhotoPreview,
+      }));
+    }
   };
 
   const uploadImageToImgbb = async (file) => {
@@ -137,9 +149,16 @@ const EditStatus = () => {
       if (!form.sequence && form.sequence !== 0) throw new Error("Sequence is required.");
       if (isNaN(Number(form.sequence))) throw new Error("Sequence must be a number.");
 
+      // Start with current URLs (from previews set during fetch)
       let featuredPhotoUrl = form.featuredPhotoPreview;
+      let coverPhotoUrl = form.coverPhotoPreview;
+
+      // Upload if replaced
       if (form.featuredPhoto) {
         featuredPhotoUrl = await uploadImageToImgbb(form.featuredPhoto);
+      }
+      if (form.coverPhoto) {
+        coverPhotoUrl = await uploadImageToImgbb(form.coverPhoto);
       }
 
       const payload = {
@@ -147,6 +166,8 @@ const EditStatus = () => {
         sequence: Number(form.sequence),
         featuredPhoto: featuredPhotoUrl,
         description: form.description,
+        // include coverPhoto only if we have a URL (existing or new)
+        ...(coverPhotoUrl ? { coverPhoto: coverPhotoUrl } : {}),
       };
 
       const res = await fetch(`${API_BASE}/status/${id}`, {
@@ -207,13 +228,32 @@ const EditStatus = () => {
             <img
               src={form.featuredPhotoPreview}
               alt="Current Featured"
-              className="object-cover w-32 h-20 mb-2 rounded"
+              className="object-cover w-40 h-24 mb-2 rounded"
             />
           )}
           <input
             type="file"
             accept="image/*"
             name="featuredPhoto"
+            onChange={handlePhotoChange}
+            className="w-full file-input file-input-bordered"
+          />
+        </div>
+
+        {/* Cover Photo (optional) */}
+        <div>
+          <label className="block mb-1 font-medium">Cover Photo (optional)</label>
+          {form.coverPhotoPreview && (
+            <img
+              src={form.coverPhotoPreview}
+              alt="Current Cover"
+              className="object-cover w-40 h-24 mb-2 rounded"
+            />
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            name="coverPhoto"
             onChange={handlePhotoChange}
             className="w-full file-input file-input-bordered"
           />

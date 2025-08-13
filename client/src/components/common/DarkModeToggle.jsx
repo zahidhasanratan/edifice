@@ -4,14 +4,19 @@ import { useState, useEffect } from 'react';
 import { FiSun, FiMoon } from 'react-icons/fi';
 
 const DarkModeToggle = () => {
-  const [darkMode, setDarkMode] = useState(true); // ✅ Default state is dark
+  const [darkMode, setDarkMode] = useState(true);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
 
-    // ✅ If user has a saved preference, use it. Otherwise default to dark.
-    const isDark = savedTheme ? savedTheme === 'dark' : true;
+    let isDark;
+    if (savedTheme) {
+      isDark = savedTheme === 'dark';
+    } else {
+      // Detect system preference if no saved theme
+      isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
 
     applyTheme(isDark);
     setDarkMode(isDark);
@@ -21,10 +26,13 @@ const DarkModeToggle = () => {
   const applyTheme = (isDark) => {
     const html = document.documentElement;
 
-    html.classList.remove('dark', 'light');
-    html.classList.add(isDark ? 'dark' : 'light');
-
-    html.style.colorScheme = isDark ? 'dark' : 'light';
+    if (isDark) {
+      html.classList.add('dark');
+      html.style.colorScheme = 'dark';
+    } else {
+      html.classList.remove('dark');
+      html.style.colorScheme = 'light';
+    }
 
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
   };

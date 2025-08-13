@@ -13,14 +13,18 @@ export default function HomePage() {
   useEffect(() => {
     AOS.init({ once: true });
     window.scrollTo(0, 0);
-    document.title = 'Home | EDIFICE'; // ✅ Dynamically set title
+    document.title = 'Home | EDIFICE';
   }, []);
 
   return (
     <main>
       <HeroSlider />
       <AboutHome />
-      <ProjectsGrid subtitle="Latest Launches" title="Projects" />
+      <ProjectsGrid 
+  subtitle="Latest Launches" 
+  title="Projects" 
+  showHomeOnly={true} 
+/>
       <Testimonials />
     </main>
   );

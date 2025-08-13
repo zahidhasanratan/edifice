@@ -1,12 +1,21 @@
 'use client';
 
-import { useEffect, useState, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import AOS from 'aos';
 import Image from 'next/image';
 import Link from 'next/link';
 import 'aos/dist/aos.css';
 
-const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
+const API_BASE = 'https://edifice-tau.vercel.app/api';
+
+/**
+ * ProjectsGrid
+ * @param {string} title       Small label above heading (e.g., "Projects")
+ * @param {string} subtitle    Main heading (e.g., "Latest Launches")
+ * @param {string} type        Optional project type: "Ongoing" | "Completed" | "Upcoming"
+ * @param {boolean} showHomeOnly Show only projects with showHome=true (for homepage)
+ */
+const ProjectsGrid = ({ title = '', subtitle = '', type = '', showHomeOnly = false }) => {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const abortRef = useRef(null);
@@ -16,18 +25,27 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
   }, []);
 
   useEffect(() => {
-    // abort previous fetch on prop change/unmount
+    // Abort previous fetch on prop change/unmount
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
 
     const fetchProjects = async () => {
       try {
-        const res = await fetch('https://edifice-tau.vercel.app/api/projects', {
+        // Build URL with server-side filters
+        const params = new URLSearchParams();
+        if (showHomeOnly) params.set('home', 'true'); // ✅ only showHome:true
+        if (type) params.set('type', type);           // (works if you add type filter on backend)
+        const url = `${API_BASE}/projects${params.toString() ? `?${params}` : ''}`;
+
+        const res = await fetch(url, {
           signal: controller.signal,
           headers: { Accept: 'application/json' },
-          cache: 'no-store', // feel free to change to 'force-cache' if API has good cache headers
+          cache: 'no-store',
         });
+
+        if (!res.ok) throw new Error(`Failed to fetch projects: ${res.status}`);
+
         const data = await res.json();
         setProjects(Array.isArray(data) ? data : []);
       } catch (err) {
@@ -35,7 +53,7 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
           console.error('Failed to fetch projects:', err);
         }
       } finally {
-        setTimeout(() => setIsLoading(false), 200);
+        setTimeout(() => setIsLoading(false), 200); // smoother skeleton transition
       }
     };
 
@@ -43,26 +61,21 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
     fetchProjects();
 
     return () => controller.abort();
-  }, [type]);
+  }, [type, showHomeOnly]);
 
-  // filter + sort without redoing work on every render
+  // Optional client-side sort (in case API isn't sorted)
   const visibleProjects = useMemo(() => {
-    const filtered = type
-      ? projects.filter(
-          (p) => p?.projectType?.toLowerCase() === type.toLowerCase()
-        )
+    const filteredByType = type
+      ? projects.filter(p => p?.projectType?.toLowerCase() === type.toLowerCase())
       : projects;
 
-    const sorted = [...filtered].sort((a, b) => {
-      const aId = a?._id ?? '';
-      const bId = b?._id ?? '';
-      const numA = /^[0-9]+$/.test(aId) ? BigInt(aId) : null;
-      const numB = /^[0-9]+$/.test(bId) ? BigInt(bId) : null;
-      if (numA !== null && numB !== null) return numA < numB ? -1 : numA > numB ? 1 : 0;
-      return String(aId).localeCompare(String(bId));
+    // Prefer createdAt desc if present; otherwise fallback to _id string compare
+    return [...filteredByType].sort((a, b) => {
+      const aDate = a?.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const bDate = b?.createdAt ? new Date(b.createdAt).getTime() : 0;
+      if (aDate !== bDate) return bDate - aDate;
+      return String(a?._id || '').localeCompare(String(b?._id || ''));
     });
-
-    return sorted;
   }, [projects, type]);
 
   return (
@@ -92,10 +105,10 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
               <div key={i} className="w-full px-4 md:w-1/2 lg:w-1/3">
                 <div className="mx-auto mb-10 max-w-[380px]">
                   <div className="relative w-full h-[570px] rounded-lg overflow-hidden">
-                    <div className="absolute inset-0 animate-pulse bg-[color-mix(in_srgb,var(--foreground)_/10%,transparent)]" />
+                    <div className="absolute inset-0 animate-pulse bg-black/10 dark:bg-black/10" />
                   </div>
-                  <div className="mt-4 h-6 w-3/4 mx-auto rounded animate-pulse bg-[color-mix(in_srgb,var(--foreground)_/10%,transparent)]" />
-                  <div className="mt-2 h-4 w-1/2 mx-auto rounded animate-pulse bg-[color-mix(in_srgb,var(--foreground)_/10%,transparent)]" />
+                  <div className="mt-4 h-6 w-3/4 mx-auto rounded animate-pulse bg-black/10 dark:bg-black/10" />
+                  <div className="mt-2 h-4 w-1/2 mx-auto rounded animate-pulse bg-black/10 dark:bg-black/10" />
                 </div>
               </div>
             ))
@@ -106,26 +119,30 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
                   className="group mx-auto mb-10 max-w-[380px] text-center md:mb-16"
                   data-aos="fade-up"
                 >
-                  <div className="bg-[var(--background)] text-[var(--foreground)] shadow-lg overflow-hidden transition-colors duration-300 rounded-lg group cursor-pointer">
-                    {/* Use Next Link for SPA navigation + prefetch */}
+                  {/* Card contrasts with section in both themes */}
+                  <div className="
+                    bg-white text-gray-900
+                    dark:bg-gray-900 dark:text-white
+                    shadow-lg overflow-hidden transition-colors duration-300
+                    rounded-lg group cursor-pointer
+                    border border-transparent dark:border-gray-200/20
+                  ">
                     <Link href={`/projects/${project._id}`} prefetch scroll className="block">
                       <div className="relative w-full h-[570px] overflow-hidden">
                         <Image
                           src={project.featureImage || '/fallback.jpg'}
-                          alt={project.title}
+                          alt={project.title || 'Project'}
                           fill
                           className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
                           sizes="(max-width: 768px) 100vw, 33vw"
-                          // Avoid forcing priority on every card; give it to the first couple only
                           priority={idx < 2}
-                          // Next/Image is already lazy for non-priority; keep it smooth
                         />
                       </div>
                       <div className="p-5">
-                        <h3 className="text-xl font-semibold group-hover:text-[#c20e35] transition duration-300">
+                        <h3 className="text-xl font-semibold transition duration-300 group-hover:text-[#c20e35]">
                           {project.title}
                         </h3>
-                        <p className="mt-1 text-sm text-[var(--foreground)]/70">
+                        <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
                           {project.address || project.exactLocation || 'No location available'}
                         </p>
                       </div>
@@ -135,7 +152,7 @@ const ProjectsGrid = ({ title = '', subtitle = '', type = '' }) => {
               </div>
             ))
           ) : (
-            <p className="text-lg text-gray-500">No projects found.</p>
+            <p className="text-lg text-gray-500 dark:text-gray-600">No projects found.</p>
           )}
         </div>
       </div>
