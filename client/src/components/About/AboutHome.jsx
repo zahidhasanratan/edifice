@@ -59,7 +59,7 @@ const AboutHome = () => {
           {about.shortDescription?.split('\n').map((para, index) => (
             <p
               key={index}
-              className="text-[var(--foreground)] text-[14px] leading-[20px]"
+              className="text-[var(--foreground)] text-[14px] leading-[20px] text-justify"
             >
               {para}
             </p>

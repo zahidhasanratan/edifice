@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import InnerHero from '@/components/Hero/InnerHero';
-import ContactForm from '@/components/common/ContactForm';
+import ContactForm from '@/components/common/ContactForm'; // Import the ContactForm component
 
 const ContactPage = () => {
   const [contactData, setContactData] = useState(null);
@@ -120,9 +120,9 @@ const ContactPage = () => {
         />
       </section>
 
-      {/* Contact Form */}
+      {/* Contact Form with reCAPTCHA */}
       <div data-aos="fade-up">
-        <ContactForm />
+        <ContactForm /> {/* ContactForm already has reCAPTCHA integrated */}
       </div>
     </main>
   );

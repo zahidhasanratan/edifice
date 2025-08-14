@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const ContactForm = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [recaptchaValue, setRecaptchaValue] = useState(null); // For storing reCAPTCHA value
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,13 +29,19 @@ const ContactForm = () => {
     setIsSubmitting(true);
     setSubmitStatus(null);
 
+    if (!recaptchaValue) {
+      alert('Please complete the reCAPTCHA');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const res = await fetch('https://edifice-tau.vercel.app/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, recaptchaValue }), // Include recaptchaValue in the request body
       });
 
       const data = await res.json();
@@ -129,6 +137,14 @@ const ContactForm = () => {
             className="w-full bg-transparent border-b border-gray-500 dark:border-gray-200 focus:outline-none py-3 px-1 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-200 focus:border-[#c20e35] transition-colors duration-300 resize-none"
             required
           ></textarea>
+        </div>
+
+        {/* Google reCAPTCHA */}
+        <div className="text-center">
+          <ReCAPTCHA
+            sitekey="6Lf3paUrAAAAAPG2xjUHCgRztZiHel7NHAlF99MN" // Your actual Site Key
+            onChange={setRecaptchaValue} // Handle the reCAPTCHA value on change
+          />
         </div>
 
         <div className="text-center">
