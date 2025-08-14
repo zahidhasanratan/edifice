@@ -14,8 +14,10 @@ const AddPage = () => {
   });
 
   const [menus, setMenus] = useState([]);
-  const editorRef = useRef();
-  const editorInstanceRef = useRef();
+
+  // CKEditor refs
+  const editorRef = useRef(null);
+  const editorInstanceRef = useRef(null);
 
   useEffect(() => {
     fetchMenus();
@@ -23,7 +25,7 @@ const AddPage = () => {
 
     return () => {
       if (editorInstanceRef.current) {
-        editorInstanceRef.current.destroy().catch(console.error);
+        editorInstanceRef.current.destroy().catch(() => {});
         editorInstanceRef.current = null;
       }
     };
@@ -31,7 +33,8 @@ const AddPage = () => {
 
   const fetchMenus = async () => {
     try {
-      const res = await fetch('https://edifice-tau.vercel.app/api/menus/all');
+      const res = await fetch('https://edifice-tau.vercel.app/api/menus/all', { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to fetch menus');
       const data = await res.json();
       setMenus(data);
     } catch (err) {
@@ -39,38 +42,82 @@ const AddPage = () => {
     }
   };
 
-  const loadEditor = async () => {
-    if (!window.ClassicEditor) {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js';
-      script.onload = initEditor;
-      document.body.appendChild(script);
-    } else {
-      initEditor();
-    }
-  };
+  // Use CKEditor 5 super-build so Alignment (incl. Justify) is available
+  const loadEditor = () => {
+    const initEditor = () => {
+      if (!editorRef.current || editorInstanceRef.current) return;
 
-  const initEditor = () => {
-    if (editorRef.current && !editorInstanceRef.current) {
-      window.ClassicEditor.create(editorRef.current)
-        .then(editor => {
+      window.CKEDITOR.ClassicEditor.create(editorRef.current, {
+        toolbar: {
+          items: [
+            'heading',
+            '|',
+            'bold',
+            'italic',
+            'underline',
+            'strikethrough',
+            'link',
+            '|',
+            'bulletedList',
+            'numberedList',
+            '|',
+            'alignment', // includes left/center/right/justify
+            '|',
+            'outdent',
+            'indent',
+            '|',
+            'blockQuote',
+            'insertTable',
+            'undo',
+            'redo'
+          ],
+          shouldNotGroupWhenFull: true
+        },
+        alignment: {
+          options: ['left', 'center', 'right', 'justify']
+        },
+        removePlugins: [
+          // trim unused heavy plugins to keep editor light
+          'AIAssistant', 'CKBox', 'CKFinder', 'EasyImage',
+          'RealTimeCollaborativeComments', 'RealTimeCollaborativeTrackChanges',
+          'RealTimeCollaborativeRevisionHistory', 'PresenceList', 'Comments',
+          'TrackChanges', 'TrackChangesData', 'RevisionHistory',
+          'Pagination', 'WProofreader', 'SlashCommand', 'Template',
+          'DocumentOutline', 'FormatPainter', 'TableOfContents',
+          'PasteFromOfficeEnhanced', 'ExportPdf', 'ExportWord'
+        ],
+      })
+        .then((editor) => {
           editor.model.document.on('change:data', () => {
-            const data = editor.getData();
-            setForm(prev => ({ ...prev, description: data }));
+            setForm((prev) => ({ ...prev, description: editor.getData() }));
           });
           editorInstanceRef.current = editor;
         })
-        .catch(error => console.error('CKEditor Error:', error));
+        .catch((error) => {
+          console.error('CKEditor Error:', error);
+          Swal.fire('Editor Error', 'Failed to initialize the editor', 'error');
+        });
+    };
+
+    if (window.CKEDITOR?.ClassicEditor) {
+      initEditor();
+    } else {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.ckeditor.com/ckeditor5/39.0.1/super-build/ckeditor.js';
+      script.async = true;
+      script.onload = initEditor;
+      script.onerror = () => console.error('Failed to load CKEditor super-build');
+      document.body.appendChild(script);
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handlePhotoChange = (e) => {
-    setForm({ ...form, coverPhoto: e.target.files[0] });
+    setForm((prev) => ({ ...prev, coverPhoto: e.target.files?.[0] || null }));
   };
 
   const uploadImageToImgbb = async (file) => {
@@ -84,6 +131,9 @@ const AddPage = () => {
     });
 
     const data = await res.json();
+    if (!data?.success) {
+      throw new Error(data?.error?.message || 'Image upload failed');
+    }
     return data.data.url;
   };
 
@@ -112,16 +162,16 @@ const AddPage = () => {
 
       const result = await res.json();
 
-      if (result._id || result.insertedId) {
+      if (res.ok && (result._id || result.insertedId)) {
         Swal.fire('Success!', 'Page added successfully', 'success').then(() => {
           navigate('/pages');
         });
       } else {
-        Swal.fire('Error!', 'Something went wrong', 'error');
+        throw new Error(result?.message || 'Something went wrong');
       }
     } catch (error) {
       console.error('Submission error:', error);
-      Swal.fire('Error!', error.message, 'error');
+      Swal.fire('Error!', error.message || 'Something went wrong', 'error');
     }
   };
 
@@ -129,9 +179,9 @@ const AddPage = () => {
   const buildMenuOptions = (menus, parentId = null, level = 0) => {
     let result = [];
     menus
-      .filter(menu => String(menu.parent) === String(parentId))
+      .filter((menu) => String(menu.parent) === String(parentId))
       .sort((a, b) => (a.order || 0) - (b.order || 0))
-      .forEach(menu => {
+      .forEach((menu) => {
         result.push({
           ...menu,
           displayName: `${'↳ '.repeat(level)}${menu.menu_name}`,
@@ -172,7 +222,7 @@ const AddPage = () => {
           required
         >
           <option value="">Select Menu</option>
-          {buildMenuOptions(menus).map(menu => (
+          {buildMenuOptions(menus).map((menu) => (
             <option key={menu._id} value={menu.slug}>
               {menu.displayName}
             </option>
@@ -187,7 +237,10 @@ const AddPage = () => {
         />
 
         <label className="font-medium">Description</label>
-        <div ref={editorRef} />
+        <div
+          ref={editorRef}
+          className="min-h-[220px] border rounded bg-white"
+        />
 
         <button type="submit" className="w-full btn btn-primary">
           Add Page

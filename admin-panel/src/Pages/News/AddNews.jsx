@@ -14,41 +14,85 @@ const AddNews = () => {
     description: '',
   });
 
-  const editorRef = useRef();
-  const editorInstanceRef = useRef();
+  const editorRef = useRef(null);
+  const editorInstanceRef = useRef(null);
 
+  // Load CKEditor 5 super-build (has Alignment + Justify) and init
   useEffect(() => {
-    const loadEditor = async () => {
-      if (!window.ClassicEditor) {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js';
-        script.onload = initEditor;
-        document.body.appendChild(script);
-      } else {
-        initEditor();
-      }
-    };
-
     const initEditor = () => {
-      if (editorRef.current && !editorInstanceRef.current) {
-        window.ClassicEditor
-          .create(editorRef.current)
-          .then(editor => {
-            editor.model.document.on('change:data', () => {
-              const data = editor.getData();
-              setForm(prev => ({ ...prev, description: data }));
-            });
-            editorInstanceRef.current = editor;
-          })
-          .catch(error => console.error('CKEditor Error:', error));
-      }
+      if (!editorRef.current || editorInstanceRef.current) return;
+
+      // super-build exposes global `CKEDITOR`
+      window.CKEDITOR.ClassicEditor.create(editorRef.current, {
+        toolbar: {
+          items: [
+            'heading',
+            '|',
+            'bold',
+            'italic',
+            'underline',
+            'strikethrough',
+            'link',
+            '|',
+            'bulletedList',
+            'numberedList',
+            '|',
+            'alignment', // includes left/center/right/justify
+            '|',
+            'outdent',
+            'indent',
+            '|',
+            'blockQuote',
+            'insertTable',
+            'undo',
+            'redo'
+          ],
+          shouldNotGroupWhenFull: true
+        },
+        alignment: {
+          options: ['left', 'center', 'right', 'justify']
+        },
+        // trim bloat you don't use
+        removePlugins: [
+          'AIAssistant', 'CKBox', 'CKFinder', 'EasyImage',
+          'RealTimeCollaborativeComments', 'RealTimeCollaborativeTrackChanges',
+          'RealTimeCollaborativeRevisionHistory', 'PresenceList', 'Comments',
+          'TrackChanges', 'TrackChangesData', 'RevisionHistory',
+          'Pagination', 'WProofreader', 'SlashCommand', 'Template',
+          'DocumentOutline', 'FormatPainter', 'TableOfContents',
+          'PasteFromOfficeEnhanced', 'ExportPdf', 'ExportWord'
+        ],
+      })
+        .then((editor) => {
+          editor.model.document.on('change:data', () => {
+            setForm(prev => ({ ...prev, description: editor.getData() }));
+          });
+          editorInstanceRef.current = editor;
+        })
+        .catch((error) => {
+          console.error('CKEditor Error:', error);
+          Swal.fire('Editor Error', 'Failed to initialize the editor', 'error');
+        });
     };
 
-    loadEditor();
+    const loadEditorScript = () => {
+      if (window.CKEDITOR?.ClassicEditor) {
+        initEditor();
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = 'https://cdn.ckeditor.com/ckeditor5/39.0.1/super-build/ckeditor.js';
+      script.async = true;
+      script.onload = initEditor;
+      script.onerror = () => console.error('Failed to load CKEditor super-build');
+      document.body.appendChild(script);
+    };
+
+    loadEditorScript();
 
     return () => {
       if (editorInstanceRef.current) {
-        editorInstanceRef.current.destroy().catch(console.error);
+        editorInstanceRef.current.destroy().catch(() => {});
         editorInstanceRef.current = null;
       }
     };
@@ -56,12 +100,12 @@ const AddNews = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
   const handlePhotoChange = (e) => {
     const { name, files } = e.target;
-    setForm({ ...form, [name]: files[0] });
+    setForm(prev => ({ ...prev, [name]: files?.[0] || null }));
   };
 
   const uploadImageToImgbb = async (file) => {
@@ -75,6 +119,9 @@ const AddNews = () => {
     });
 
     const data = await res.json();
+    if (!data?.success) {
+      throw new Error(data?.error?.message || 'Image upload failed');
+    }
     return data.data.url;
   };
 
@@ -109,16 +156,16 @@ const AddNews = () => {
 
       const result = await res.json();
 
-      if (result._id || result.insertedId) {
+      if (res.ok && (result._id || result.insertedId)) {
         Swal.fire('Success!', 'News article added successfully', 'success').then(() => {
           navigate('/news');
         });
       } else {
-        Swal.fire('Error!', 'Something went wrong', 'error');
+        throw new Error(result?.message || 'Something went wrong');
       }
     } catch (error) {
       console.error('Submission error:', error);
-      Swal.fire('Error!', error.message, 'error');
+      Swal.fire('Error!', error.message || 'Something went wrong', 'error');
     }
   };
 
@@ -152,7 +199,7 @@ const AddNews = () => {
           placeholder="Short Details"
           className="w-full textarea textarea-bordered"
           required
-        ></textarea>
+        />
 
         {/* Featured Photo */}
         <div>
@@ -179,7 +226,10 @@ const AddNews = () => {
         </div>
 
         <label className="font-medium">News Description</label>
-        <div ref={editorRef} />
+        <div
+          ref={editorRef}
+          className="min-h-[220px] border rounded bg-white"
+        />
 
         <button type="submit" className="w-full btn btn-primary">
           Add News

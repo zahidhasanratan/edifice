@@ -15,37 +15,84 @@ const AddStatus = () => {
     title: "",
     sequence: "",
     featuredPhoto: null,
-    coverPhoto: null,      // NEW
+    coverPhoto: null,
     description: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const editorRef = useRef();
-  const editorInstanceRef = useRef();
+  // CKEditor refs
+  const editorRef = useRef(null);
+  const editorInstanceRef = useRef(null);
 
   useEffect(() => {
-    const loadEditor = async () => {
-      if (!window.ClassicEditor) {
-        const script = document.createElement("script");
-        script.src = "https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js";
-        script.onload = initEditor;
-        document.body.appendChild(script);
-      } else {
-        initEditor();
-      }
+    const initEditor = () => {
+      if (!editorRef.current || editorInstanceRef.current) return;
+
+      // SUPER-BUILD exposes `window.CKEDITOR`
+      window.CKEDITOR.ClassicEditor.create(editorRef.current, {
+        toolbar: {
+          items: [
+            "heading",
+            "|",
+            "bold",
+            "italic",
+            "underline",
+            "strikethrough",
+            "link",
+            "|",
+            "bulletedList",
+            "numberedList",
+            "|",
+            "alignment", // left/center/right/justify
+            "|",
+            "outdent",
+            "indent",
+            "|",
+            "blockQuote",
+            "insertTable",
+            "undo",
+            "redo",
+          ],
+          shouldNotGroupWhenFull: true,
+        },
+        alignment: {
+          options: ["left", "center", "right", "justify"],
+        },
+        // Trim heavy plugins you don't use to keep editor light
+        removePlugins: [
+          "AIAssistant", "CKBox", "CKFinder", "EasyImage",
+          "RealTimeCollaborativeComments", "RealTimeCollaborativeTrackChanges",
+          "RealTimeCollaborativeRevisionHistory", "PresenceList", "Comments",
+          "TrackChanges", "TrackChangesData", "RevisionHistory",
+          "Pagination", "WProofreader", "SlashCommand", "Template",
+          "DocumentOutline", "FormatPainter", "TableOfContents",
+          "PasteFromOfficeEnhanced", "ExportPdf", "ExportWord",
+        ],
+      })
+        .then((editor) => {
+          // Sync editor -> React
+          editor.model.document.on("change:data", () => {
+            setForm((prev) => ({ ...prev, description: editor.getData() }));
+          });
+          editorInstanceRef.current = editor;
+        })
+        .catch((error) => {
+          console.error("CKEditor Error:", error);
+          Swal.fire("Editor Error", "Failed to initialize the editor", "error");
+        });
     };
 
-    const initEditor = () => {
-      if (editorRef.current && !editorInstanceRef.current) {
-        window.ClassicEditor.create(editorRef.current)
-          .then((editor) => {
-            editor.model.document.on("change:data", () => {
-              setForm((prev) => ({ ...prev, description: editor.getData() }));
-            });
-            editorInstanceRef.current = editor;
-          })
-          .catch((error) => console.error("CKEditor Error:", error));
+    const loadEditor = () => {
+      if (window.CKEDITOR?.ClassicEditor) {
+        initEditor();
+      } else {
+        const script = document.createElement("script");
+        script.src = "https://cdn.ckeditor.com/ckeditor5/39.0.1/super-build/ckeditor.js";
+        script.async = true;
+        script.onload = initEditor;
+        script.onerror = () => console.error("Failed to load CKEditor super-build");
+        document.body.appendChild(script);
       }
     };
 
@@ -53,7 +100,7 @@ const AddStatus = () => {
 
     return () => {
       if (editorInstanceRef.current) {
-        editorInstanceRef.current.destroy().catch(console.error);
+        editorInstanceRef.current.destroy().catch(() => {});
         editorInstanceRef.current = null;
       }
     };
@@ -98,8 +145,10 @@ const AddStatus = () => {
 
     try {
       if (!form.title.trim()) throw new Error("Title cannot be empty.");
-      if (!form.description || !form.description.trim()) throw new Error("Description cannot be empty.");
-      if (!form.sequence && form.sequence !== 0) throw new Error("Sequence is required.");
+      if (!form.description || !form.description.trim())
+        throw new Error("Description cannot be empty.");
+      if (form.sequence === "" || form.sequence === null || form.sequence === undefined)
+        throw new Error("Sequence is required.");
       if (isNaN(Number(form.sequence))) throw new Error("Sequence must be a number.");
       if (!form.featuredPhoto) throw new Error("Please select a Featured Photo.");
 
@@ -107,13 +156,13 @@ const AddStatus = () => {
       const featuredPhotoUrl = await uploadImageToImgbb(form.featuredPhoto);
       const coverPhotoUrl = await uploadImageToImgbb(form.coverPhoto); // optional
 
-      // Build payload (omit undefined/empty values automatically)
+      // Build payload
       const payload = {
         title: form.title.trim(),
         sequence: Number(form.sequence),
         featuredPhoto: featuredPhotoUrl,
         description: form.description,
-        ...(coverPhotoUrl ? { coverPhoto: coverPhotoUrl } : {}), // include only if provided
+        ...(coverPhotoUrl ? { coverPhoto: coverPhotoUrl } : {}),
       };
 
       const res = await fetch(`${API_BASE}/status`, {
@@ -205,9 +254,15 @@ const AddStatus = () => {
 
         {/* Description (CKEditor) */}
         <label className="font-medium">Description</label>
-        <div ref={editorRef} />
+        <div
+          ref={editorRef}
+          className="min-h-[220px] border rounded bg-white"
+        />
 
-        <button type="submit" className={`w-full btn btn-primary ${isSubmitting ? "btn-disabled" : ""}`}>
+        <button
+          type="submit"
+          className={`w-full btn btn-primary ${isSubmitting ? "btn-disabled" : ""}`}
+        >
           {isSubmitting ? "Submitting..." : "Add Status"}
         </button>
       </form>

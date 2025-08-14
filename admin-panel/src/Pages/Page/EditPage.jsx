@@ -15,8 +15,10 @@ export const EditPage = () => {
   });
 
   const [menus, setMenus] = useState([]);
-  const editorRef = useRef();
-  const editorInstanceRef = useRef();
+
+  // CKEditor refs
+  const editorRef = useRef(null);
+  const editorInstanceRef = useRef(null);
 
   useEffect(() => {
     fetchMenus();
@@ -25,15 +27,17 @@ export const EditPage = () => {
 
     return () => {
       if (editorInstanceRef.current) {
-        editorInstanceRef.current.destroy().catch(console.error);
+        editorInstanceRef.current.destroy().catch(() => {});
         editorInstanceRef.current = null;
       }
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   const fetchMenus = async () => {
     try {
-      const res = await fetch('https://edifice-tau.vercel.app/api/menus/all');
+      const res = await fetch('https://edifice-tau.vercel.app/api/menus/all', { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to fetch menus');
       const data = await res.json();
       setMenus(data);
     } catch (err) {
@@ -43,57 +47,122 @@ export const EditPage = () => {
 
   const fetchPage = async () => {
     try {
-      const res = await fetch(`https://edifice-tau.vercel.app/api/pages/${id}`);
+      const res = await fetch(`https://edifice-tau.vercel.app/api/pages/${id}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to fetch page');
       const data = await res.json();
-      setForm(data);
-
-      // Wait for CKEditor to load and then set data
-      setTimeout(() => {
-        if (editorInstanceRef.current) {
-          editorInstanceRef.current.setData(data.description || '');
-        }
-      }, 500);
+      setForm({
+        title: data.title || '',
+        subTitle: data.subTitle || '',
+        menuSlug: data.menuSlug || '',
+        description: data.description || '',
+        coverPhoto: data.coverPhoto || '',
+      });
     } catch (err) {
       console.error('Error fetching page:', err);
+      Swal.fire('Error!', 'Failed to load page', 'error');
     }
   };
 
+  // Load CKEditor 5 super-build (includes Alignment + Justify)
   const loadEditor = () => {
-    if (!window.ClassicEditor) {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js';
-      script.onload = initEditor;
-      document.body.appendChild(script);
-    } else {
-      initEditor();
-    }
-  };
+    const initEditor = () => {
+      if (!editorRef.current || editorInstanceRef.current) return;
 
-  const initEditor = () => {
-    if (editorRef.current && !editorInstanceRef.current) {
-      window.ClassicEditor.create(editorRef.current)
+      window.CKEDITOR.ClassicEditor.create(editorRef.current, {
+        toolbar: {
+          items: [
+            'heading',
+            '|',
+            'bold',
+            'italic',
+            'underline',
+            'strikethrough',
+            'link',
+            '|',
+            'bulletedList',
+            'numberedList',
+            '|',
+            'alignment', // left/center/right/justify
+            '|',
+            'outdent',
+            'indent',
+            '|',
+            'blockQuote',
+            'insertTable',
+            'undo',
+            'redo'
+          ],
+          shouldNotGroupWhenFull: true
+        },
+        alignment: {
+          options: ['left', 'center', 'right', 'justify']
+        },
+        removePlugins: [
+          'AIAssistant', 'CKBox', 'CKFinder', 'EasyImage',
+          'RealTimeCollaborativeComments', 'RealTimeCollaborativeTrackChanges',
+          'RealTimeCollaborativeRevisionHistory', 'PresenceList', 'Comments',
+          'TrackChanges', 'TrackChangesData', 'RevisionHistory',
+          'Pagination', 'WProofreader', 'SlashCommand', 'Template',
+          'DocumentOutline', 'FormatPainter', 'TableOfContents',
+          'PasteFromOfficeEnhanced', 'ExportPdf', 'ExportWord'
+        ],
+      })
         .then((editor) => {
+          // Sync editor -> React state
           editor.model.document.on('change:data', () => {
-            const data = editor.getData();
-            setForm((prev) => ({ ...prev, description: data }));
+            setForm(prev => ({ ...prev, description: editor.getData() }));
           });
+
+          // If we already have description (from fetchPage), push it into editor
+          if (form.description) {
+            editor.setData(form.description);
+          }
+
           editorInstanceRef.current = editor;
         })
-        .catch((error) => console.error('CKEditor Error:', error));
+        .catch((error) => {
+          console.error('CKEditor Error:', error);
+          Swal.fire('Editor Error', 'Failed to initialize the editor', 'error');
+        });
+    };
+
+    if (window.CKEDITOR?.ClassicEditor) {
+      initEditor();
+    } else {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.ckeditor.com/ckeditor5/39.0.1/super-build/ckeditor.js';
+      script.async = true;
+      script.onload = initEditor;
+      script.onerror = () => console.error('Failed to load CKEditor super-build');
+      document.body.appendChild(script);
     }
   };
+
+  // Keep editor content in sync if form.description changes after editor is ready
+  useEffect(() => {
+    const editor = editorInstanceRef.current;
+    if (editor && typeof form.description === 'string') {
+      const current = editor.getData();
+      if (current !== form.description) {
+        editor.setData(form.description);
+      }
+    }
+  }, [form.description]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
   const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (file) {
-      uploadImageToImgbb(file).then((url) => {
-        setForm((prev) => ({ ...prev, coverPhoto: url }));
-      });
+      uploadImageToImgbb(file)
+        .then((url) => setForm(prev => ({ ...prev, coverPhoto: url })))
+        .catch((err) => {
+          console.error('Upload error:', err);
+          Swal.fire('Upload Error', err.message || 'Image upload failed', 'error');
+        });
     }
   };
 
@@ -108,6 +177,9 @@ export const EditPage = () => {
     });
 
     const data = await res.json();
+    if (!data?.success) {
+      throw new Error(data?.error?.message || 'Image upload failed');
+    }
     return data.data.url;
   };
 
@@ -135,11 +207,11 @@ export const EditPage = () => {
           navigate('/pages');
         });
       } else {
-        Swal.fire('Error!', result.message || 'Update failed', 'error');
+        Swal.fire('Error!', result?.message || 'Update failed', 'error');
       }
     } catch (err) {
       console.error('Update error:', err);
-      Swal.fire('Error!', err.message, 'error');
+      Swal.fire('Error!', err.message || 'Something went wrong', 'error');
     }
   };
 
@@ -212,7 +284,10 @@ export const EditPage = () => {
         )}
 
         <label className="font-medium">Description</label>
-        <div ref={editorRef} />
+        <div
+          ref={editorRef}
+          className="min-h-[220px] border rounded bg-white"
+        />
 
         <button type="submit" className="w-full btn btn-primary">
           Update Page

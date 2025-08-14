@@ -17,41 +17,90 @@ const EditStatus = () => {
     sequence: "",
     featuredPhoto: null,
     featuredPhotoPreview: "",
-    coverPhoto: null,             // NEW
-    coverPhotoPreview: "",        // NEW
+    coverPhoto: null,
+    coverPhotoPreview: "",
     description: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const editorRef = useRef();
-  const editorInstanceRef = useRef();
 
-  // Load CKEditor
+  // CKEditor refs
+  const editorRef = useRef(null);
+  const editorInstanceRef = useRef(null);
+
+  // Load CKEditor 5 super-build (includes Alignment + Justify)
   useEffect(() => {
-    const loadEditor = async () => {
-      if (!window.ClassicEditor) {
-        const script = document.createElement("script");
-        script.src = "https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js";
-        script.onload = initEditor;
-        document.body.appendChild(script);
-      } else {
-        initEditor();
-      }
+    const initEditor = () => {
+      if (!editorRef.current || editorInstanceRef.current) return;
+
+      window.CKEDITOR.ClassicEditor.create(editorRef.current, {
+        toolbar: {
+          items: [
+            "heading",
+            "|",
+            "bold",
+            "italic",
+            "underline",
+            "strikethrough",
+            "link",
+            "|",
+            "bulletedList",
+            "numberedList",
+            "|",
+            "alignment", // left/center/right/justify
+            "|",
+            "outdent",
+            "indent",
+            "|",
+            "blockQuote",
+            "insertTable",
+            "undo",
+            "redo",
+          ],
+          shouldNotGroupWhenFull: true,
+        },
+        alignment: {
+          options: ["left", "center", "right", "justify"],
+        },
+        removePlugins: [
+          "AIAssistant", "CKBox", "CKFinder", "EasyImage",
+          "RealTimeCollaborativeComments", "RealTimeCollaborativeTrackChanges",
+          "RealTimeCollaborativeRevisionHistory", "PresenceList", "Comments",
+          "TrackChanges", "TrackChangesData", "RevisionHistory",
+          "Pagination", "WProofreader", "SlashCommand", "Template",
+          "DocumentOutline", "FormatPainter", "TableOfContents",
+          "PasteFromOfficeEnhanced", "ExportPdf", "ExportWord",
+        ],
+      })
+        .then((editor) => {
+          // React ← editor
+          editor.model.document.on("change:data", () => {
+            setForm((prev) => ({ ...prev, description: editor.getData() }));
+          });
+
+          // If description already loaded from API, push into editor
+          if (form.description) {
+            editor.setData(form.description);
+          }
+
+          editorInstanceRef.current = editor;
+        })
+        .catch((error) => {
+          console.error("CKEditor Error:", error);
+          Swal.fire("Editor Error", "Failed to initialize the editor", "error");
+        });
     };
 
-    const initEditor = () => {
-      if (editorRef.current && !editorInstanceRef.current) {
-        window.ClassicEditor.create(editorRef.current)
-          .then((editor) => {
-            editor.model.document.on("change:data", () => {
-              setForm((prev) => ({ ...prev, description: editor.getData() }));
-            });
-            editorInstanceRef.current = editor;
-            if (form.description) {
-              editor.setData(form.description);
-            }
-          })
-          .catch((error) => console.error("CKEditor Error:", error));
+    const loadEditor = () => {
+      if (window.CKEDITOR?.ClassicEditor) {
+        initEditor();
+      } else {
+        const script = document.createElement("script");
+        script.src = "https://cdn.ckeditor.com/ckeditor5/39.0.1/super-build/ckeditor.js";
+        script.async = true;
+        script.onload = initEditor;
+        script.onerror = () => console.error("Failed to load CKEditor super-build");
+        document.body.appendChild(script);
       }
     };
 
@@ -59,18 +108,29 @@ const EditStatus = () => {
 
     return () => {
       if (editorInstanceRef.current) {
-        editorInstanceRef.current.destroy().catch(console.error);
+        editorInstanceRef.current.destroy().catch(() => {});
         editorInstanceRef.current = null;
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // initialize once
+
+  // Keep editor in sync when form.description updates (after fetch)
+  useEffect(() => {
+    const editor = editorInstanceRef.current;
+    if (editor && typeof form.description === "string") {
+      const current = editor.getData();
+      if (current !== form.description) {
+        editor.setData(form.description);
+      }
+    }
   }, [form.description]);
 
   // Fetch existing status
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const res = await fetch(`${API_BASE}/status/${id}`);
+        const res = await fetch(`${API_BASE}/status/${id}`, { cache: "no-store" });
         if (!res.ok) throw new Error("Failed to fetch status");
         const data = await res.json();
         setForm({
@@ -78,13 +138,10 @@ const EditStatus = () => {
           sequence: data.sequence ?? "",
           featuredPhoto: null,
           featuredPhotoPreview: data.featuredPhoto || "",
-          coverPhoto: null,                                   // NEW
-          coverPhotoPreview: data.coverPhoto || "",           // NEW
+          coverPhoto: null,
+          coverPhotoPreview: data.coverPhoto || "",
           description: data.description || "",
         });
-        if (editorInstanceRef.current) {
-          editorInstanceRef.current.setData(data.description || "");
-        }
       } catch (err) {
         console.error("Error fetching status:", err);
         Swal.fire("Error!", "Failed to load status data.", "error");
@@ -145,8 +202,10 @@ const EditStatus = () => {
 
     try {
       if (!form.title.trim()) throw new Error("Title cannot be empty.");
-      if (!form.description || !form.description.trim()) throw new Error("Description cannot be empty.");
-      if (!form.sequence && form.sequence !== 0) throw new Error("Sequence is required.");
+      if (!form.description || !form.description.trim())
+        throw new Error("Description cannot be empty.");
+      if (form.sequence === "" || form.sequence === null || form.sequence === undefined)
+        throw new Error("Sequence is required.");
       if (isNaN(Number(form.sequence))) throw new Error("Sequence must be a number.");
 
       // Start with current URLs (from previews set during fetch)
@@ -166,7 +225,6 @@ const EditStatus = () => {
         sequence: Number(form.sequence),
         featuredPhoto: featuredPhotoUrl,
         description: form.description,
-        // include coverPhoto only if we have a URL (existing or new)
         ...(coverPhotoUrl ? { coverPhoto: coverPhotoUrl } : {}),
       };
 
@@ -261,9 +319,15 @@ const EditStatus = () => {
 
         {/* Description (CKEditor) */}
         <label className="font-medium">Description</label>
-        <div ref={editorRef} />
+        <div
+          ref={editorRef}
+          className="min-h-[220px] border rounded bg-white"
+        />
 
-        <button type="submit" className={`w-full btn btn-primary ${isSubmitting ? "btn-disabled" : ""}`}>
+        <button
+          type="submit"
+          className={`w-full btn btn-primary ${isSubmitting ? "btn-disabled" : ""}`}
+        >
           {isSubmitting ? "Updating..." : "Update Status"}
         </button>
       </form>

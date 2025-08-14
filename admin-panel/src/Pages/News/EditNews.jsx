@@ -17,79 +17,138 @@ const EditNews = () => {
 
   const [newFeaturedFile, setNewFeaturedFile] = useState(null);
   const [newCoverFile, setNewCoverFile] = useState(null);
-  const editorRef = useRef();
-  const editorInstanceRef = useRef();
+
+  // CKEditor refs
+  const editorRef = useRef(null);
+  const editorInstanceRef = useRef(null);
   const [editorReady, setEditorReady] = useState(false);
 
-  // Step 1: Fetch existing news data
+  // 1) Fetch existing news data
   useEffect(() => {
-    fetch(`https://edifice-tau.vercel.app/api/news/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
+    (async () => {
+      try {
+        const res = await fetch(`https://edifice-tau.vercel.app/api/news/${id}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error('Failed to fetch news');
+        const data = await res.json();
         setForm({
           ...data,
-          publishDate: data.publishDate?.slice(0, 10),
+          publishDate: data.publishDate?.slice(0, 10) || '',
         });
         setEditorReady(true);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error('Error fetching news:', err);
         Swal.fire('Error!', 'Failed to fetch news data', 'error');
-      });
+      }
+    })();
   }, [id]);
 
-  // Step 2: Load CKEditor dynamically
+  // 2) Load CKEditor 5 super-build (has Alignment + Justify) and init
   useEffect(() => {
-    const loadEditor = () => {
-      if (!window.ClassicEditor) {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js';
-        script.onload = initEditor;
-        document.body.appendChild(script);
-      } else {
-        initEditor();
-      }
-    };
-
     const initEditor = () => {
-      if (editorRef.current && !editorInstanceRef.current && editorReady) {
-        window.ClassicEditor
-          .create(editorRef.current)
-          .then((editor) => {
-            editor.setData(form.description || '');
-            editor.model.document.on('change:data', () => {
-              const data = editor.getData();
-              setForm((prev) => ({ ...prev, description: data }));
-            });
-            editorInstanceRef.current = editor;
-          })
-          .catch((error) => {
-            console.error('CKEditor Error:', error);
+      if (!editorRef.current || editorInstanceRef.current || !editorReady) return;
+
+      // super-build exposes global `CKEDITOR`
+      window.CKEDITOR.ClassicEditor.create(editorRef.current, {
+        toolbar: {
+          items: [
+            'heading',
+            '|',
+            'bold',
+            'italic',
+            'underline',
+            'strikethrough',
+            'link',
+            '|',
+            'bulletedList',
+            'numberedList',
+            '|',
+            'alignment', // <— includes left/center/right/justify
+            '|',
+            'outdent',
+            'indent',
+            '|',
+            'blockQuote',
+            'insertTable',
+            'undo',
+            'redo'
+          ],
+          shouldNotGroupWhenFull: true
+        },
+        alignment: {
+          options: ['left', 'center', 'right', 'justify']
+        },
+
+        // Optional: slim the super-build by removing heavy plugins you don't need
+        removePlugins: [
+          // Remove things you don't use to keep it lean
+          'AIAssistant', 'CKBox', 'CKFinder', 'EasyImage', 'RealTimeCollaborativeComments',
+          'RealTimeCollaborativeTrackChanges', 'RealTimeCollaborativeRevisionHistory',
+          'PresenceList', 'Comments', 'TrackChanges', 'TrackChangesData', 'RevisionHistory',
+          'Pagination', 'WProofreader', 'SlashCommand', 'Template', 'DocumentOutline',
+          'FormatPainter', 'TableOfContents', 'PasteFromOfficeEnhanced', 'ExportPdf', 'ExportWord'
+        ],
+      })
+        .then((editor) => {
+          // Set initial content
+          editor.setData(form.description || '');
+          // Keep React state in sync
+          editor.model.document.on('change:data', () => {
+            setForm((prev) => ({ ...prev, description: editor.getData() }));
           });
-      }
+          editorInstanceRef.current = editor;
+        })
+        .catch((error) => {
+          console.error('CKEditor Error:', error);
+          Swal.fire('Editor Error', 'Failed to initialize the editor', 'error');
+        });
     };
 
-    if (editorReady) loadEditor();
+    const loadEditorScript = () => {
+      // Use SUPER-BUILD (note: different global than classic build)
+      if (window.CKEDITOR?.ClassicEditor) {
+        initEditor();
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = 'https://cdn.ckeditor.com/ckeditor5/39.0.1/super-build/ckeditor.js';
+      script.async = true;
+      script.onload = initEditor;
+      script.onerror = () => console.error('Failed to load CKEditor super-build');
+      document.body.appendChild(script);
+    };
 
+    if (editorReady) loadEditorScript();
+
+    // Cleanup on unmount
     return () => {
       if (editorInstanceRef.current) {
-        editorInstanceRef.current.destroy().catch(console.error);
+        editorInstanceRef.current.destroy().catch(() => {});
         editorInstanceRef.current = null;
       }
     };
   }, [editorReady]);
 
+  // Sync external description changes back into editor if needed
+  useEffect(() => {
+    if (editorInstanceRef.current && typeof form.description === 'string') {
+      const current = editorInstanceRef.current.getData();
+      if (current !== form.description) {
+        editorInstanceRef.current.setData(form.description);
+      }
+    }
+  }, [form.description]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFeaturedPhotoChange = (e) => {
-    setNewFeaturedFile(e.target.files[0]);
+    setNewFeaturedFile(e.target.files[0] || null);
   };
 
   const handleCoverPhotoChange = (e) => {
-    setNewCoverFile(e.target.files[0]);
+    setNewCoverFile(e.target.files[0] || null);
   };
 
   const uploadImageToImgbb = async (file) => {
@@ -103,6 +162,9 @@ const EditNews = () => {
     });
 
     const data = await res.json();
+    if (!data?.success) {
+      throw new Error('Image upload failed');
+    }
     return data.data.url;
   };
 
@@ -134,16 +196,16 @@ const EditNews = () => {
 
       const result = await res.json();
 
-      if (result._id || result.updatedAt) {
+      if (res.ok && (result._id || result.updatedAt)) {
         Swal.fire('Success!', 'News updated successfully!', 'success').then(() => {
           navigate('/news');
         });
       } else {
-        Swal.fire('Error!', 'Update failed.', 'error');
+        throw new Error(result?.message || 'Update failed.');
       }
     } catch (error) {
       console.error('Update error:', error);
-      Swal.fire('Error!', error.message, 'error');
+      Swal.fire('Error!', error.message || 'Something went wrong', 'error');
     }
   };
 
@@ -177,10 +239,10 @@ const EditNews = () => {
           placeholder="Short Details"
           className="w-full textarea textarea-bordered"
           required
-        ></textarea>
+        />
 
         {/* Featured Photo */}
-        {form.featuredPhoto && (
+        {form.featuredPhoto ? (
           <div>
             <label className="block font-semibold">Current Featured Photo:</label>
             <img
@@ -189,7 +251,7 @@ const EditNews = () => {
               className="object-cover w-40 h-24 mb-2 border rounded"
             />
           </div>
-        )}
+        ) : null}
         <input
           type="file"
           accept="image/*"
@@ -198,7 +260,7 @@ const EditNews = () => {
         />
 
         {/* Cover Photo */}
-        {form.coverPhoto && (
+        {form.coverPhoto ? (
           <div>
             <label className="block font-semibold">Current Cover Photo:</label>
             <img
@@ -207,7 +269,7 @@ const EditNews = () => {
               className="object-cover w-40 h-24 mb-2 border rounded"
             />
           </div>
-        )}
+        ) : null}
         <input
           type="file"
           accept="image/*"
@@ -215,13 +277,14 @@ const EditNews = () => {
           className="w-full file-input file-input-bordered"
         />
 
-        {/* Description */}
+        {/* Description (CKEditor mounts here) */}
         <label className="font-medium">News Description</label>
-        <div ref={editorRef} />
+        <div
+          ref={editorRef}
+          className="min-h-[220px] border rounded bg-white"
+        />
 
-        <button type="submit" className="w-full btn btn-primary">
-          Update News
-        </button>
+        <button type="submit" className="w-full btn btn-primary">Update News</button>
       </form>
     </div>
   );
