@@ -71,7 +71,7 @@ const TeamSection = () => {
                       />
                     </div>
                     <div className="absolute bottom-0 left-0 w-full bg-[var(--foreground)]/90 text-[var(--background)] p-4 transition-all duration-300 group-hover:bg-opacity-100">
-                      <h3 className="text-lg font-semibold">{member.name}</h3>
+                      <h3 className="text-sm">{member.name}</h3>
                       <p className="text-sm text-[#c20e35]">{member.designation}</p>
                     </div>
                   </div>
