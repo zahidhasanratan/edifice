@@ -7,6 +7,7 @@ import Image from 'next/image';
 const AboutHome = () => {
   const [about, setAbout] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     AOS.init({ duration: 800, easing: 'ease-in-out' });
@@ -25,6 +26,26 @@ const AboutHome = () => {
 
     fetchAbout();
   }, []);
+
+  // Animate Counter for tag2
+  useEffect(() => {
+    if (!about?.tag2) return;
+
+    let start = 0;
+    const end = parseInt(about.tag2, 10) || 0;
+    if (end === 0) return;
+
+    const duration = 2000; // total animation time (ms)
+    const stepTime = Math.abs(Math.floor(duration / end));
+
+    const timer = setInterval(() => {
+      start += 1;
+      setCount(start);
+      if (start === end) clearInterval(timer);
+    }, stepTime);
+
+    return () => clearInterval(timer);
+  }, [about?.tag2]);
 
   if (isLoading || !about) {
     return (
@@ -77,12 +98,12 @@ const AboutHome = () => {
             data-aos="fade-up"
             data-aos-delay="600"
             priority
-            unoptimized // optional: remove if you added allowed domain in next.config
+            unoptimized // remove if domains are configured in next.config
           />
 
           <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 bg-[#c20e35] dark:bg-red-600 text-white px-5 py-3 shadow-lg text-center">
             <p className="text-sm tracking-wide uppercase">{about.tag1}</p>
-            <h3 className="text-4xl font-extrabold tracking-widest">{about.tag2}</h3>
+            <h3 className="text-4xl font-extrabold tracking-widest">{count}</h3>
           </div>
         </div>
       </div>
