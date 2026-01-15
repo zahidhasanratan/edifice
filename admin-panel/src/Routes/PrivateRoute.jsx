@@ -3,7 +3,7 @@
 import { useContext } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../Provider/AuthProvider";
-import { Loader } from "../Components/Loader"; // ✅ shows loading state while checking auth
+import { Loader } from "../components/Loader"; // ✅ shows loading state while checking auth
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
