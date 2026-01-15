@@ -11,11 +11,30 @@ const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
   .map(o => o.trim())
   .filter(Boolean);
 
+// Automatically add www and non-www versions of domains
+const expandedOrigins = new Set(allowedOrigins);
+allowedOrigins.forEach(origin => {
+  try {
+    const url = new URL(origin);
+    const hostname = url.hostname;
+    // If it's already www, add non-www version
+    if (hostname.startsWith('www.')) {
+      const nonWwwHostname = hostname.replace(/^www\./, '');
+      expandedOrigins.add(`${url.protocol}//${nonWwwHostname}`);
+    } else {
+      // If it's non-www, add www version
+      expandedOrigins.add(`${url.protocol}//www.${hostname}`);
+    }
+  } catch (e) {
+    // Invalid URL, skip
+  }
+});
+
 const corsOptions = {
   origin: function (origin, callback) {
     // Allow server-to-server / SSR / curl (no Origin header)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
+    if (expandedOrigins.has(origin)) return callback(null, true);
     return callback(new Error("Not allowed by CORS: " + origin));
   },
   credentials: true,
@@ -90,7 +109,7 @@ app.get("/", (req, res) => {
     ok: true,
     msg: "🚀 API Server is running...",
     origin: req.headers.origin || null,
-    allowedOrigins,
+    allowedOrigins: Array.from(expandedOrigins),
   });
 });
 
