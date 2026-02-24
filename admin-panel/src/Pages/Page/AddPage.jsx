@@ -33,7 +33,7 @@ const AddPage = () => {
 
   const fetchMenus = async () => {
     try {
-      const res = await fetch('https://edifice-tau.vercel.app/api/menus/all', { cache: 'no-store' });
+      const res = await fetch('https://edificese.vercel.app/api/menus/all', { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to fetch menus');
       const data = await res.json();
       setMenus(data);
@@ -154,7 +154,7 @@ const AddPage = () => {
         coverPhoto: photoUrl,
       };
 
-      const res = await fetch('https://edifice-tau.vercel.app/api/pages', {
+      const res = await fetch('https://edificese.vercel.app/api/pages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

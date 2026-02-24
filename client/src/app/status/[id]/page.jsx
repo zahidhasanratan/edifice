@@ -8,7 +8,7 @@ import 'aos/dist/aos.css';
 
 const API_BASE =
   (process.env.NEXT_PUBLIC_API_BASE && process.env.NEXT_PUBLIC_API_BASE.replace(/\/+$/, '')) ||
-  'https://edifice-tau.vercel.app/api';
+  'https://edificese.vercel.app/api';
 
 export default function StatusDetailsPage() {
   const { id } = useParams();

@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 // API base
 const API_BASE =
   (import.meta?.env?.VITE_API_URL && import.meta.env.VITE_API_URL.replace(/\/+$/, "")) ||
-  "https://edifice-tau.vercel.app/api";
+  "https://edificese.vercel.app/api";
 
 const EditStatus = () => {
   const navigate = useNavigate();

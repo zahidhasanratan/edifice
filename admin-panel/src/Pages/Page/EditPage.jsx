@@ -36,7 +36,7 @@ export const EditPage = () => {
 
   const fetchMenus = async () => {
     try {
-      const res = await fetch('https://edifice-tau.vercel.app/api/menus/all', { cache: 'no-store' });
+      const res = await fetch('https://edificese.vercel.app/api/menus/all', { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to fetch menus');
       const data = await res.json();
       setMenus(data);
@@ -47,7 +47,7 @@ export const EditPage = () => {
 
   const fetchPage = async () => {
     try {
-      const res = await fetch(`https://edifice-tau.vercel.app/api/pages/${id}`, { cache: 'no-store' });
+      const res = await fetch(`https://edificese.vercel.app/api/pages/${id}`, { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to fetch page');
       const data = await res.json();
       setForm({
@@ -194,7 +194,7 @@ export const EditPage = () => {
         coverPhoto: form.coverPhoto,
       };
 
-      const res = await fetch(`https://edifice-tau.vercel.app/api/pages/${id}`, {
+      const res = await fetch(`https://edificese.vercel.app/api/pages/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

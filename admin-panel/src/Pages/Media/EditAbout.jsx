@@ -33,7 +33,7 @@ const EditAbout = () => {
 
   const fetchAbout = async () => {
     try {
-      const res = await fetch('https://edifice-tau.vercel.app/api/about', { cache: 'no-store' });
+      const res = await fetch('https://edificese.vercel.app/api/about', { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to load About');
       const data = await res.json();
       if (data) {
@@ -170,7 +170,7 @@ const EditAbout = () => {
         tag2: form.tag2,
       };
 
-      const res = await fetch('https://edifice-tau.vercel.app/api/about', {
+      const res = await fetch('https://edificese.vercel.app/api/about', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

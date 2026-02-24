@@ -20,7 +20,7 @@ const AddMenu = () => {
   useEffect(() => {
     const fetchMenus = async () => {
       try {
-        const res = await fetch('https://edifice-tau.vercel.app/api/menus/all');
+        const res = await fetch('https://edificese.vercel.app/api/menus/all');
         const data = await res.json();
         setParentMenus(data);
       } catch (err) {
@@ -47,7 +47,7 @@ const AddMenu = () => {
     };
 
     try {
-      const res = await fetch('https://edifice-tau.vercel.app/api/menus', {
+      const res = await fetch('https://edificese.vercel.app/api/menus', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newMenu),

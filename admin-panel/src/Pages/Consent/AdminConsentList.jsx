@@ -18,7 +18,7 @@ const AdminConsentList = () => {
     setLoading(true);
     setErrorMessage(''); // Reset error message before making a new request
     try {
-      const res = await fetch(`https://edifice-tau.vercel.app/api/consents?page=${page}&q=${searchQuery}`);
+      const res = await fetch(`https://edificese.vercel.app/api/consents?page=${page}&q=${searchQuery}`);
       const data = await res.json();
       console.log("Fetched consent data:", data);  // Log the data from backend
 
@@ -47,7 +47,7 @@ const AdminConsentList = () => {
 
     if (confirm.isConfirmed) {
       try {
-        const res = await fetch(`https://edifice-tau.vercel.app/api/consents/${visitorId}`, {
+        const res = await fetch(`https://edificese.vercel.app/api/consents/${visitorId}`, {
           method: 'DELETE',
         });
 

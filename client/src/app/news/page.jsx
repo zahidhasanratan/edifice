@@ -19,7 +19,7 @@ const News = () => {
     document.title = "News | EDIFICE";
     window.scrollTo(0, 0);
 
-    fetch('https://edifice-tau.vercel.app/api/news')
+    fetch('https://edificese.vercel.app/api/news')
       .then((res) => res.json())
       .then((data) => {
         if (data && data.news && Array.isArray(data.news)) {

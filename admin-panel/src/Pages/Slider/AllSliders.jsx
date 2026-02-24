@@ -14,10 +14,18 @@ const AllSliders = () => {
   }, []);
 
   const fetchSliders = async () => {
-    const res = await fetch("https://edifice-tau.vercel.app/api/sliders");
-    const data = await res.json();
-    setSliders(data);
-    setFilteredSliders(data);
+    try {
+      const res = await fetch("https://edificese.vercel.app/api/sliders");
+      const data = await res.json();
+      const list = Array.isArray(data)
+        ? data
+        : data?.sliders ?? data?.data ?? [];
+      setSliders(list);
+      setFilteredSliders(list);
+    } catch {
+      setSliders([]);
+      setFilteredSliders([]);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -30,7 +38,7 @@ const AllSliders = () => {
     });
 
     if (confirm.isConfirmed) {
-      const res = await fetch(`https://edifice-tau.vercel.app/api/sliders/${id}`, {
+      const res = await fetch(`https://edificese.vercel.app/api/sliders/${id}`, {
         method: "DELETE",
       });
       const result = await res.json();
@@ -44,19 +52,21 @@ const AllSliders = () => {
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearch(query);
-    const filtered = sliders.filter(
+    const source = Array.isArray(sliders) ? sliders : [];
+    const filtered = source.filter(
       (s) =>
-        s.title.toLowerCase().includes(query) ||
-        s.subtitle.toLowerCase().includes(query)
+        (s?.title ?? "").toLowerCase().includes(query) ||
+        (s?.subtitle ?? "").toLowerCase().includes(query)
     );
     setFilteredSliders(filtered);
     setCurrentPage(1);
   };
 
+  const list = Array.isArray(filteredSliders) ? filteredSliders : [];
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
-  const currentItems = filteredSliders.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(filteredSliders.length / itemsPerPage);
+  const currentItems = list.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(list.length / itemsPerPage);
 
   return (
     <div className="p-6 mx-auto max-w-7xl">

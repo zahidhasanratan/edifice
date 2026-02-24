@@ -9,7 +9,7 @@ import InnerHero from '@/components/Hero/InnerHero';
 
 const API_BASE =
   (process.env.NEXT_PUBLIC_API_BASE && process.env.NEXT_PUBLIC_API_BASE.replace(/\/+$/, '')) ||
-  'https://edifice-tau.vercel.app/api';
+  'https://edificese.vercel.app/api';
 
 export default function StatusPage() {
   const [items, setItems] = useState([]);

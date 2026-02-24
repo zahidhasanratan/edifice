@@ -36,7 +36,7 @@ const ContactForm = () => {
     }
 
     try {
-      const res = await fetch('https://edifice-tau.vercel.app/api/contact', {
+      const res = await fetch('https://edificese.vercel.app/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

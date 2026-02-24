@@ -24,7 +24,7 @@ const GalleryAlbum = () => {
 
   const fetchAlbums = async () => {
     try {
-      const res = await fetch('https://edifice-tau.vercel.app/api/albums');
+      const res = await fetch('https://edificese.vercel.app/api/albums');
       const data = await res.json();
       setAlbums(data);
     } catch (error) {

@@ -3,7 +3,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-const API_BASE = 'https://edifice-tau.vercel.app/api';
+const API_BASE = 'https://edificese.vercel.app/api';
 
 export const AllProjects = () => {
   const [projects, setProjects] = useState([]);

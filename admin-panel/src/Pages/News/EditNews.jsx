@@ -27,7 +27,7 @@ const EditNews = () => {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch(`https://edifice-tau.vercel.app/api/news/${id}`, { cache: 'no-store' });
+        const res = await fetch(`https://edificese.vercel.app/api/news/${id}`, { cache: 'no-store' });
         if (!res.ok) throw new Error('Failed to fetch news');
         const data = await res.json();
         setForm({
@@ -188,7 +188,7 @@ const EditNews = () => {
         coverPhoto: coverUrl,
       };
 
-      const res = await fetch(`https://edifice-tau.vercel.app/api/news/${id}`, {
+      const res = await fetch(`https://edificese.vercel.app/api/news/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

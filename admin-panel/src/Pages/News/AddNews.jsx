@@ -148,7 +148,7 @@ const AddNews = () => {
         description: form.description,
       };
 
-      const res = await fetch('https://edifice-tau.vercel.app/api/news', {
+      const res = await fetch('https://edificese.vercel.app/api/news', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

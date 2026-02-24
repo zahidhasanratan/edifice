@@ -9,7 +9,7 @@ const AboutSection = () => {
   useEffect(() => {
     const fetchAbout = async () => {
       try {
-        const res = await fetch('https://edifice-tau.vercel.app/api/about');
+        const res = await fetch('https://edificese.vercel.app/api/about');
         const data = await res.json();
         setAbout(data);
       } catch (error) {

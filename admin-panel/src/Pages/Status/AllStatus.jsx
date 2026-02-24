@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 // Configure your API base
 const API_BASE =
   (import.meta?.env?.VITE_API_URL && import.meta.env.VITE_API_URL.replace(/\/+$/, "")) ||
-  "https://edifice-tau.vercel.app/api";
+  "https://edificese.vercel.app/api";
 
 const AllStatus = () => {
   const [statuses, setStatuses] = useState([]);

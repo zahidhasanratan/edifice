@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
-const API = 'https://edifice-tau.vercel.app/api/sliders';
+const API = 'https://edificese.vercel.app/api/sliders';
 
 const HeroSlider = () => {
   const [slides, setSlides] = useState([]);

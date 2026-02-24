@@ -14,7 +14,7 @@ const TeamSection = () => {
 
     const fetchTeam = async () => {
       try {
-        const res = await fetch('https://edifice-tau.vercel.app/api/team');
+        const res = await fetch('https://edificese.vercel.app/api/team');
         const data = await res.json();
         const sorted = data.sort((a, b) => (a.sequence || 0) - (b.sequence || 0));
         setTeamMembers(sorted);

@@ -6,7 +6,7 @@ import InnerHero from '@/components/Hero/InnerHero';
 export const revalidate = 120; // ISR: refresh every 120s
 
 async function getProject(id) {
-  const res = await fetch(`https://edifice-tau.vercel.app/api/projects/${id}`, {
+  const res = await fetch(`https://edificese.vercel.app/api/projects/${id}`, {
     next: { revalidate },
   });
   if (!res.ok) notFound();

@@ -28,7 +28,7 @@ const Testimonials = () => {
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
-        const res = await fetch('https://edifice-tau.vercel.app/api/testimonials', { cache: 'no-store' });
+        const res = await fetch('https://edificese.vercel.app/api/testimonials', { cache: 'no-store' });
         const data = await res.json();
         setTestimonials(Array.isArray(data) ? data : []);
       } catch (error) {

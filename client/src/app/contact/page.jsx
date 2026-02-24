@@ -18,7 +18,7 @@ const ContactPage = () => {
 
   const fetchContactData = async () => {
     try {
-      const res = await fetch('https://edifice-tau.vercel.app/api/contactInfo');
+      const res = await fetch('https://edificese.vercel.app/api/contactInfo');
       const data = await res.json();
       setContactData(data);
     } catch (err) {

@@ -19,7 +19,7 @@ const AllNews = () => {
   const fetchNews = async (signal) => {
     try {
       setLoading(true);
-      const url = `https://edifice-tau.vercel.app/api/news?page=${page}&search=${encodeURIComponent(
+      const url = `https://edificese.vercel.app/api/news?page=${page}&search=${encodeURIComponent(
         search
       )}&ts=${Date.now()}`; // cache-buster
       const res = await fetch(url, { cache: 'no-store', signal });
@@ -51,7 +51,7 @@ const AllNews = () => {
       setNews((prev) => prev.filter((n) => n._id !== id));
 
       // 2) Hit API
-      const res = await fetch(`https://edifice-tau.vercel.app/api/news/${id}`, {
+      const res = await fetch(`https://edificese.vercel.app/api/news/${id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       });

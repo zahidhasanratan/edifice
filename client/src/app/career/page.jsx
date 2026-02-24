@@ -24,7 +24,7 @@ const CareerPage = () => {
 
   const fetchJobs = async () => {
     try {
-      const res = await fetch('https://edifice-tau.vercel.app/api/careers');
+      const res = await fetch('https://edificese.vercel.app/api/careers');
       const data = await res.json();
       setJobListings(data);
     } catch (error) {

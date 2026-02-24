@@ -33,7 +33,7 @@ const Header = () => {
   useEffect(() => {
     const fetchMenus = async () => {
       try {
-        const res = await fetch('https://edifice-tau.vercel.app/api/menus/all');
+        const res = await fetch('https://edificese.vercel.app/api/menus/all');
         const data = await res.json();
         setMenus(Array.isArray(data) ? data : []);
       } catch (err) {
@@ -59,7 +59,7 @@ const Header = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch('https://edifice-tau.vercel.app/api/projects');
+        const res = await fetch('https://edificese.vercel.app/api/projects');
         const data = await res.json();
         setAllProjects(Array.isArray(data) ? data : []);
       } catch (err) {

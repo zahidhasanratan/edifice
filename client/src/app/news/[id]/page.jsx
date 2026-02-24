@@ -23,7 +23,7 @@ const NewsDetails = () => {
 
     const fetchNews = async () => {
       try {
-        const res = await fetch(`https://edifice-tau.vercel.app/api/news/${id}`);
+        const res = await fetch(`https://edificese.vercel.app/api/news/${id}`);
         const data = await res.json();
         setNews(data);
       } catch (err) {

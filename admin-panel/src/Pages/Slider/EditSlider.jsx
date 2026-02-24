@@ -20,7 +20,7 @@ const EditSlider = () => {
   useEffect(() => {
     const fetchSlider = async () => {
       try {
-        const res = await fetch(`https://edifice-tau.vercel.app/api/sliders/${id}`);
+        const res = await fetch(`https://edificese.vercel.app/api/sliders/${id}`);
         const data = await res.json();
         setSlider(data);
         setTitle(data.title || "");
@@ -61,7 +61,7 @@ const EditSlider = () => {
         image: imageUrl,
       };
 
-      const res = await fetch(`https://edifice-tau.vercel.app/api/sliders/${id}`, {
+      const res = await fetch(`https://edificese.vercel.app/api/sliders/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedSlider),

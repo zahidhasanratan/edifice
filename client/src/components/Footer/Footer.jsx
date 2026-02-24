@@ -21,7 +21,7 @@ const Footer = () => {
   useEffect(() => {
     const fetchContact = async () => {
       try {
-        const res = await fetch('https://edifice-tau.vercel.app/api/contactInfo');
+        const res = await fetch('https://edificese.vercel.app/api/contactInfo');
         const data = await res.json();
         setContact(data);
       } catch (err) {
@@ -31,7 +31,7 @@ const Footer = () => {
 
     const fetchMenus = async () => {
       try {
-        const res = await fetch('https://edifice-tau.vercel.app/api/menus/all');
+        const res = await fetch('https://edificese.vercel.app/api/menus/all');
         const data = await res.json();
         const filteredMenus = data.filter((menu) => menu.footer1 === true);
         setFooterMenus(filteredMenus);

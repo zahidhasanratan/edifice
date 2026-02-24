@@ -44,7 +44,7 @@ const AddSlider = () => {
         status,
       };
 
-      const res = await fetch("https://edifice-tau.vercel.app/api/sliders", {
+      const res = await fetch("https://edificese.vercel.app/api/sliders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(slider),

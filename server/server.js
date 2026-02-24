@@ -78,10 +78,48 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 /* ===================== MongoDB ===================== */
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
+const MONGO_URI = process.env.MONGO_URI;
+if (!MONGO_URI) {
+  console.warn("⚠️ MONGO_URI is not set — DB routes will return 503.");
+}
+
+const mongooseConnectionPromise = MONGO_URI
+  ? mongoose.connect(MONGO_URI).then(() => {
+      console.log("✅ MongoDB Connected");
+      return mongoose.connection;
+    })
+  : Promise.reject(new Error("MONGO_URI not configured"));
+
+mongooseConnectionPromise.catch((err) =>
+  console.error("❌ MongoDB Connection Error:", err)
+);
+
+// Wait for DB before handling API routes (avoids 500 on Vercel serverless cold start)
+const DB_WAIT_MS = 15000;
+app.use("/api", (req, res, next) => {
+  let responded = false;
+  const send = (status, body) => {
+    if (responded) return;
+    responded = true;
+    res.status(status).json(body);
+  };
+  mongooseConnectionPromise
+    .then(() => {
+      if (!responded) {
+        responded = true;
+        next();
+      }
+    })
+    .catch((err) => {
+      console.error("DB not available for /api:", err?.message || err);
+      send(503, { message: "Database unavailable", error: err?.message });
+    });
+  setTimeout(() => {
+    if (!responded && mongoose.connection.readyState !== 1) {
+      send(503, { message: "Database connection timeout" });
+    }
+  }, DB_WAIT_MS);
+});
 
 /* ===================== Routes ===================== */
 const pageRoutes = require("./routes/pageRoutes");
